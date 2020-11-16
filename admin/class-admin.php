@@ -53,6 +53,25 @@ class ST_BB_Admin {
 	}
 
 	/**
+	 * Load all BB modules.
+	 *
+	 * @since    1.0.0
+	 */
+	public function load_bb_modules() {
+		
+		// Load parent class.
+		require_once ST_BB_DIR . 'public/bb-modules/class-st-bb-module.php';
+		
+		// Load all modules.
+		$modules = array(
+			'hero',
+		);
+		foreach ( $modules as $module ) {
+			require_once ST_BB_DIR . 'public/bb-modules/' . $module . '/' . $module . '.php';
+		}
+	}
+
+	/**
 	 * Register the stylesheets for the admin area.
 	 *
 	 * @since    1.0.0

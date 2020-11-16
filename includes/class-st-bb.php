@@ -65,6 +65,7 @@ class ST_BB {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
+
 		if ( defined( 'ST_BB_VERSION' ) ) {
 			$this->version = ST_BB_VERSION;
 		} else {
@@ -157,8 +158,11 @@ class ST_BB {
 
 		$plugin_admin = new ST_BB_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		// Load all BB modules.
+		$this->loader->add_action( 'init', $plugin_admin, 'load_bb_modules' );
+
+		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		// Amend BB global settings.
 		$this->loader->add_action( 'fl_builder_register_settings_form', $plugin_admin, 'amend_bb_global_settings', 10, 2 );
@@ -180,8 +184,8 @@ class ST_BB {
 
 		$plugin_public = new ST_BB_Public( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 	}
 
