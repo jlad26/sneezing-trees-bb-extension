@@ -24,12 +24,26 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+// Only run plugin if BB is active.
+// NB Check that the folder for Pro version is corect
+$st_bb_lite_activated = in_array('beaver-builder-lite-version/fl-builder.php', apply_filters('active_plugins', get_option('active_plugins')));
+$st_bb_pro_activated = in_array('beaver-builder/fl-builder.php', apply_filters('active_plugins', get_option('active_plugins')));
+
+if( ! $st_bb_lite_activated && ! $st_bb_pro_activated ){ 
+    return;
+}
+
 /**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'ST_BB_VERSION', '1.0.0' );
+
+// Define constants.
+define( 'ST_BB_DIR', plugin_dir_path( __FILE__ ) );
+define( 'ST_BB_URL', plugins_url( '/', __FILE__ ) );
+define( 'ST_BB_TD', 'sneezing-trees-bb-extension' );
 
 /**
  * The code that runs during plugin activation.

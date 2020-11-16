@@ -33,7 +33,7 @@ class ST_BB_i18n {
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
-			'sneezing-trees-bb-extension',
+			ST_BB_TD,
 			false,
 			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);
