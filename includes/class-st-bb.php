@@ -160,6 +160,10 @@ class ST_BB {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		// Amend BB global settings.
+		$this->loader->add_action( 'fl_builder_register_settings_form', $plugin_admin, 'amend_bb_global_settings', 10, 2 );
+		
+
 	}
 
 	/**

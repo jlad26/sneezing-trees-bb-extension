@@ -98,4 +98,24 @@ class ST_BB_Admin {
 
 	}
 
+	/**
+	 * Amend global BB settings, stripping out default padding and margins.
+	 *
+	 * @since    1.0.0
+	 * @hooked fl_builder_register_settings_form
+	 */
+	public function amend_bb_global_settings( $form, $id ) {
+		
+		if ( 'global' == $id ) {
+			$form['tabs']['general']['sections']['rows']['fields']['row_padding']['default'] = 0;
+			$form['tabs']['general']['sections']['rows']['fields']['row_width_default']['default'] = 'full';
+			$form['tabs']['general']['sections']['rows']['fields']['row_content_width_default']['default'] = 'full';
+			$form['tabs']['general']['sections']['modules']['fields']['module_margins']['default'] = 0;
+		}
+
+		return $form;
+
+	}
+
+
 }
