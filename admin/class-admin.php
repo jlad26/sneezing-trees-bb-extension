@@ -117,5 +117,41 @@ class ST_BB_Admin {
 
 	}
 
+	/**
+	 * Remove BB outer content wrapping on front end.
+	 * @hooked	fl_builder_after_render_content
+	 */
+	public static function remove_bb_frontend_content_wrap() {
+		if ( ! is_admin() && ! isset( $_GET['fl_builder'] ) ) {
+			ob_clean();
+			FlBuilder::render_nodes();
+		}
+	}
+	
+	/**
+	 * Remove BB rows and modules content wrapping on front end by
+	 * replacing standard template with our own.
+	 * @hooked	fl_builder_template_path
+	 */
+	public static function remove_bb_frontend_row_and_module_wrap( $template_path, $template_base, $slug ) {
+		if ( ! is_admin() && ! isset( $_GET['fl_builder'] ) ) {
+
+			switch( $template_base ) {
+
+				case 'row':
+					$template_path = ST_BB_DIR . 'public/partials/frontend-row.php';
+					break;
+				
+				case 'module':
+					$template_path =  ST_BB_DIR . 'public/partials/frontend-module.php';
+					break;
+
+
+			}
+
+			
+		}
+		return $template_path;
+	}
 
 }

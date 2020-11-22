@@ -163,6 +163,9 @@ class ST_BB {
 		// Amend BB global settings.
 		$this->loader->add_action( 'fl_builder_register_settings_form', $plugin_admin, 'amend_bb_global_settings', 10, 2 );
 		
+		// Remove BB content wrapping on front end, set default margins and padding to zero and width to full width.
+		$this->loader->add_action( 'fl_builder_after_render_content', $plugin_admin, 'remove_bb_frontend_content_wrap' );
+		$this->loader->add_action( 'fl_builder_template_path', $plugin_admin, 'remove_bb_frontend_row_and_module_wrap', 10, 3 );
 
 	}
 
