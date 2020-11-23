@@ -60,18 +60,11 @@ class ST_BB_Public {
 	public function enqueue_styles() {
 
 		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in ST_BB_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The ST_BB_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
+		 * Enqueue Bootstrap grid CSS.
 		 */
 
-		wp_enqueue_style( $this->plugin_name . '-public-css', plugin_dir_url( __FILE__ ) . 'css/public.css', array(), $this->version, 'all' );
+		$min = WP_DEBUG ? '' : 'min.';
+		wp_enqueue_style( $this->plugin_name . '-bootstrap-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap-grid.' . $min . 'css', array(), $this->version, 'all' );
 
 	}
 
