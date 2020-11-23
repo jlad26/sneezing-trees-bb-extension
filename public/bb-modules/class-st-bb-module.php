@@ -43,7 +43,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 * @access   public
 	 * @var      array    $config    Settings used to initialize module.
 	 */
-    public static $config;
+    public $config = array();
 
     /**
 	 * Constructor.
@@ -65,6 +65,38 @@ abstract class ST_BB_Module extends FLBuilderModule {
         
         parent::__construct( $args );
         $this->utilities = new ST_BB_Utility();
+
+        // Set generic config.
+        $this->set_config();
+        
+    }
+
+    /**
+	 * Set the generic config for all modules.
+	 *
+	 * @since    1.0.0
+	 */
+    protected function set_config() {
+        $this->config = apply_filters( 'st_bb_module_config', array(
+            'inner_content_classes' => array( 'st_bb_inner_content' )
+        ), $this );
+    }
+
+    /**
+	 * Get module classes.
+	 *
+	 * @since    1.0.0
+	 */
+    public function module_classes( $class_type, $echo = true ) {
+        $out = '';
+        if ( isset( $this->config['inner_content_classes'] ) ) {
+            $out = implode( ' ', $this->config['inner_content_classes'] );
+            if ( $echo ) {
+                echo esc_attr( $out );
+            } else {
+                return $out;
+            }
+        }
     }
 
     /**
@@ -150,7 +182,6 @@ abstract class ST_BB_Module extends FLBuilderModule {
                 'title'         =>  'Content',
                 'sections'		=>  array(
                     'background'     =>  array(
-                        'before'    =>  'testing',
                         'title'         =>  'Background',
                         'fields'        =>  array(
                             'background_color'  =>  array(
@@ -173,7 +204,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
                             'image' => array(
                                 'type'          => 'photo',
                                 'label'         => __( 'Image', ST_BB_TD ),
-                                'show_remove'       => false,
+                                'show_remove'       => true,
                             ),
                         ),
                     ),

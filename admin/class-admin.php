@@ -184,4 +184,15 @@ class ST_BB_Admin {
 		return $template_path;
 	}
 
+	/**
+	 * Add class to sections.
+	 * @hooked	fl_builder_module_attributes
+	 */
+	public static function add_class_to_sections( $attrs, $module ) {
+		if ( is_subclass_of( $module, 'ST_BB_Module' ) ) {
+			$attrs['class'][] = 'st-bb-section';
+		}
+		return $attrs;
+	}
+
 }

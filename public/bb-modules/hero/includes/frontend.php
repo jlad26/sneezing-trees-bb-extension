@@ -18,8 +18,6 @@ if ( isset( $settings) && isset( $module ) ) {
 
 // Set defaults.
 $defaults = array(
-    'close_outer_tag'       =>  true,
-    'container-tag'         =>  'section',
     'container_classes'     =>  '',
     'button_classes'        =>  '',
     'button_url'            =>  '#',
@@ -30,13 +28,13 @@ foreach ( $defaults as $param => $default ) {
     }
 }
 ?>
-<<?php echo $mod_params['container-tag']; ?> class="st-bb-hero st-bb-hero-outer<?php echo esc_attr( $mod_params['container_classes'] ); ?>">
+<div class="st-bb-hero st-bb-hero-outer<?php echo esc_attr( $mod_params['container_classes'] ); ?>">
     <div class="st-bb-hero-inner">
         <div class="st-bb-hero-overlay"></div>
         <?php if ( isset( $mod_params['image_src'] ) ) : ?>
         <img src="<?php echo esc_url( $mod_params['image_src'] ); ?>" alt="" />
         <?php endif; ?>
-        <div class="st-bb-hero-content">
+        <div class="st-bb-hero-content <?php $module->module_classes( 'inner_content_classes' ); ?>">
             
             <?php if ( isset( $mod_params['title'] ) ) : ?>
             <h1 class="st-bb-hero-title">
@@ -58,6 +56,4 @@ foreach ( $defaults as $param => $default ) {
 
         </div>
     </div>
-<?php if ( $mod_params['close_outer_tag'] ) : ?>
-<<?php echo $mod_params['container-tag']; ?>>
-<?php endif; ?>
+</div>
