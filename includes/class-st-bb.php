@@ -177,6 +177,9 @@ class ST_BB {
 		// Add a standard class to all sections.
 		$this->loader->add_filter( 'fl_builder_module_attributes', $plugin_admin, 'add_class_to_sections', 10, 2 );
 
+		// Add in instance CSS for all ST BB modules to handle row background image and colour.
+		$this->loader->add_filter( 'fl_builder_render_css', $plugin_admin, 'add_instance_css', 10, 4 );
+
 	}
 
 	/**

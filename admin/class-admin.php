@@ -151,7 +151,7 @@ class ST_BB_Admin {
 	 * Remove BB outer content wrapping on front end.
 	 * @hooked	fl_builder_after_render_content
 	 */
-	public static function remove_bb_frontend_content_wrap() {
+	public function remove_bb_frontend_content_wrap() {
 		if ( ! is_admin() && ! isset( $_GET['fl_builder'] ) ) {
 			ob_clean();
 			FlBuilder::render_nodes();
@@ -163,24 +163,23 @@ class ST_BB_Admin {
 	 * replacing standard template with our own.
 	 * @hooked	fl_builder_template_path
 	 */
-	public static function remove_bb_frontend_row_and_module_wrap( $template_path, $template_base, $slug ) {
-		if ( ! is_admin() && ! isset( $_GET['fl_builder'] ) ) {
+	public function remove_bb_frontend_row_and_module_wrap( $template_path, $template_base, $slug ) {
 
-			switch( $template_base ) {
+		switch( $template_base ) {
 
-				case 'row':
+			case 'row':
+				if ( ! is_admin() && ! isset( $_GET['fl_builder'] ) ) {
 					$template_path = ST_BB_DIR . 'public/partials/frontend-row.php';
-					break;
-				
-				case 'module':
-					$template_path =  ST_BB_DIR . 'public/partials/frontend-module.php';
-					break;
-
-
-			}
-
+				}
+				break;
 			
+			case 'module':
+				$template_path =  ST_BB_DIR . 'public/partials/frontend-module.php';
+				break;
+
+
 		}
+
 		return $template_path;
 	}
 
@@ -188,11 +187,28 @@ class ST_BB_Admin {
 	 * Add class to sections.
 	 * @hooked	fl_builder_module_attributes
 	 */
-	public static function add_class_to_sections( $attrs, $module ) {
+	public function add_class_to_sections( $attrs, $module ) {
 		if ( is_subclass_of( $module, 'ST_BB_Module' ) ) {
 			$attrs['class'][] = 'st-bb-section';
+			$attrs['class'] = apply_filters( 'st_bb_section_classes', $attrs['class'], $module );
 		}
 		return $attrs;
+	}
+
+	/**
+	 * Add instance CSS to all modules. This handles row background image and colour.
+	 * @hooked	fl_builder_render_css
+	 */
+	public function add_instance_css( $css, $nodes, $global_settings, $include_global ) {
+		foreach ( $nodes['modules'] as $module ) {
+			$settings = $module->settings;
+			$id       = $module->node;
+			ob_start();
+			include ST_BB_DIR . 'public/bb-modules/includes/frontend.css.php';
+			FLBuilderCSS::render();
+			$css .= ob_get_clean();
+		}
+		return $css;
 	}
 
 }

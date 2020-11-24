@@ -2,3 +2,36 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+ .st-bb-row {
+    position: relative;
+    height: 100vh;
+}
+.st-bb-row-background.--st-bb-row-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    z-index: 9;
+}
+.st-bb-row-background.--st-bb-row-img img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+.st-bb-row-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+.--st-bb-row-img .st_bb_module {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 11;
+}

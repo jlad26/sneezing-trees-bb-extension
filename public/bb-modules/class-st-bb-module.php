@@ -78,7 +78,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 */
     protected function set_config() {
         $this->config = apply_filters( 'st_bb_module_config', array(
-            'inner_content_classes' => array( 'st_bb_inner_content' )
+            'module_classes' => array( 'container' )
         ), $this );
     }
 
@@ -89,8 +89,8 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 */
     public function module_classes( $class_type, $echo = true ) {
         $out = '';
-        if ( isset( $this->config['inner_content_classes'] ) ) {
-            $out = implode( ' ', $this->config['inner_content_classes'] );
+        if ( isset( $this->config['module_classes'] ) ) {
+            $out = implode( ' ', $this->config['module_classes'] );
             if ( $echo ) {
                 echo esc_attr( $out );
             } else {

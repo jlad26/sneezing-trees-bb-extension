@@ -59,11 +59,9 @@ class ST_BB_Public {
 	 */
 	public function enqueue_styles() {
 
-		/**
-		 * Enqueue Bootstrap grid CSS.
-		 */
-
 		$min = WP_DEBUG ? '' : 'min.';
+
+		// Bootstrap grid.
 		wp_enqueue_style( $this->plugin_name . '-bootstrap-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap-grid.' . $min . 'css', array(), $this->version, 'all' );
 
 	}
