@@ -206,6 +206,12 @@ abstract class ST_BB_Module extends FLBuilderModule {
                                 'label'         => __( 'Image', ST_BB_TD ),
                                 'show_remove'       => true,
                             ),
+                            'row_image_alt'		=>  array(
+                                'type'          =>  'text',
+                                'label'         =>  __( 'Image alt', ST_BB_TD ),
+                                'preview'       =>  false,
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
                         ),
                     ),
                 ),

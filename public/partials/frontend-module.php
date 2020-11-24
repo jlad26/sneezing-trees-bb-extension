@@ -77,7 +77,7 @@ $on_backend = is_admin() || isset( $_GET['fl_builder'] );
 				
 				<div class="st-bb-row-overlay"></div>
 				<?php if ( ! empty( $mod_params['row_image_src'] ) ) : ?>
-				<img src="<?php echo esc_url( $mod_params['row_image_src'] ); ?>" alt="" />
+				<img src="<?php echo esc_url( $mod_params['row_image_src'] ); ?>" alt="<?php esc_attr_e( $mod_params['row_image_alt'] ); ?>" />
 				<?php endif; ?>
 
 				<?php
