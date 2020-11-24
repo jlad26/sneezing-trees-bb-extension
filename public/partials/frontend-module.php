@@ -72,18 +72,11 @@ $on_backend = is_admin() || isset( $_GET['fl_builder'] );
 			/**
 			 * The .st-bb-row-background and .st-bb-row-overlay elements together set the
 			 * row background color and image.
-			 * If an image is used, then the background colour and opacity is set on the
-			 * .st-bb-row-overlay element and elements are positioned absolutely.
-			 * Otherwise background colour and opacity are set on the .st-bb-row-background element and
-			 * positioned statically.
 			 */ ?>
 			<div class="st-bb-row-background<?php echo ! empty( $mod_params['row_image_src'] ) ? ' --st-bb-row-img' : ''; ?>">
 				
-				<?php
-				// Only include the overlay and image if an image is set.
-				if ( ! empty( $mod_params['row_image_src'] ) ) :
-				?>
 				<div class="st-bb-row-overlay"></div>
+				<?php if ( ! empty( $mod_params['row_image_src'] ) ) : ?>
 				<img src="<?php echo esc_url( $mod_params['row_image_src'] ); ?>" alt="" />
 				<?php endif; ?>
 
