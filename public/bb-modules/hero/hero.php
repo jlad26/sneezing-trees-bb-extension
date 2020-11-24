@@ -52,23 +52,18 @@ class ST_BB_Hero_Module extends ST_BB_Module {
                             'title'		=>  array(
                                 'type'          =>  'text',
                                 'label'         =>  'Heading',
-                                'preview'       =>    array(
-                                    'type'            =>    'text',
-                                    'selector'        =>    '.st-bb-hero-title',
+                                'preview'       =>   array(
+                                    'type'          =>    'text',
+                                    'selector'      =>    '.st-bb-hero-title',
                                 ),
                                 'sanitize'		=>	'sanitize_text_field',
                             ),
-                        ),
-                    ),
-                    'testing'		=>  array(
-                        'title'         =>  'Sub-heading',
-                        'fields'        =>  array(
                             'subtitle'		=>  array(
                                 'type'          =>  'text',
                                 'label'         =>  'Sub-heading',
-                                'preview'       =>    array(
-                                    'type'            =>    'text',
-                                    'selector'        =>    '.st-bb-hero-subtitle',
+                                'preview'       =>   array(
+                                    'type'          =>    'text',
+                                    'selector'      =>    '.st-bb-hero-subtitle',
                                 ),
                                 'sanitize'		=>	'sanitize_text_field',
                             ),
