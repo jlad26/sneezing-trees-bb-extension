@@ -184,14 +184,14 @@ abstract class ST_BB_Module extends FLBuilderModule {
                     'background'     =>  array(
                         'title'         =>  'Background',
                         'fields'        =>  array(
-                            'background_color'  =>  array(
+                            'row_bg_color'  =>  array(
                                 'type'          =>  'color',
                                 'label'         => __( 'Colour', ST_BB_TD ),
                                 'default'       =>  '',
                                 'show_reset'    =>  true,
                                 'help'          =>  __( 'Background colour for the whole section. If an image is set this color acts as an overlay. Black or white is recommended to darken or lighten the image respectively.', ST_BB_TD ),
                             ),
-                            'background_opacity'  =>  array(
+                            'row_bg_opacity'  =>  array(
                                 'type'          =>  'unit',
                                 'label'         => __( 'Opacity (%)', ST_BB_TD ),
                                 'default'       =>  100,
@@ -201,7 +201,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
                                     'step'  =>  1,
                                 )
                             ),
-                            'image' => array(
+                            'row_image' => array(
                                 'type'          => 'photo',
                                 'label'         => __( 'Image', ST_BB_TD ),
                                 'show_remove'       => true,

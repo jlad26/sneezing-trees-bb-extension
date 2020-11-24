@@ -11,7 +11,7 @@ if ( ! isset( $module ) ) {
 
 // Make sure that image src is set.
 $mod_params = array(
-	'image_src'		=>	''
+	'row_image_src'		=>	''
 );
 
 // If this is a BB module...
@@ -77,14 +77,14 @@ $on_backend = is_admin() || isset( $_GET['fl_builder'] );
 			 * Otherwise background colour and opacity are set on the .st-bb-row-background element and
 			 * positioned statically.
 			 */ ?>
-			<div class="st-bb-row-background<?php echo ! empty( $mod_params['image_src'] ) ? ' --st-bb-row-img' : ''; ?>">
+			<div class="st-bb-row-background<?php echo ! empty( $mod_params['row_image_src'] ) ? ' --st-bb-row-img' : ''; ?>">
 				
 				<?php
 				// Only include the overlay and image if an image is set.
-				if ( ! empty( $mod_params['image_src'] ) ) :
+				if ( ! empty( $mod_params['row_image_src'] ) ) :
 				?>
 				<div class="st-bb-row-overlay"></div>
-				<img src="<?php echo esc_url( $mod_params['image_src'] ); ?>" alt="" />
+				<img src="<?php echo esc_url( $mod_params['row_image_src'] ); ?>" alt="" />
 				<?php endif; ?>
 
 				<?php
