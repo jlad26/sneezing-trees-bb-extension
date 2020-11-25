@@ -124,6 +124,11 @@ class ST_BB {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/bb-modules/class-bb-module-manager.php';
 
+		/**
+		 * The class responsible for managing ACF content modules.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-acf-module-manager.php';
+
 		$this->loader = new ST_BB_Loader();
 
 	}
@@ -146,8 +151,7 @@ class ST_BB {
 	}
 
 	/**
-	 * Register all of the hooks related to the admin area functionality
-	 * of the plugin.
+	 * Register all of the hooks related to the core plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   private
@@ -158,6 +162,9 @@ class ST_BB {
 
 		// Initialize all BB modules.
 		$this->loader->add_action( 'init', $plugin_hook_mgr, 'init_bb_modules' );
+
+		// Initialize ACF component of the plugin.
+		$this->loader->add_action( 'plugins_loaded', $plugin_hook_mgr, 'init_acf_module_mgr' );
 
 		// Enqueue scripts and styles.
 		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_hook_mgr, 'enqueue_admin_styles_and_scripts' );

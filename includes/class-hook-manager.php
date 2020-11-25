@@ -58,8 +58,17 @@ class ST_BB_Hook_Manager {
 	 * @hooked init
 	 */
 	public function init_bb_modules() {
-		
 		ST_BB_Module_Manager::init_bb_modules();
+	}
+
+	/**
+	 * Initialize ACF component of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @hooked init
+	 */
+	public function init_acf_module_mgr() {
+		new ST_BB_ACF_Module_Manager( $this->plugin_name, $this->version );
 	}
 
 	/**
