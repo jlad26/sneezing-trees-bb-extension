@@ -75,9 +75,4 @@ class ST_BB_Hero_Module extends ST_BB_Module {
     }
     
 }
-
-/**
- * Register the module and its form settings.
- */
-ST_BB_Hero_Module::init();
 ?>
