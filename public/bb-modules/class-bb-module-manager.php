@@ -57,18 +57,19 @@ class ST_BB_Module_Manager {
 
 			}
 		}
-		
+
 	}
 
 	/**
 	 * Get module class name from directory containing class.
-	 * Converts dashes to underscores and capitalizes first letters.
+	 * Strips 'st-bb-' prefix, then converts dashes to underscores and capitalizes first letters.
 	 *
 	 * @since    1.0.0
 	 * @hooked init
 	 */
 	private static function get_class_name_from_dir( $dirname, $prepend = '', $append = '' ) {
-		return $prepend . implode( '_', array_map( 'ucfirst', explode( '-', $dirname ) ) ) . $append;
+		$module_id = str_replace( 'st-bb-', '', $dirname );
+		return $prepend . implode( '_', array_map( 'ucfirst', explode( '-', $module_id ) ) ) . $append;
 	}
 
 }

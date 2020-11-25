@@ -52,10 +52,16 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 */
     public function __construct( $args ) {
         
+        $class_info     = new ReflectionClass( $this );
+		$class_path     = $class_info->getFileName();
+        $class_dir           = basename( dirname( $class_path ) ) . '/';
+        
         // Set defaults.
         $defaults = array(
             'category'  =>  __( 'Sneezing Trees', ST_BB_TD ),
             'group'     =>  __( 'Sneezing Trees', ST_BB_TD ),
+            'dir'       =>  ST_BB_DIR . 'public/bb-modules/modules/' . $class_dir,
+            'url'       =>  ST_BB_URL . 'public/bb-modules/modules/' . $class_dir,
         );
         foreach( $defaults as $arg => $default ) {
             if ( ! isset( $args[ $arg ] ) ) {
@@ -90,7 +96,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
     public function module_classes( $class_type, $echo = true ) {
         $out = '';
         if ( 'module' == $class_type ) {
-            $classes = array( 'st-bb-' . $this->slug );
+            $classes = array( $this->slug );
             if ( isset( $this->config['module_classes'] ) ) {
                 $classes = array_merge( $classes, $this->config['module_classes'] );
             }
