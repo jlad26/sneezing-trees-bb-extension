@@ -123,58 +123,79 @@ abstract class ST_BB_Module extends FLBuilderModule {
         $initial_config = static::get_module_config();
 
         // Add in generic config sections if not overridden by module config.
-        if ( isset( $generic_config['module'] ) ) {
-
-            // Add in module title if needed.
-            if (
-                isset( $generic_config['module']['title'] ) &&
-                ! isset( $initial_config['module']['title'] )
-            ) {
-                $initial_config['module']['title'] = $generic_config['module']['title'];
-            }
-
-            if ( isset( $generic_config['module']['sections'] ) ) {
-                
-                $add_generic_sections_before = array();
-                
-                foreach ( $generic_config['module']['sections'] as $section => $section_params ) {
-
-                    if ( ! isset( $initial_config['module']['sections'][ $section ] ) ) {
-                        
-                        // Record section to add if not defined by child module.
-                        $section_before = isset( $section_params['before'] ) ? $section_params['before'] : 'beginning';
-                        $add_generic_sections_before[ $section_before ][] = $section;
-                        
-                    }
-
-                }
-
-                // Add in the generic sections at the right location.
-                if ( ! empty( $add_generic_sections_before) ) {
-                    
-                    $module_sections = array();
-                    
-                    if ( isset( $add_generic_sections_before['beginning'] ) ) {
-                        foreach ( $add_generic_sections_before['beginning'] as $section ) {
-                            $module_sections[ $section ] = $generic_config['module']['sections'][ $section ];
-                        }
-                    }
-                    foreach ( $initial_config['module']['sections'] as $before_section => $section_params ) {
-                        if ( isset( $add_generic_sections_before[ $before_section ] ) ) {
-                            foreach ( $add_generic_sections_before[ $before_section ] as $section ) {
-                                $module_sections[ $section ] = $generic_config['module']['sections'][ $section ];
-                            }
-                        }
-                        $module_sections[ $before_section ] = $section_params;
-                    }
-                    
-                    $initial_config['module']['sections'] = $module_sections;
-
-                }
-
-            }
-
+        
+        if ( empty( $generic_config ) ) {
+            return $initial_config;
         }
+
+        foreach ( $generic_config as $tab => $tab_settings ) {
+            if ( ! isset( $initial_config[ $tab ] ) ) {
+                $initial_config[ $tab ] = $tab_settings;
+            } else {
+
+                // Add in tab title if needed.
+                if (
+                    isset( $generic_config[ $tab ]['title'] ) &&
+                    ! isset( $initial_config[ $tab ]['title'] )
+                ) {
+                    $initial_config[ $tab ]['title'] = $generic_config[ $tab ]['title'];
+                }
+
+            }
+        }
+        
+        // if ( isset( $generic_config['module'] ) ) {
+
+        //     // Add in module title if needed.
+        //     if (
+        //         isset( $generic_config['module']['title'] ) &&
+        //         ! isset( $initial_config['module']['title'] )
+        //     ) {
+        //         $initial_config['module']['title'] = $generic_config['module']['title'];
+        //     }
+
+        //     if ( isset( $generic_config['module']['sections'] ) ) {
+                
+        //         $add_generic_sections_before = array();
+                
+        //         foreach ( $generic_config['module']['sections'] as $section => $section_params ) {
+
+        //             if ( ! isset( $initial_config['module']['sections'][ $section ] ) ) {
+                        
+        //                 // Record section to add if not defined by child module.
+        //                 $section_before = isset( $section_params['before'] ) ? $section_params['before'] : 'beginning';
+        //                 $add_generic_sections_before[ $section_before ][] = $section;
+                        
+        //             }
+
+        //         }
+
+        //         // Add in the generic sections at the right location.
+        //         if ( ! empty( $add_generic_sections_before) ) {
+                    
+        //             $module_sections = array();
+                    
+        //             if ( isset( $add_generic_sections_before['beginning'] ) ) {
+        //                 foreach ( $add_generic_sections_before['beginning'] as $section ) {
+        //                     $module_sections[ $section ] = $generic_config['module']['sections'][ $section ];
+        //                 }
+        //             }
+        //             foreach ( $initial_config['module']['sections'] as $before_section => $section_params ) {
+        //                 if ( isset( $add_generic_sections_before[ $before_section ] ) ) {
+        //                     foreach ( $add_generic_sections_before[ $before_section ] as $section ) {
+        //                         $module_sections[ $section ] = $generic_config['module']['sections'][ $section ];
+        //                     }
+        //                 }
+        //                 $module_sections[ $before_section ] = $section_params;
+        //             }
+                    
+        //             $initial_config['module']['sections'] = $module_sections;
+
+        //         }
+
+        //     }
+
+        // }
 
         return $initial_config;
     }
@@ -191,9 +212,12 @@ abstract class ST_BB_Module extends FLBuilderModule {
         return array(
             'module'      => array(
                 'title'         =>  'Content',
+            ),
+            'background'      => array(
+                'title'         =>  'Background',
                 'sections'		=>  array(
-                    'background'     =>  array(
-                        'title'         =>  'Background',
+                    'row_colour'     =>  array(
+                        'title'         =>  'Colour',
                         'fields'        =>  array(
                             'row_bg_color'  =>  array(
                                 'type'          =>  'color',
@@ -212,6 +236,11 @@ abstract class ST_BB_Module extends FLBuilderModule {
                                     'step'  =>  1,
                                 )
                             ),
+                        ),
+                    ),
+                    'row_image'     =>  array(
+                        'title'         =>  'Image',
+                        'fields'        =>  array(
                             'row_image' => array(
                                 'type'          => 'photo',
                                 'label'         => __( 'Image', ST_BB_TD ),
