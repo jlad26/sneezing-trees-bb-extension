@@ -2,19 +2,13 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
- .st-bb-row {
+ .st-bb-section {
     position: relative;
-    height: 100vh;
 }
-.st-bb-row-background {
+img.st-bb-background-img {
     position: absolute;
     top: 0;
     left: 0;
-    height: 100vh;
-    width: 100%;
-    z-index: 9;
-}
-.st-bb-row-background img {
     object-fit: cover;
     height: 100%;
     width: 100%;
@@ -25,13 +19,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 10;
 }
-.st_bb_module {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 11;
+.st-bb-module {
+    position: relative;
 }

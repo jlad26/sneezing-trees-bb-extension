@@ -35,7 +35,6 @@ if ( is_subclass_of( $module, 'FLBuilderModule' ) ) {
 
 // Set defaults.
 $defaults = array(
-    'row_classes'     =>  '',
     'button_classes'        =>  '',
     'button_url'            =>  '#',
 );
@@ -63,42 +62,28 @@ $on_backend = is_admin() || isset( $_GET['fl_builder'] );
 
 		<?php
 		/**
-		 * The .st-bb-row element is always 100% width of the overall section as it is used
-		 * to position full width background and images.
+		 * The row background image and overlay.
 		 */ ?>
-		<div class="st-bb-row<?php echo esc_attr( $mod_params['row_classes'] ); ?>">
-
-			<?php
-			/**
-			 * The .st-bb-row-background and .st-bb-row-overlay elements together set the
-			 * row background color and image.
-			 */ ?>
-			<div class="st-bb-row-background<?php echo ! empty( $mod_params['row_image_src'] ) ? ' --st-bb-row-img' : ''; ?>">
-				
-				<div class="st-bb-row-overlay"></div>
-				<?php if ( ! empty( $mod_params['row_image_src'] ) ) : ?>
-				<img src="<?php echo esc_url( $mod_params['row_image_src'] ); ?>" alt="<?php esc_attr_e( $mod_params['row_image_alt'] ); ?>" />
-				<?php endif; ?>
-
-				<?php
-				/**
-				 * The module content container.
-				 */ ?>
-				<div class="st_bb_module">
-					<?php // Render module content.
-					ob_start();
-					include apply_filters( 'st_bb_module_frontend_file', $module->dir . 'includes/frontend.php', $module );
-					$out = ob_get_clean();
-					echo apply_filters( 'st_bb_render_module_content', $out, $module );
-					?>
-				</div>
-
-			</div>
-
+		<?php if ( ! empty( $mod_params['row_image_src'] ) ) : ?>
+		<img class="st-bb-background-img" src="<?php echo esc_url( $mod_params['row_image_src'] ); ?>" alt="<?php esc_attr_e( $mod_params['row_image_alt'] ); ?>" />
+		<?php endif; ?>
+		<div class="st-bb-row-overlay"></div>
+		
+		<?php
+		/**
+		 * The module content container.
+		 */ ?>
+		<div class="<?php $module->module_classes( 'module' ); ?>">
+			<?php // Render module content.
+			ob_start();
+			include apply_filters( 'st_bb_module_frontend_file', $module->dir . 'includes/frontend.php', $module );
+			$out = ob_get_clean();
+			echo apply_filters( 'st_bb_render_module_content', $out, $module );
+			?>
 		</div>
 	
 	<?php if ( $on_backend ) : ?>
-
 	</div>
 	<?php endif; ?>
+	
 </section>
