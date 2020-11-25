@@ -27,8 +27,8 @@ class ST_BB_Hero_Module extends ST_BB_Module {
         parent::__construct( array(
             'name'              =>  __( 'Hero', ST_BB_TD ),
             'description'       =>  __( 'Hero', ST_BB_TD ),
-            'dir'               =>  ST_BB_DIR . 'public/bb-modules/hero/',
-            'url'               =>  ST_BB_URL . 'public/bb-modules/hero/',
+            'dir'               =>  ST_BB_DIR . 'public/bb-modules/modules/hero/',
+            'url'               =>  ST_BB_URL . 'public/bb-modules/modules/hero/',
             'icon'              =>  'button.svg',
             'partial_refresh'   =>  true,
         ) );

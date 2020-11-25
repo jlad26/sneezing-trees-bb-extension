@@ -75,8 +75,7 @@ class ST_BB {
 
 		$this->load_dependencies();
 		$this->set_locale();
-		$this->define_admin_hooks();
-		$this->define_public_hooks();
+		$this->define_hooks();
 
 	}
 
@@ -116,15 +115,14 @@ class ST_BB {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-utility.php';
 
 		/**
-		 * The class responsible for defining all actions that occur in the admin area.
+		 * The class responsible for defining all hooked functions.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-hook-manager.php';
 
 		/**
-		 * The class responsible for defining all actions that occur in the public-facing
-		 * side of the site.
+		 * The class responsible for managing BB modules.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/bb-modules/class-bb-module-manager.php';
 
 		$this->loader = new ST_BB_Loader();
 
@@ -154,47 +152,32 @@ class ST_BB {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
+	private function define_hooks() {
 
-		$plugin_admin = new ST_BB_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_hook_mgr = new ST_BB_Hook_Manager( $this->get_plugin_name(), $this->get_version() );
 
-		// Load all BB modules.
-		$this->loader->add_action( 'init', $plugin_admin, 'load_bb_modules' );
+		// Initialize all BB modules.
+		$this->loader->add_action( 'init', $plugin_hook_mgr, 'init_bb_modules' );
 
-		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		// Enqueue scripts and styles.
+		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_hook_mgr, 'enqueue_admin_styles_and_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_hook_mgr, 'enqueue_public_styles_and_scripts' );
 
-		// Disable Gutenberg editor
-		$this->loader->add_filter( 'use_block_editor_for_post', $plugin_admin, 'disable_gutenburg' );
+		// Disable Gutenberg editor.
+		$this->loader->add_filter( 'use_block_editor_for_post', $plugin_hook_mgr, 'disable_gutenburg' );
 		
 		// Amend BB global settings.
-		$this->loader->add_action( 'fl_builder_register_settings_form', $plugin_admin, 'amend_bb_global_settings', 10, 2 );
+		$this->loader->add_action( 'fl_builder_register_settings_form', $plugin_hook_mgr, 'amend_bb_global_settings', 10, 2 );
 		
 		// Remove BB content wrapping on front end, set default margins and padding to zero and width to full width.
-		$this->loader->add_action( 'fl_builder_after_render_content', $plugin_admin, 'remove_bb_frontend_content_wrap' );
-		$this->loader->add_filter( 'fl_builder_template_path', $plugin_admin, 'remove_bb_frontend_row_and_module_wrap', 10, 3 );
+		$this->loader->add_action( 'fl_builder_after_render_content', $plugin_hook_mgr, 'remove_bb_frontend_content_wrap' );
+		$this->loader->add_filter( 'fl_builder_template_path', $plugin_hook_mgr, 'remove_bb_frontend_row_and_module_wrap', 10, 3 );
 
 		// Add a standard class to all sections.
-		$this->loader->add_filter( 'fl_builder_module_attributes', $plugin_admin, 'add_class_to_sections', 10, 2 );
+		$this->loader->add_filter( 'fl_builder_module_attributes', $plugin_hook_mgr, 'add_class_to_sections', 10, 2 );
 
 		// Add in instance CSS for all ST BB modules to handle row background image and colour.
-		$this->loader->add_filter( 'fl_builder_render_css', $plugin_admin, 'add_instance_css', 10, 4 );
-
-	}
-
-	/**
-	 * Register all of the hooks related to the public-facing functionality
-	 * of the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function define_public_hooks() {
-
-		$plugin_public = new ST_BB_Public( $this->get_plugin_name(), $this->get_version() );
-
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_filter( 'fl_builder_render_css', $plugin_hook_mgr, 'add_instance_css', 10, 4 );
 
 	}
 

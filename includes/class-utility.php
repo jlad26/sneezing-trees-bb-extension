@@ -26,7 +26,7 @@ class ST_BB_Utility {
      * @param   string  $option     Key of option to return.
      * @param   mixed   Option or options.
 	 */
-    public function get_options( $option = '' ) {
+    public static function get_options( $option = '' ) {
 
         $options = get_option( 'st_bb_options', '' );
 
