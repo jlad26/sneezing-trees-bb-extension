@@ -65,7 +65,7 @@ class ST_BB_Hook_Manager {
 	 * Initialize ACF component of the plugin.
 	 *
 	 * @since    1.0.0
-	 * @hooked init
+	 * @hooked plugins_loaded
 	 */
 	public function init_acf_module_mgr() {
 		new ST_BB_ACF_Module_Manager( $this->plugin_name, $this->version );
