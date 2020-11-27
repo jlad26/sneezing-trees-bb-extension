@@ -190,6 +190,7 @@ class ST_BB_Hook_Manager {
 	 * @hooked	fl_builder_render_css
 	 */
 	public function add_instance_css( $css, $nodes, $global_settings, $include_global ) {
+		
 		foreach ( $nodes['modules'] as $module ) {
 			$settings = $module->settings;
 			$id       = $module->node;

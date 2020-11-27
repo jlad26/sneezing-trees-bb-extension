@@ -2,23 +2,18 @@
 
 /**
  * Check that module has been defined, either by BB or ACF.
- * Note that $module is either an FLBuilderModule object or an
- * ST_ACF_Module object
+ * Note that $module is an FLBuilderModule object in either
+ * case but the instance has limited data if ACF-defined.
  */
 if ( ! isset( $module ) ) {
 	return false;
 }
 
-// Make sure that image src is set.
-$mod_params = array(
-	'row_image_src'		=>	''
-);
+// Define module parameters.
+$mod_params = get_object_vars( $settings );
 
-// If this is a BB module...
-if ( is_subclass_of( $module, 'FLBuilderModule' ) ) {
-
-	// Define module parameters.
-	$mod_params = get_object_vars( $settings );
+// If this is a full BB module...
+if ( ! empty( $module->form ) ) {
 
 	// Get BB section classes.
 	ob_start();
@@ -26,7 +21,6 @@ if ( is_subclass_of( $module, 'FLBuilderModule' ) ) {
 	$mod_params['section_attributes'] = ltrim( ob_get_clean() );
 
 } else { // ...this is an ACF version.
-	// $mod_params = ? some ACF module property
 
 	$acf_section_classes = apply_filters( 'st_bb_section_classes', array( 'st-bb-section' ), $module );
 	$mod_params['section_attributes'] = 'class="' . implode( ' ', $acf_section_classes ) . '"';

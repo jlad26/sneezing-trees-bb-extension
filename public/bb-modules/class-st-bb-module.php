@@ -19,24 +19,6 @@
 abstract class ST_BB_Module extends FLBuilderModule {
 
     /**
-	 * Generic settings that apply to all plugin modules.
-	 *
-	 * @since    1.0.0
-	 * @access   public
-	 * @var      array    $generic_settings    Generic settings.
-	 */
-    public $generic_settings;
-
-    /**
-	 * Utilies.
-	 *
-	 * @since    1.0.0
-	 * @access   public
-	 * @var      ST_BB_Utility    $utilities    Plugin utilities.
-	 */
-    public $utilities;
-
-    /**
 	 * Configuration settings.
 	 *
 	 * @since    1.0.0
@@ -70,7 +52,6 @@ abstract class ST_BB_Module extends FLBuilderModule {
         }
         
         parent::__construct( $args );
-        $this->utilities = new ST_BB_Utility();
 
         // Set generic config.
         $this->set_config();
@@ -228,8 +209,9 @@ abstract class ST_BB_Module extends FLBuilderModule {
                             ),
                             'row_bg_opacity'  =>  array(
                                 'type'          =>  'unit',
-                                'label'         => __( 'Opacity (%)', ST_BB_TD ),
+                                'label'         => __( 'Opacity', ST_BB_TD ),
                                 'default'       =>  100,
+                                'description'   =>  '%',
                                 'slider'        =>  array(
                                     'min'   =>  0,
                                     'max'   =>  100,

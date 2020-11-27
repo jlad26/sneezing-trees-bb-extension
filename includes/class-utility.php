@@ -84,10 +84,8 @@ class ST_BB_Utility {
         
         // Get class names of all ST BB Modules
         $st_bb_module_names = array();
-        foreach ( FLBuilderModel::$modules as $module ) {
-            if ( is_subclass_of( $module, 'ST_BB_Module' ) ) {
-                $st_bb_module_names[] = get_class( $module );
-            }
+        foreach ( ST_BB_Module_Manager::get_registered_modules() as $module ) {
+            $st_bb_module_names[] = get_class( $module );
         }
 
         // Select field groups that are ST BB modules.
