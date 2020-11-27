@@ -74,6 +74,12 @@ class ST_BB_ACF_Module_Manager {
 		// When saving variable content modules, update the page / post postmeta to record which ACF modules are active.
 		add_action( 'acf/save_post', array( $this, 'update_postmeta_with_variable_content_modules' ) );
 
+		/**
+		 * When deleting variable content modules, also delete all associated custom fields on posts / pages
+		 * and update postmeta on those posts / pages.
+		 */
+		add_action( 'before_delete_post', array( $this, 'remove_post_meta_on_variable_content_module_deletion' ), 10, 2 );
+
 	}
 
 	/**
@@ -380,6 +386,31 @@ class ST_BB_ACF_Module_Manager {
 						),
 						'choices' => array(),
 						'default_value' => false,
+						'allow_null' => 0,
+						'multiple' => 0,
+						'ui' => 1,
+						'ajax' => 0,
+						'return_format' => 'value',
+						'placeholder' => '',
+					),
+					array(
+						'key' => 'field_5fc0c15a03d63',
+						'label' => 'Content type',
+						'name' => 'acf_module_content_type',
+						'type' => 'select',
+						'instructions' => __( 'Fixed content modules must be programatically called and have the content set here. Variable content modules appear when editing pages / posts and content is set there.', ST_BB_TD ),
+						'required' => 0,
+						'conditional_logic' => 0,
+						'wrapper' => array(
+							'width' => '',
+							'class' => '',
+							'id' => '',
+						),
+						'choices' => array(
+							'variable' => 'Variable Content',
+							'fixed' => 'Fixed Content',
+						),
+						'default_value' => 'variable',
 						'allow_null' => 0,
 						'multiple' => 0,
 						'ui' => 1,
@@ -716,7 +747,7 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 *  When saving variable content modules, update the page / post postmeta
+	 * When saving variable content modules, update the page / post postmeta
 	 * to record which ACF modules are active.
 	 *
 	 * @since    1.0.0
@@ -750,6 +781,83 @@ class ST_BB_ACF_Module_Manager {
 			delete_post_meta( $post_id, 'st_bb_acf_modules' );
 		} else {
 			update_post_meta( $post_id, 'st_bb_acf_modules', $acf_module_ids );
+		}
+
+	}
+
+	/**
+	 * When deleting variable content modules, also delete all associated custom fields on posts / pages
+	 * and update postmeta on those posts / pages.
+	 *
+	 * @since    1.0.0
+	 * @hooked	before_delete_post
+	 */
+	public function remove_post_meta_on_variable_content_module_deletion( $post_id, $post ) {
+
+		// Only act on ACF module posts.
+		if ( 'st-acf-module' != $post->post_type ) {
+			return false;
+		}
+
+		$module_id = $post_id;
+
+		// Only act on variable content modules.
+		if ( 'variable' == get_field( 'acf_module_content_type', $module_id ) ) {
+			
+			// Get all posts where this ACF module appears.
+			$args = array(
+				'post_type'	=>	'any',
+				'meta_query' => array(
+					array(
+						'key'		=>	'st_bb_acf_modules',
+						'compare'	=>	'EXISTS'
+					)
+				)
+			);
+
+			$q = new WP_Query( $args );
+			$posts = $posts_and_revisions = $q->posts;
+
+			if ( ! empty( $posts ) ) {
+
+				// Get all post revisions and include them.
+				foreach( $posts as $post ) {
+					$revisions = wp_get_post_revisions( $post );
+					$posts_and_revisions = array_merge( $posts_and_revisions, $revisions );
+				}
+
+				$posts = $posts_and_revisions;
+				foreach( $posts as $post ) {
+
+					// Update the postmeta.
+					$module_ids = get_post_meta( $post->ID, 'st_bb_acf_modules', true );
+					if ( is_array( $module_ids ) ) {
+						if ( array_key_exists( $module_id, $module_ids ) ) {
+							unset( $module_ids[ $module_id ] );
+							if ( empty( $module_ids ) ) {
+								delete_post_meta( $post->ID, 'st_bb_acf_modules' );
+							} else {
+								update_post_meta( $post->ID, 'st_bb_acf_modules', $module_ids );
+							}
+						}
+					}
+
+					// Delete the fields from the DB.
+					$post_meta = get_post_meta( $post->ID );
+					if ( is_array( $post_meta) ) {
+						foreach ( $post_meta as $meta_key => $meta_values_array ) {
+							$found_pos = strpos( $meta_key, 'section*_' );
+							if ( 1 === $found_pos || 0 === $found_pos ) {
+								if ( $module_id == self::get_acf_module_id_from_section_name( $meta_key ) ) {
+									delete_metadata ( 'post', $post->ID, $meta_key );
+								}
+							}
+						}
+					}
+
+				}
+			}
+
 		}
 
 	}
