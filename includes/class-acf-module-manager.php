@@ -71,69 +71,30 @@ class ST_BB_ACF_Module_Manager {
 		// Populate choice of post types when creating new ACF module.
 		add_filter( 'acf/load_field/name=acf_module_location_post_type', array( $this, 'populate_post_type_choice' ) );
 
-		// When saving variable content modules, update the page / post postmeta to record which ACF modules are active.
-		add_action( 'acf/save_post', array( $this, 'update_postmeta_with_variable_content_modules' ) );
+		// When deleting variable content modules, also delete all associated custom fields on posts / pages.
+		add_action( 'before_delete_post', array( $this, 'remove_post_meta_on_content_module_deletion' ), 10, 2 );
 
-		/**
-		 * When deleting variable content modules, also delete all associated custom fields on posts / pages
-		 * and update postmeta on those posts / pages.
-		 */
-		add_action( 'before_delete_post', array( $this, 'remove_post_meta_on_variable_content_module_deletion' ), 10, 2 );
+		// When updating a variable content module, record in options where it appears.
+		add_action( 'acf/save_post', array( $this, 'update_registered_content_modules' ) );
 
-	}
-
-	/**
-	 * Render ACF modules.
-	 *
-	 * @since	1.0.0
-	 * 
-	 * @param	string	$placement	Either 'before' or 'after' content
-	 * @param	int		$post_id	ID of post against which fields are stored
-	 * @param	bool	$echo		Whether output will be rendered or returned
-	 */
-	public static function render_acf_modules( $placement, $post_id = 0, $echo = true ) {
-
-		// Get the post id if needed.
-		if ( ! $post_id ) {
-			$post_id = get_the_ID();
-		}
-
-		// Get all ACF fields.
-		$field_sections = get_fields( $post_id );
-
-		// End here if there are no fields.
-		if ( empty( $field_sections ) ) {
-			return false;
-		}
-
-		$modules_data = self::get_acf_modules_data( $placement, $field_sections );
-		
-		$registered_modules = ST_BB_Module_Manager::get_registered_modules();
-		foreach ( $modules_data as $module_data ) {
-
-			// Get the class name.
-			$module_class = get_class( $registered_modules[ $module_data['type'] ] );
-			$module = new $module_class();
-			$settings = (object) $module_data['fields'];
-			
-			include( ST_BB_DIR . 'public/partials/frontend-module.php' );
-
-		}
+		// Add in modules content to post / page content.
+		add_filter( 'the_content', array( $this, 'add_modules_content' ) );
 
 	}
 
 	/**
-	 * Get sorted modules data for a page / post.
+	 * Get module data for a page / post.
 	 *
 	 * @since	1.0.0
 	 * 
-	 * @param	string	$placement			Either 'before' or 'after' content
-	 * @param	array		$field_sections		Array of ACF fields sections.
+	 * @param	int		$acf_module_id		ID of ACF module
+	 * @param	array	$field_sections		Array of ACF fields sections.
+	 * @return	array	Array of module data
 	 */
-	private static function get_acf_modules_data( $placement, $field_sections ) {
+	private static function get_acf_module_data( $acf_module_id, $field_sections ) {
 
-		$modules = array();
-		
+		$module_data = array();
+
 		// Cycle through each field sections.
 		foreach ( $field_sections as $section => $fields ) {
 			
@@ -142,37 +103,19 @@ class ST_BB_ACF_Module_Manager {
 				continue;
 			}
 
-			$acf_module_id = self::get_acf_module_id_from_section_name( $section );
-			$acf_module_ids[] = $acf_module_id;
+			if( $acf_module_id == self::get_acf_module_id_from_section_name( $section ) ) {
 
-			// Store the fields against ACF module ID.
-			foreach ( $fields as $field_key => $field_value ) {
-				$data_key = str_replace( '**' . $acf_module_id, '', $field_key );
-				$module_data[ $acf_module_id ][ $data_key ] = $field_value;
-			}
-
-		}
-
-		// Get ACF module data.
-		foreach ( $acf_module_ids as $acf_module_id ) {
-
-			// Only include those with the right placement.
-			if ( $placement == get_field( 'acf_module_location', $acf_module_id ) ) {
-				
-				// Place in array with key as order so can be sorted.
-				$modules[ get_field( 'acf_module_order', $acf_module_id ) ] = array(
-					'type'		=>	get_field( 'choose_st_bb_module', $acf_module_id ),
-					'fields'	=>	$module_data[ $acf_module_id ]
-				);
+				// Store the fields.
+				foreach ( $fields as $field_key => $field_value ) {
+					$data_key = str_replace( '**' . $acf_module_id, '', $field_key );
+					$module_data[ $data_key ] = $field_value;
+				}
 
 			}
 
 		}
 
-		// Sort the modules.
-		ksort( $modules );
-
-		return $modules;
+		return $module_data;
 
 	}
 
@@ -198,28 +141,9 @@ class ST_BB_ACF_Module_Manager {
 				$module_field_group = get_fields( $field_group->ID );
 
 				// Get the ACF field module.
-				$acf_module = array();
-				if ( isset( ST_BB_Module_Manager::$acf_modules[ $module_field_group['choose_st_bb_module'] ] ) ) {
-					$acf_module = ST_BB_Module_Manager::$acf_modules[ $module_field_group['choose_st_bb_module'] ];
-				}
-
-				// Set overall key and title.
-				$acf_module['key'] = '**st_acf_module_' . $field_group->ID;
-				$acf_module['title'] = $field_group->post_title;
-
-				// Cycle through and make all tab, section and field keys and names unique by adding ACF module ID.
-				foreach ( $acf_module['fields'] as $key => $field ) {
-					
-					// Set the key
-					$acf_module['fields'][ $key ]['key'] .= '**' . $field_group->ID;
-					$acf_module['fields'][ $key ]['name'] .= '**' . $field_group->ID;
-					if ( isset ( $acf_module['fields'][ $key ]['sub_fields'] ) ) {
-						foreach ( $acf_module['fields'][ $key ]['sub_fields'] as $sub_field_key => $sub_field ) {
-							$acf_module['fields'][ $key ]['sub_fields'][ $sub_field_key ]['key'] .= '**' . $field_group->ID;
-							$acf_module['fields'][ $key ]['sub_fields'][ $sub_field_key ]['name'] .= '**' . $field_group->ID;
-						}
-					}
-				}
+				$acf_module = self::get_acf_module_fields(
+					$field_group->ID, $field_group->post_title, $module_field_group['choose_st_bb_module']
+				);	
 
 				// Set up the location info.
 				$location = array();
@@ -296,6 +220,46 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
+	 * Get the ACF module field for a module type.
+	 *
+	 * @since	1.0.0
+	 * 
+	 * @param	int			$acf_id				ACF module ID
+	 * @param	string		$acf_title			ACF module title
+	 * @param	string		$module_slug		Module slug
+	 */
+	public static function get_acf_module_fields( $acf_id, $acf_title, $module_slug ) {
+
+		$acf_module = array();
+		if ( isset( ST_BB_Module_Manager::$acf_modules[ $module_slug ] ) ) {
+
+			$acf_module = ST_BB_Module_Manager::$acf_modules[ $module_slug ];
+
+			// Set overall key and title.
+			$acf_module['key'] = '**st_acf_module_' . $acf_id;
+			$acf_module['title'] = $acf_title;
+
+			// Cycle through and make all tab, section and field keys and names unique by adding ACF module ID.
+			foreach ( $acf_module['fields'] as $key => $field ) {
+				
+				// Set the key
+				$acf_module['fields'][ $key ]['key'] .= '**' . $acf_id;
+				$acf_module['fields'][ $key ]['name'] .= '**' . $acf_id;
+				if ( isset ( $acf_module['fields'][ $key ]['sub_fields'] ) ) {
+					foreach ( $acf_module['fields'][ $key ]['sub_fields'] as $sub_field_key => $sub_field ) {
+						$acf_module['fields'][ $key ]['sub_fields'][ $sub_field_key ]['key'] .= '**' . $acf_id;
+						$acf_module['fields'][ $key ]['sub_fields'][ $sub_field_key ]['name'] .= '**' . $acf_id;
+					}
+				}
+			}
+
+		}
+
+		return $acf_module;
+
+	}
+
+	/**
 	 * Get the ACF module ID from a field section name string.
 	 *
 	 * @since	1.0.0
@@ -366,177 +330,389 @@ class ST_BB_ACF_Module_Manager {
 			'supports'				=>	array( 'title' )
 		);
 
-		$acf_field_groups['st-acf-module'] = array(
+		$fixed_content_message = __( '<h1><strong>Fixed content</strong></h1><p>This content will appear on all pages and posts selected in <strong>Location on site</strong>. To have content vary by page, choose <strong>Variable content</strong> in <strong>Content type</strong>.', ST_BB_TD );
+
+		$acf_fields = array(
 			array(
-				'key' => 'group_5fbe30305bde3',
-				'title' => 'ACF module',
-				'fields' => array(
-					array(
-						'key' => 'field_5fbe30414defe',
-						'label' => 'Module',
-						'name' => 'choose_st_bb_module',
-						'type' => 'select',
-						'instructions' => '',
-						'required' => 0,
-						'conditional_logic' => 0,
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'choices' => array(),
-						'default_value' => false,
-						'allow_null' => 0,
-						'multiple' => 0,
-						'ui' => 1,
-						'ajax' => 0,
-						'return_format' => 'value',
-						'placeholder' => '',
-					),
-					array(
-						'key' => 'field_5fc0c15a03d63',
-						'label' => 'Content type',
-						'name' => 'acf_module_content_type',
-						'type' => 'select',
-						'instructions' => __( 'Fixed content modules must be programatically called and have the content set here. Variable content modules appear when editing pages / posts and content is set there.', ST_BB_TD ),
-						'required' => 0,
-						'conditional_logic' => 0,
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'choices' => array(
-							'variable' => 'Variable Content',
-							'fixed' => 'Fixed Content',
-						),
-						'default_value' => 'variable',
-						'allow_null' => 0,
-						'multiple' => 0,
-						'ui' => 1,
-						'ajax' => 0,
-						'return_format' => 'value',
-						'placeholder' => '',
-					),
-					array(
-						'key' => 'field_5fbe3db40af36',
-						'label' => 'Show on post types',
-						'name' => 'acf_module_location_post_type',
-						'type' => 'select',
-						'instructions' => __( 'Add page as a post type to then select specific pages', ST_BB_TD ),
-						'required' => 0,
-						'conditional_logic' => 0,
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'choices' => array(),
-						'default_value' => array(
-						),
-						'allow_null' => 1,
-						'multiple' => 1,
-						'ui' => 1,
-						'ajax' => 0,
-						'return_format' => 'value',
-						'placeholder' => '',
-					),
-					array(
-						'key' => 'field_5fbe3d2a0af35',
-						'label' => 'Show on pages',
-						'name' => 'acf_module_location_pages',
-						'type' => 'post_object',
-						'instructions' => __( 'Leave blank for all pages (although you must also have selected page in Post Types above)' , ST_BB_TD ),
-						'required' => 0,
-						'conditional_logic' => array(
-							array(
-								array(
-									'field' => 'field_5fbe3db40af36',
-									'operator' => '==contains',
-									'value' => 'page',
-								),
-							),
-						),
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'post_type' => array(
-							0 => 'page',
-						),
-						'taxonomy' => '',
-						'allow_null' => 1,
-						'multiple' => 1,
-						'return_format' => 'id',
-						'ui' => 1,
-					),
-					array(
-						'key' => 'field_5fbe603875734',
-						'label' => 'Location',
-						'name' => 'acf_module_location',
-						'type' => 'select',
-						'instructions' => 'Module to appear before or after the page / post content',
-						'required' => 0,
-						'conditional_logic' => 0,
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'choices' => array(
-							'before' => 'Before',
-							'after' => 'After',
-						),
-						'default_value' => 'before',
-						'allow_null' => 0,
-						'multiple' => 0,
-						'ui' => 1,
-						'ajax' => 0,
-						'return_format' => 'value',
-						'placeholder' => '',
-					),
-					array(
-						'key' => 'field_5fbe60ad75735',
-						'label' => 'Order',
-						'name' => 'acf_module_order',
-						'type' => 'number',
-						'instructions' => 'Lower numbers appear first',
-						'required' => 0,
-						'conditional_logic' => 0,
-						'wrapper' => array(
-							'width' => '',
-							'class' => '',
-							'id' => '',
-						),
-						'default_value' => 0,
-						'placeholder' => '',
-						'prepend' => '',
-						'append' => '',
-						'min' => -50,
-						'max' => 50,
-						'step' => 1,
-					),
+				'key' => 'field_5fc12a6df548a',
+				'label' => __( 'Type', ST_BB_TD ),
+				'name' => '',
+				'type' => 'tab',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
 				),
-				'location' => array(
+				'placement' => 'top',
+				'endpoint' => 0,
+			),
+			array(
+				'key' => 'field_5fbe30414defe',
+				'label' => __( 'Module type', ST_BB_TD ),
+				'name' => 'choose_st_bb_module',
+				'type' => 'select',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'choices' => array(),
+				'default_value' => false,
+				'allow_null' => 0,
+				'multiple' => 0,
+				'ui' => 1,
+				'ajax' => 0,
+				'return_format' => 'value',
+				'placeholder' => '',
+			),
+			array(
+				'key' => 'field_5fc16ff6ae153',
+				'label' => '',
+				'name' => '',
+				'type' => 'message',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => array(
 					array(
 						array(
-							'param' => 'post_type',
+							'field' => 'field_5fc0c15a03d63',
 							'operator' => '==',
-							'value' => 'st-acf-module',
+							'value' => 'fixed',
 						),
 					),
 				),
-				'menu_order' => 0,
-				'position' => 'normal',
-				'style' => 'default',
-				'label_placement' => 'top',
-				'instruction_placement' => 'label',
-				'hide_on_screen' => '',
-				'active' => true,
-				'description' => '',
-			)
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'message' => $fixed_content_message,
+				'new_lines' => 'wpautop',
+				'esc_html' => 0,
+			),
+			array(
+				'key' => 'field_5fc165139075e',
+				'label' => __( 'Location on site', ST_BB_TD ),
+				'name' => '',
+				'type' => 'tab',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'placement' => 'top',
+				'endpoint' => 0,
+			),
+			array(
+				'key' => 'field_5fbe3db40af36',
+				'label' => __( 'Show on post types', ST_BB_TD ),
+				'name' => 'acf_module_location_post_type',
+				'type' => 'select',
+				'instructions' => __( 'Add page as a post type to then select specific pages', ST_BB_TD ),
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'choices' => array(),
+				'default_value' => array(
+				),
+				'allow_null' => 1,
+				'multiple' => 1,
+				'ui' => 1,
+				'ajax' => 0,
+				'return_format' => 'value',
+				'placeholder' => '',
+			),
+			array(
+				'key' => 'field_5fbe3d2a0af35',
+				'label' => __( 'Show on pages', ST_BB_TD ),
+				'name' => 'acf_module_location_pages',
+				'type' => 'post_object',
+				'instructions' => __( 'Leave blank for all pages (although you must also have selected page in Post Types above)' , ST_BB_TD ),
+				'required' => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field' => 'field_5fbe3db40af36',
+							'operator' => '==contains',
+							'value' => 'page',
+						),
+					),
+				),
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'post_type' => array(
+					0 => 'page',
+				),
+				'taxonomy' => '',
+				'allow_null' => 1,
+				'multiple' => 1,
+				'return_format' => 'id',
+				'ui' => 1,
+			),
+			array(
+				'key' => 'field_5fc17005ae154',
+				'label' => '',
+				'name' => '',
+				'type' => 'message',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field' => 'field_5fc0c15a03d63',
+							'operator' => '==',
+							'value' => 'fixed',
+						),
+					),
+				),
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'message' => $fixed_content_message,
+				'new_lines' => 'wpautop',
+				'esc_html' => 0,
+			),
+			array(
+				'key' => 'field_5fc16c8377a9e',
+				'label' => __( 'Location on page', ST_BB_TD ),
+				'name' => '',
+				'type' => 'tab',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'placement' => 'top',
+				'endpoint' => 0,
+			),
+			array(
+				'key' => 'field_5fc107b2491f2',
+				'label' => __( 'Add to page / post content automatically', ST_BB_TD ),
+				'name' => 'acf_module_the_content',
+				'type' => 'true_false',
+				'instructions' => __( 'If selected, content will be added automatically. If not, content must be displayed using the function *****', ST_BB_TD ),
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'message' => '',
+				'default_value' => 1,
+				'ui' => 1,
+				'ui_on_text' => '',
+				'ui_off_text' => '',
+			),
+			array(
+				'key' => 'field_5fbe603875734',
+				'label' => __( 'Location', ST_BB_TD ),
+				'name' => 'acf_module_location',
+				'type' => 'select',
+				'instructions' => __( 'Module to appear before or after the page / post content', ST_BB_TD),
+				'required' => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field' => 'field_5fc107b2491f2',
+							'operator' => '==',
+							'value' => '1',
+						),
+					),
+				),
+				'wrapper' => array(
+					'width' => '50%',
+					'class' => '',
+					'id' => '',
+				),
+				'choices' => array(
+					'before' => __( 'Before', ST_BB_TD ),
+					'after' => __( 'After', ST_BB_TD ),
+				),
+				'default_value' => 'before',
+				'allow_null' => 0,
+				'multiple' => 0,
+				'ui' => 1,
+				'ajax' => 0,
+				'return_format' => 'value',
+				'placeholder' => '',
+			),
+			array(
+				'key' => 'field_5fbe60ad75735',
+				'label' => __( 'Order', ST_BB_TD ),
+				'name' => 'acf_module_order',
+				'type' => 'number',
+				'instructions' => __( 'Lower numbers appear first', ST_BB_TD ),
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '50%',
+					'class' => '',
+					'id' => '',
+				),
+				'default_value' => 0,
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => -50,
+				'max' => 50,
+				'step' => 1,
+			),
+			array(
+				'key' => 'field_5fc1700fae155',
+				'label' => '',
+				'name' => '',
+				'type' => 'message',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field' => 'field_5fc0c15a03d63',
+							'operator' => '==',
+							'value' => 'fixed',
+						),
+					),
+				),
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'message' => $fixed_content_message,
+				'new_lines' => 'wpautop',
+				'esc_html' => 0,
+			),
+			array(
+				'key' => 'field_5fc12aaaf548b',
+				'label' => __( 'Content type', ST_BB_TD ),
+				'name' => '',
+				'type' => 'tab',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'placement' => 'top',
+				'endpoint' => 0,
+			),
+			array(
+				'key' => 'field_5fc0c15a03d63',
+				'label' => __( 'Content type', ST_BB_TD ),
+				'name' => 'acf_module_content_type',
+				'type' => 'select',
+				'instructions' => __( 'Fixed content modules have the content set here. Variable content modules appear when editing pages / posts and content is set there.', ST_BB_TD ),
+				'required' => 0,
+				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'choices' => array(
+					'variable' => __( 'Variable Content', ST_BB_TD ),
+					'fixed' => __( 'Fixed Content', ST_BB_TD ),
+				),
+				'default_value' => 'variable',
+				'allow_null' => 0,
+				'multiple' => 0,
+				'ui' => 1,
+				'ajax' => 0,
+				'return_format' => 'value',
+				'placeholder' => '',
+			),
+			array(
+				'key' => 'field_5fc1624e1c51a',
+				'label' => '',
+				'name' => '',
+				'type' => 'message',
+				'instructions' => '',
+				'required' => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field' => 'field_5fc0c15a03d63',
+							'operator' => '==',
+							'value' => 'fixed',
+						),
+					),
+				),
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'message' => $fixed_content_message,
+				'new_lines' => 'wpautop',
+				'esc_html' => 0,
+			),
+		);
 
+		// Add the module fields for the ACF Module CPT.
+		foreach ( ST_BB_Module_Manager::$acf_modules as $slug => $instance ) {
+			$module_fields = self::get_acf_module_fields( 'fixed', 'Content', $slug );
+			foreach ( $module_fields['fields'] as $key => $module_field ) {
+				if ( 0 == $key) {
+					$module_field['endpoint'] = 1;
+				}
+				$module_field['conditional_logic'] = array(
+					array(
+						array(
+							'field' => 'field_5fc0c15a03d63',
+							'operator' => '==',
+							'value' => 'fixed',
+						),
+					),
+				);
+				$acf_fields[] = $module_field;
+			}
+		}
+
+		$acf_field_groups['st-acf-module'] = array(
+			'key' => 'group_5fbe30305bde3',
+			'title' => __( 'Content module configuration', ST_BB_TD ),
+			'fields' => $acf_fields,
+			'location' => array(
+				array(
+					array(
+						'param' => 'post_type',
+						'operator' => '==',
+						'value' => 'st-acf-module',
+					),
+				),
+			),
+			'menu_order' => 0,
+			'position' => 'normal',
+			'style' => 'default',
+			'label_placement' => 'top',
+			'instruction_placement' => 'label',
+			'hide_on_screen' => '',
+			'active' => true,
+			'description' => '',
 		);
 
 		foreach( $post_type_data as $post_type => $args ) {
@@ -545,11 +721,9 @@ class ST_BB_ACF_Module_Manager {
 			}
 		}
 
-		foreach( $acf_field_groups as $post_type => $field_groups ) {
+		foreach( $acf_field_groups as $post_type => $field_group ) {
 			if ( post_type_exists( $post_type ) ) {
-				foreach( $field_groups as $field_group ) {
-					acf_add_local_field_group( $field_group );
-				}
+				acf_add_local_field_group( $field_group );
 			}
 
 		}
@@ -747,52 +921,12 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 * When saving variable content modules, update the page / post postmeta
-	 * to record which ACF modules are active.
-	 *
-	 * @since    1.0.0
-	 * @hooked	acf/save_post
-	 */
-	public function update_postmeta_with_variable_content_modules( $post_id ) {
-		
-		// Don't update when we are working on a content module itself.
-		if ( 'st-acf-module' == get_post_type( $post_id ) ) {
-			return false;
-		}
-		
-		$acf_fields = get_fields( $post_id );
-
-		// Cycle through the fields and get the ids of any content modules.
-		$acf_module_ids = array();
-		if ( is_array( $acf_fields ) ) {
-
-			foreach ( $acf_fields as $acf_field_key => $acf_field_value ) {
-				
-				// If this is one of our sections, add the adf module id.
-				if ( 0 === strpos( $acf_field_key, 'section*_' ) ) {
-					$acf_module_ids[ self::get_acf_module_id_from_section_name( $acf_field_key ) ] = true;
-				}
-			}
-
-		}
-
-		// Should never be empty, but just in case...
-		if ( empty( $acf_module_ids ) ) {
-			delete_post_meta( $post_id, 'st_bb_acf_modules' );
-		} else {
-			update_post_meta( $post_id, 'st_bb_acf_modules', $acf_module_ids );
-		}
-
-	}
-
-	/**
-	 * When deleting variable content modules, also delete all associated custom fields on posts / pages
-	 * and update postmeta on those posts / pages.
+	 * When deleting variable content modules, also delete all associated custom fields on posts / pages.
 	 *
 	 * @since    1.0.0
 	 * @hooked	before_delete_post
 	 */
-	public function remove_post_meta_on_variable_content_module_deletion( $post_id, $post ) {
+	public function remove_post_meta_on_content_module_deletion( $post_id, $post ) {
 
 		// Only act on ACF module posts.
 		if ( 'st-acf-module' != $post->post_type ) {
@@ -801,64 +935,220 @@ class ST_BB_ACF_Module_Manager {
 
 		$module_id = $post_id;
 
-		// Only act on variable content modules.
-		if ( 'variable' == get_field( 'acf_module_content_type', $module_id ) ) {
-			
-			// Get all posts where this ACF module appears.
-			$args = array(
-				'post_type'	=>	'any',
-				'meta_query' => array(
-					array(
-						'key'		=>	'st_bb_acf_modules',
-						'compare'	=>	'EXISTS'
-					)
-				)
-			);
+		// Get all postmeta entries that are ACF module data.
+		global $wpdb;
+		$query = 'SELECT meta_id, meta_key FROM ' . $wpdb->postmeta . ' WHERE meta_key LIKE %s';
+		$post_meta = $wpdb->get_results(
+			$wpdb->prepare( $query, '%section*_%' ),
+			ARRAY_A
+		);
 
-			$q = new WP_Query( $args );
-			$posts = $posts_and_revisions = $q->posts;
+		// Delete any post meta that correspond to this module id.
+		if ( ! empty( $post_meta ) ) {
 
-			if ( ! empty( $posts ) ) {
-
-				// Get all post revisions and include them.
-				foreach( $posts as $post ) {
-					$revisions = wp_get_post_revisions( $post );
-					$posts_and_revisions = array_merge( $posts_and_revisions, $revisions );
-				}
-
-				$posts = $posts_and_revisions;
-				foreach( $posts as $post ) {
-
-					// Update the postmeta.
-					$module_ids = get_post_meta( $post->ID, 'st_bb_acf_modules', true );
-					if ( is_array( $module_ids ) ) {
-						if ( array_key_exists( $module_id, $module_ids ) ) {
-							unset( $module_ids[ $module_id ] );
-							if ( empty( $module_ids ) ) {
-								delete_post_meta( $post->ID, 'st_bb_acf_modules' );
-							} else {
-								update_post_meta( $post->ID, 'st_bb_acf_modules', $module_ids );
-							}
-						}
+			$meta_ids_to_delete = array();
+			$batch = 0;
+			$rows_in_batch = 0;
+			foreach ( $post_meta as $row ) {
+				if ( $module_id == self::get_acf_module_id_from_section_name( $row['meta_key'] ) ) {
+					if ( 20 == $rows_in_batch ) {
+						$rows_in_batch = 0;
+						$batch++;
 					}
-
-					// Delete the fields from the DB.
-					$post_meta = get_post_meta( $post->ID );
-					if ( is_array( $post_meta) ) {
-						foreach ( $post_meta as $meta_key => $meta_values_array ) {
-							$found_pos = strpos( $meta_key, 'section*_' );
-							if ( 1 === $found_pos || 0 === $found_pos ) {
-								if ( $module_id == self::get_acf_module_id_from_section_name( $meta_key ) ) {
-									delete_metadata ( 'post', $post->ID, $meta_key );
-								}
-							}
-						}
-					}
-
+					$meta_ids_to_delete[ $batch ][] = $row['meta_id'];
+					$rows_in_batch++;
 				}
 			}
 
+			foreach( $meta_ids_to_delete as $batch_to_delete ) {
+				$query = 'DELETE FROM ' . $wpdb->postmeta . ' WHERE meta_id IN (' . implode( ', ', $batch_to_delete ) . ')';
+				$post_meta = $wpdb->query( $query );
+			}
+
 		}
+
+	}
+
+	/**
+	 * When updating a variable content module, record in options where it appears.
+	 *
+	 * @since    1.0.0
+	 * @hooked	acf/save_post
+	 */
+	public function update_registered_content_modules( $post_id ) {
+		
+		// Only on ACF module save
+		if ( 'st-acf-module' !== get_post_type( $post_id ) ) {
+			return false;
+		}
+
+		// Get all published content modules.
+		$args = array(
+			'post_type'		=>	'st-acf-module',
+			'post_status'	=>	'publish',
+			'numberposts'	=>	-1,
+		);
+
+		$acf_modules = get_posts( $args );
+
+		$module_registration = array(
+			'post_types'	=>	array(),
+			'page_ids'		=>	array()
+		);
+
+		if ( is_array( $acf_modules ) ) {
+			foreach( $acf_modules as $acf_module ) {
+					
+				$post_types = get_field( 'acf_module_location_post_type', $acf_module->ID );
+				$page_ids = get_field( 'acf_module_location_pages', $acf_module->ID );
+
+				// Add in post types.
+				if ( ! empty( $post_types ) ) {
+					foreach ( $post_types as $post_type ) {
+						if ( ! isset( $module_registration['post_types'][ $post_type ] ) ) {
+							$module_registration['post_types'][ $post_type ] = array();
+						}
+						if ( ! in_array( $acf_module->ID, $module_registration['post_types'][ $post_type ] ) ) {
+							$module_registration['post_types'][ $post_type ][] = $acf_module->ID;
+						}
+					}
+				}
+
+				// Add in page IDs, storing against the IDs of the module they are displaying.
+				if ( ! empty( $page_ids ) ) {
+					foreach ( $page_ids as $page_id ) {
+						if ( ! isset( $module_registration['page_ids'][ $acf_module->ID ] ) ) {
+							$module_registration['page_ids'][ $acf_module->ID ] = array( $page_id );
+						}
+						if ( ! in_array( $page_id, $module_registration['page_ids'][ $acf_module->ID ] ) ) {
+							$module_registration['page_ids'][ $acf_module->ID ][] = $page_id;
+						}
+					}
+				}
+
+			}
+		}
+
+		update_option( 'st_acf_module_registration', $module_registration );
+
+	}
+
+	/**
+	 * Add in modules content to post / page content.
+	 *
+	 * @since    1.0.0
+	 * @hooked	the_content
+	 */
+	public function add_modules_content( $content ) {
+	
+		if ( is_main_query() ) {
+
+			global $post;
+			
+			// Work out whether we have content to display.
+			$module_registration = get_option( 'st_acf_module_registration' );
+
+			// Stop if no content or this post type is not permitted.
+			if ( empty( $module_registration ) ) {
+				return $content;
+			}
+			if ( ! isset( $module_registration['post_types'][ $post->post_type ] ) ) {
+				return $content;
+			}
+
+			$module_ids = array();
+			
+			if ( 'page' == $post->post_type ) {
+				
+				// Start with assumption that all modules appear on all pages.
+				$module_ids = $module_registration['post_types']['page'];
+				
+				// Then if module is only allocated to specific pages then remove if this isn't one of them.
+				foreach( $module_registration['post_types']['page'] as $page_type_module_id ) {
+					if ( isset( $module_registration['page_ids'][ $page_type_module_id ] ) ) {
+						if ( ! in_array( $post->ID, $module_registration['page_ids'][ $page_type_module_id ] ) ) {
+							unset( $module_ids[ array_search( $page_type_module_id, $module_ids ) ] );
+						}
+					}
+				}
+
+			} else {
+				$module_ids = $module_registration['post_types'][ $post_type ];
+			}
+
+			$display_module_ids['before'] = $display_module_ids['after'] = array();
+			foreach ( $module_ids as $module_id ) {
+
+				// Ignore any we aren't displaying automatically and slot them into before and after.
+				if ( get_field( 'acf_module_the_content', $module_id ) ) {
+					$placement = get_field( 'acf_module_location', $module_id );
+					$order = get_field( 'acf_module_order', $module_id );
+					$display_module_ids[ $placement ][ $order ] = $module_id;
+				}
+
+			}
+
+			// Sort the modules.
+			ksort( $display_module_ids['before'] );
+			ksort( $display_module_ids['after'] );
+
+			// Add in the modules contents.
+			$before_content = '';
+			foreach ( $display_module_ids['before'] as $acf_module_id ) {
+				$before_content .= self::get_module_content( $post->ID, $acf_module_id );
+			}
+
+			$content = $before_content.$content;
+
+			foreach ( $display_module_ids['after'] as $acf_module_id ) {
+				$content .= self::get_module_content( $post->ID, $acf_module_id );
+			}
+
+		}
+
+		return $content;
+	
+	}
+
+	/**
+	 * Add in modules content to post / page content.
+	 *
+	 * @since    1.0.0
+	 * 
+	 * @param	int		$post_id		post id of post / page to be displayed on
+	 * @param	int		$acf_module_id	id of the ACF module
+	 * @param	string	html
+	 */
+	public static function get_module_content( $post_id, $acf_module_id ) {
+
+		// Work out whether we are getting fields from the page / post or from a fixed module.
+		$is_fixed_content = ( 'fixed' == get_field( 'acf_module_content_type', $acf_module_id ) );
+		
+		if ( $is_fixed_content ) {
+			$post_id = $acf_module_id;
+		}
+		
+		// Get all ACF fields.
+		$field_sections = get_fields( $post_id );
+
+		// End here if there are no fields.
+		if ( empty( $field_sections ) ) {
+			return '';
+		}
+
+		$acf_module_id_search_param = $is_fixed_content ? 'fixed' : $acf_module_id;
+		$module_data = self::get_acf_module_data( $acf_module_id_search_param, $field_sections );
+
+		$registered_modules = ST_BB_Module_Manager::get_registered_modules();
+
+		// Get the class name.
+		$module_class = get_class( $registered_modules[ get_field( 'choose_st_bb_module', $acf_module_id ) ] );
+		$module = new $module_class();
+		$settings = (object) $module_data;
+		
+		ob_start();
+		include( ST_BB_DIR . 'public/partials/frontend-module.php' );
+		return ob_get_clean();
 
 	}
 
