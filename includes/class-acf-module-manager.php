@@ -1347,8 +1347,10 @@ class ST_BB_ACF_Module_Manager {
 
 		}
 
-		$dep_handle = $this->plugin_name . '-public';
-		wp_add_inline_style( $dep_handle, $css );
+		if ( $css ) {
+			$dep_handle = $this->plugin_name . '-public';
+			wp_add_inline_style( $dep_handle, $css );
+		}
 
 	}
 
