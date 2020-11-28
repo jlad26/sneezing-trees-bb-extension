@@ -93,8 +93,8 @@ class ST_BB_Module_Manager {
 	 */
 	public static function get_registered_modules() {
 		$modules = array();
-		foreach ( self::$modules as $module ) {
-			$modules[ $module ] = FlBuilderModel::$modules[ $module ];
+		foreach ( self::$modules as $slug ) {
+			$modules[ $slug ] = FlBuilderModel::$modules[ $slug ];
 		}
 		return $modules;
 	}
