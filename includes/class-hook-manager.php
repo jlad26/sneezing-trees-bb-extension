@@ -81,7 +81,7 @@ class ST_BB_Hook_Manager {
 
 		$url_base = plugin_dir_url( dirname( __FILE__ ) ) . 'public/';
 		
-		wp_enqueue_style( $this->plugin_name . '-admin-css', $url_base . 'css/admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '-admin', $url_base . 'css/admin.css', array(), $this->version, 'all' );
 		wp_enqueue_script( $this->plugin_name . '-admin-js', $url_base . 'js/admin.js', array( 'jquery' ), $this->version, false );
 
 	}
@@ -99,10 +99,10 @@ class ST_BB_Hook_Manager {
 		$min = WP_DEBUG ? '' : 'min.';
 
 		// General public-facing styles.
-		wp_enqueue_style( $this->plugin_name . '-public-css', $url_base . 'css/public.' . $min . 'css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '-public', $url_base . 'css/public.' . $min . 'css', array(), $this->version, 'all' );
 		
 		// Bootstrap grid.
-		wp_enqueue_style( $this->plugin_name . '-bootstrap-css', $url_base . 'css/bootstrap-grid.' . $min . 'css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '-bootstrap', $url_base . 'css/bootstrap-grid.' . $min . 'css', array(), $this->version, 'all' );
 
 		// wp_enqueue_script( $this->plugin_name . '-public-js', $url_base . 'js/public.js', array( 'jquery' ), $this->version, false );
 
