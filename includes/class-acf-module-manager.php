@@ -38,6 +38,24 @@ class ST_BB_ACF_Module_Manager {
 	private $version;
 
 	/**
+	 * The ids and fields of modules to be displayed on page / post.
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @var      array    $display_modules    Key: module id, value: array of fields.
+	 */
+	private static $display_modules;
+
+	/**
+	 * The field types of the BB modules to be displayed.
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @var      array    $bb_module_field_types    Format { slug : { bb_field_name : acf_field_type } }.
+	 */
+	private static $bb_module_field_types;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -71,11 +89,18 @@ class ST_BB_ACF_Module_Manager {
 		// Populate choice of post types when creating new ACF module.
 		add_filter( 'acf/load_field/name=acf_module_location_post_type', array( $this, 'populate_post_type_choice' ) );
 
-		// When deleting variable content modules, also delete all associated custom fields on posts / pages.
+		// When deleting content modules, also delete all associated custom fields on posts / pages.
 		add_action( 'before_delete_post', array( $this, 'remove_post_meta_on_content_module_deletion' ), 10, 2 );
 
-		// When updating a variable content module, record in options where it appears.
-		add_action( 'acf/save_post', array( $this, 'update_registered_content_modules' ) );
+		// When updating or deleting a content module, record in options where it appears.
+		add_action( 'save_post', array( $this, 'update_registered_content_modules' ) );
+		add_action( 'delete_post', array( $this, 'update_registered_content_modules' ) );
+
+		// Set the modules to be displayed on page / post.
+		add_action( 'get_header', array( $this, 'set_modules_to_display' ) );
+
+		// Enqueue CSS for modules to be displayed.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_modules_css' ) );
 
 		// Add in modules content to post / page content.
 		add_filter( 'the_content', array( $this, 'add_modules_content' ) );
@@ -87,28 +112,31 @@ class ST_BB_ACF_Module_Manager {
 	 *
 	 * @since	1.0.0
 	 * 
-	 * @param	int		$acf_module_id		ID of ACF module
-	 * @param	array	$field_sections		Array of ACF fields sections.
+	 * @param	int		$content_module_id		ID of ACF module or 'fixed'
+	 * @param	array	$content_module_fields	array of content module fields.
+	 * @param	array	$field_sections			Array of ACF fields sections.
 	 * @return	array	Array of module data
 	 */
-	private static function get_acf_module_data( $acf_module_id, $field_sections ) {
+	private static function get_acf_module_data( $content_module_id, $content_module_fields, $bb_field_sections ) {
 
+		$acf_module_id_search_param = 'fixed' == $content_module_fields['acf_module_content_type'] ? 'fixed' : $content_module_id;
+		
 		$module_data = array();
 
 		// Cycle through each field sections.
-		foreach ( $field_sections as $section => $fields ) {
+		foreach ( $bb_field_sections as $section => $fields ) {
 			
 			// Ignore any that haven't been stored by us.
 			if ( 0 !== strpos( $section, 'section*_' ) ) {
 				continue;
 			}
 
-			if( $acf_module_id == self::get_acf_module_id_from_section_name( $section ) ) {
+			if( $acf_module_id_search_param == self::get_acf_module_id_from_section_name( $section ) ) {
 
 				// Store the fields.
 				foreach ( $fields as $field_key => $field_value ) {
-					$data_key = str_replace( '**' . $acf_module_id, '', $field_key );
-					$module_data[ $data_key ] = $field_value;
+					$data_key = str_replace( '**' . $acf_module_id_search_param, '', $field_key );
+					$module_data[ $data_key ] = self::convert_value_to_bb_format( $content_module_fields['choose_st_bb_module'], $data_key, $field_value );
 				}
 
 			}
@@ -116,6 +144,34 @@ class ST_BB_ACF_Module_Manager {
 		}
 
 		return $module_data;
+
+	}
+
+	/**
+	 * Convert a stored field value from ACF format to BB format.
+	 *
+	 * @since	1.0.0
+	 * 
+	 * @param	string	$bb_module_slug		the BB module slug
+	 * @param	string	$data_key			the field key in BB format
+	 * @param	mixed	$field_value		the field value in ACF format
+	 * @return	mixed	the field value in BB format
+	 */
+	private static function convert_value_to_bb_format( $bb_module_slug, $data_key, $field_value ) {
+
+		// Some fields aren't present in BB form e.g. when BB adds {image_field}_src field.
+		if ( isset( self::$bb_module_field_types[ $bb_module_slug ][ $data_key ] ) ) {
+		
+			switch ( self::$bb_module_field_types[ $bb_module_slug ][ $data_key ] ) {
+				case 'color' :
+					// Strip off the hash.
+					$field_value = str_replace( '#', '', $field_value );
+					break;
+			}
+
+		}
+
+		return $field_value;
 
 	}
 
@@ -926,7 +982,7 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 * When deleting variable content modules, also delete all associated custom fields on posts / pages.
+	 * When deleting content modules, also delete all associated custom fields on posts / pages.
 	 *
 	 * @since    1.0.0
 	 * @hooked	before_delete_post
@@ -975,10 +1031,10 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 * When updating a variable content module, record in options where it appears.
+	 * When updating or deleting a content module, record in options where it appears.
 	 *
 	 * @since    1.0.0
-	 * @hooked	acf/save_post
+	 * @hooked	acf/save_post, delete_post
 	 */
 	public function update_registered_content_modules( $post_id ) {
 		
@@ -1050,62 +1106,34 @@ class ST_BB_ACF_Module_Manager {
 
 			global $post;
 			
-			// Work out whether we have content to display.
-			$module_registration = get_option( 'st_acf_module_registration' );
-
-			// Stop if no content or this post type is not permitted.
-			if ( empty( $module_registration ) ) {
-				return $content;
-			}
-			if ( ! isset( $module_registration['post_types'][ $post->post_type ] ) ) {
+			$modules = self::$display_modules;
+			if ( empty( $modules ) ) {
 				return $content;
 			}
 
-			$module_ids = array();
+			// Organize into before and after.
+			$display_modules['before'] = $display_modules['after'] = array();
+			foreach ( $modules as $module_id => $module ) {
+
+				$placement = $module['content_module_fields']['acf_module_location'];
+				$order = $module['content_module_fields']['acf_module_order'];
+				$display_modules[ $placement ][ $order ] = $module_id;
+
+			}
 			
-			if ( 'page' == $post->post_type ) {
-				
-				// Start with assumption that all modules appear on all pages.
-				$module_ids = $module_registration['post_types']['page'];
-				
-				// Then if module is only allocated to specific pages then remove if this isn't one of them.
-				foreach( $module_registration['post_types']['page'] as $page_type_module_id ) {
-					if ( isset( $module_registration['page_ids'][ $page_type_module_id ] ) ) {
-						if ( ! in_array( $post->ID, $module_registration['page_ids'][ $page_type_module_id ] ) ) {
-							unset( $module_ids[ array_search( $page_type_module_id, $module_ids ) ] );
-						}
-					}
-				}
-
-			} else {
-				$module_ids = $module_registration['post_types'][ $post_type ];
-			}
-
-			$display_module_ids['before'] = $display_module_ids['after'] = array();
-			foreach ( $module_ids as $module_id ) {
-
-				// Ignore any we aren't displaying automatically and slot them into before and after.
-				if ( get_field( 'acf_module_the_content', $module_id ) ) {
-					$placement = get_field( 'acf_module_location', $module_id );
-					$order = get_field( 'acf_module_order', $module_id );
-					$display_module_ids[ $placement ][ $order ] = $module_id;
-				}
-
-			}
-
 			// Sort the modules.
-			ksort( $display_module_ids['before'] );
-			ksort( $display_module_ids['after'] );
+			ksort( $display_modules['before'] );
+			ksort( $display_modules['after'] );
 
 			// Add in the modules contents.
 			$before_content = '';
-			foreach ( $display_module_ids['before'] as $acf_module_id ) {
+			foreach ( $display_modules['before'] as $acf_module_id ) {
 				$before_content .= self::get_module_content( $post->ID, $acf_module_id );
 			}
 
 			$content = $before_content.$content;
 
-			foreach ( $display_module_ids['after'] as $acf_module_id ) {
+			foreach ( $display_modules['after'] as $acf_module_id ) {
 				$content .= self::get_module_content( $post->ID, $acf_module_id );
 			}
 
@@ -1126,34 +1154,203 @@ class ST_BB_ACF_Module_Manager {
 	 */
 	public static function get_module_content( $post_id, $acf_module_id ) {
 
+		$module_fields = self::$display_modules[ $acf_module_id ]['content_module_fields'];
+		$settings = (object) self::$display_modules[ $acf_module_id ]['settings'];
+		
 		// Work out whether we are getting fields from the page / post or from a fixed module.
-		$is_fixed_content = ( 'fixed' == get_field( 'acf_module_content_type', $acf_module_id ) );
+		$is_fixed_content = ( 'fixed' == $module_fields[ 'acf_module_content_type' ] );
 		
 		if ( $is_fixed_content ) {
 			$post_id = $acf_module_id;
+			$field_sections = $module_fields;
+		} else {
+			$field_sections = get_fields( $post_id );
 		}
-		
-		// Get all ACF fields.
-		$field_sections = get_fields( $post_id );
 
 		// End here if there are no fields.
 		if ( empty( $field_sections ) ) {
 			return '';
 		}
 
-		$acf_module_id_search_param = $is_fixed_content ? 'fixed' : $acf_module_id;
-		$module_data = self::get_acf_module_data( $acf_module_id_search_param, $field_sections );
-
 		$registered_modules = ST_BB_Module_Manager::get_registered_modules();
 
 		// Get the class name.
-		$module_class = get_class( $registered_modules[ get_field( 'choose_st_bb_module', $acf_module_id ) ] );
+		$module_class = get_class( $registered_modules[ $module_fields['choose_st_bb_module'] ] );
 		$module = new $module_class();
-		$settings = (object) $module_data;
+		$module->node = $acf_module_id . '-' . $post_id;
 		
 		ob_start();
 		include( ST_BB_DIR . 'public/partials/frontend-module.php' );
 		return ob_get_clean();
+
+	}
+
+	/**
+	 * Set the modules to be displayed on page / post.
+	 *
+	 * @since    1.0.0
+	 * @hooked	get_header
+	 */
+	public function set_modules_to_display( $name ) {
+		global $post;
+
+		// Work out whether we have content to display.
+		$module_registration = get_option( 'st_acf_module_registration' );
+
+		// Stop if no content or this post type is not permitted.
+		if ( empty( $module_registration ) ) {
+			return array();
+		}
+		if ( ! isset( $module_registration['post_types'][ $post->post_type ] ) ) {
+			return array();
+		}
+
+		$module_ids = array();
+		
+		if ( 'page' == $post->post_type ) {
+			
+			// Start with assumption that all modules appear on all pages.
+			$module_ids = $module_registration['post_types']['page'];
+			
+			// Then if module is only allocated to specific pages then remove if this isn't one of them.
+			foreach( $module_registration['post_types']['page'] as $page_type_module_id ) {
+				if ( isset( $module_registration['page_ids'][ $page_type_module_id ] ) ) {
+					if ( ! in_array( $post->ID, $module_registration['page_ids'][ $page_type_module_id ] ) ) {
+						unset( $module_ids[ array_search( $page_type_module_id, $module_ids ) ] );
+					}
+				}
+			}
+
+		} else {
+			$module_ids = $module_registration['post_types'][ $post_type ];
+		}
+
+		// Create output format with content module fields, removing any we aren't displaying automatically.
+		$modules = array();
+		foreach ( $module_ids as $module_id ) {
+			$modules[ $module_id ]['content_module_fields'] = get_fields( $module_id );
+			if ( ! $modules[ $module_id ]['content_module_fields']['acf_module_the_content'] ) {
+				unset( $module_ids[ $module_id ] );
+			}
+		}
+
+		$bb_modules = ST_BB_Module_Manager::get_registered_modules();
+
+		// Add in the BB module settings.
+		foreach ( $modules as $module_id => $module ) {
+			
+			// Set the field types if not already set.
+			$module_slug = $module['content_module_fields']['choose_st_bb_module'];
+			if ( ! isset( self::$bb_module_field_types[ $module_slug ] ) ) {
+
+				$bb_module_form = $bb_modules[ $module_slug ]->form;
+				self::$bb_module_field_types[ $module_slug ] = self::get_bb_field_types( $bb_module_form );
+
+
+			}
+			
+			// Work out whether we are getting fields from the page / post or from a fixed module.
+			if ( 'fixed' == $module['content_module_fields'][ 'acf_module_content_type' ] ) {
+				$field_sections = $module['content_module_fields'];
+			} else {
+				$field_sections = get_fields( $post->ID );
+			}
+			if ( ! is_array( $field_sections ) ) {
+				$field_sections = array();
+			}
+
+			$modules[ $module_id ]['settings'] = self::get_acf_module_data( $module_id, $module['content_module_fields'], $field_sections );
+
+		}
+
+		self::$display_modules = $modules;
+
+	}
+
+	/**
+	 * Gets an array of bb field types indexed by their field keys.
+	 *
+	 * @since    1.0.0
+	 * 
+	 * @param	obj		$bb_module_form		A BB module form
+	 * @return	array
+	 */
+	private static function get_bb_field_types( $bb_module_form ) {
+
+		$field_types = array();
+		
+		// Cycle through the tabs.
+		foreach ( $bb_module_form as $tab => $tab_info ) {
+
+			// Skip the Advanced tab.
+			if ( 'advanced' == $tab ) {
+				continue;
+			}
+
+			// Cycle through the sections.
+			foreach ( $tab_info['sections'] as $section_key => $section ) {
+
+				// Cycle through the fields.
+				foreach ( $section['fields'] as $field_key => $field_info ) {
+					$field_types[ $field_key ] = $field_info['type'];
+				}
+
+			}
+
+		}
+
+		return $field_types;
+
+	}
+
+	/**
+	 * Enqueue CSS for modules to be displayed.
+	 *
+	 * @since    1.0.0
+	 * @hooked	wp_enqueue_scripts
+	 */
+	public function enqueue_modules_css( $name ) {
+
+		$content_modules = self::$display_modules;
+
+		// Do nothing if no modules to display.
+		if ( empty( $content_modules ) ) {
+			return false;
+		}
+
+		global $post;
+
+		// Get the BB modules.
+		$bb_modules = ST_BB_Module_Manager::get_registered_modules();
+		
+		$css = '';
+		
+		// Add the instances CSS.
+		foreach ( $content_modules as $content_module_id => $content_module ) {
+
+			$content_module_fields = $content_module['content_module_fields'];
+			
+			// Add in the all-instance instance-specific CSS.
+			$content_location_post_id = $post->ID;
+			if ( 'fixed' == $content_module_fields['acf_module_content_type'] ) {
+				$content_location_post_id = $content_module_id;
+			}
+			
+			$id = $content_module_id . '-' . $content_location_post_id;
+			$settings = (object) $content_module['settings'];
+
+			ob_start();
+			include ST_BB_DIR . 'public/bb-modules/includes/frontend.css.php';
+			$css .= ob_get_clean();
+
+			$slug = $content_module_fields['choose_st_bb_module'];
+
+			$bb_module_dir = $bb_modules[ $slug ]->dir;
+
+		}
+
+		$dep_handle = $this->plugin_name . '-public';
+		wp_add_inline_style( $dep_handle, $css );
 
 	}
 

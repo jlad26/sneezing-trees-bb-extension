@@ -22,7 +22,7 @@ if ( ! empty( $module->form ) ) {
 
 } else { // ...this is an ACF version.
 
-	$acf_section_classes = apply_filters( 'st_bb_section_classes', array( 'st-bb-section' ), $module );
+	$acf_section_classes = apply_filters( 'st_bb_section_classes', array( 'st-bb-section', 'fl-node-' . $module->node ), $module );
 	$mod_params['section_attributes'] = 'class="' . implode( ' ', $acf_section_classes ) . '"';
 
 }
