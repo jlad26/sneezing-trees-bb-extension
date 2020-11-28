@@ -140,6 +140,11 @@ class ST_BB_ACF_Module_Manager {
 
 				$module_field_group = get_fields( $field_group->ID );
 
+				// Don't display this module if it's fixed content.
+				if ( 'fixed' == $module_field_group['acf_module_content_type'] ) {
+					continue;
+				}
+
 				// Get the ACF field module.
 				$acf_module = self::get_acf_module_fields(
 					$field_group->ID, $field_group->post_title, $module_field_group['choose_st_bb_module']
