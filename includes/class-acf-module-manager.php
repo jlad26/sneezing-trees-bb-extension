@@ -1101,42 +1101,38 @@ class ST_BB_ACF_Module_Manager {
 	 * @hooked	the_content
 	 */
 	public function add_modules_content( $content ) {
-	
-		if ( is_main_query() ) {
+		
+		global $post;
+		
+		$modules = self::$display_modules;
+		if ( empty( $modules ) ) {
+			return $content;
+		}
 
-			global $post;
-			
-			$modules = self::$display_modules;
-			if ( empty( $modules ) ) {
-				return $content;
-			}
+		// Organize into before and after.
+		$display_modules['before'] = $display_modules['after'] = array();
+		foreach ( $modules as $module_id => $module ) {
 
-			// Organize into before and after.
-			$display_modules['before'] = $display_modules['after'] = array();
-			foreach ( $modules as $module_id => $module ) {
+			$placement = $module['content_module_fields']['acf_module_location'];
+			$order = $module['content_module_fields']['acf_module_order'];
+			$display_modules[ $placement ][ $order ] = $module_id;
 
-				$placement = $module['content_module_fields']['acf_module_location'];
-				$order = $module['content_module_fields']['acf_module_order'];
-				$display_modules[ $placement ][ $order ] = $module_id;
+		}
+		
+		// Sort the modules.
+		ksort( $display_modules['before'] );
+		ksort( $display_modules['after'] );
 
-			}
-			
-			// Sort the modules.
-			ksort( $display_modules['before'] );
-			ksort( $display_modules['after'] );
+		// Add in the modules contents.
+		$before_content = '';
+		foreach ( $display_modules['before'] as $acf_module_id ) {
+			$before_content .= self::get_module_content( $post->ID, $acf_module_id );
+		}
 
-			// Add in the modules contents.
-			$before_content = '';
-			foreach ( $display_modules['before'] as $acf_module_id ) {
-				$before_content .= self::get_module_content( $post->ID, $acf_module_id );
-			}
+		$content = $before_content.$content;
 
-			$content = $before_content.$content;
-
-			foreach ( $display_modules['after'] as $acf_module_id ) {
-				$content .= self::get_module_content( $post->ID, $acf_module_id );
-			}
-
+		foreach ( $display_modules['after'] as $acf_module_id ) {
+			$content .= self::get_module_content( $post->ID, $acf_module_id );
 		}
 
 		return $content;
@@ -1323,7 +1319,7 @@ class ST_BB_ACF_Module_Manager {
 		
 		$css = '';
 		
-		// Add the instances CSS.
+		// Add the CSS.
 		foreach ( $content_modules as $content_module_id => $content_module ) {
 
 			$content_module_fields = $content_module['content_module_fields'];
