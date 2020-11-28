@@ -82,7 +82,7 @@ class ST_BB_Hook_Manager {
 		$url_base = plugin_dir_url( dirname( __FILE__ ) ) . 'public/';
 		
 		wp_enqueue_style( $this->plugin_name . '-admin-css', $url_base . 'css/admin.css', array(), $this->version, 'all' );
-		wp_enqueue_script( $this->plugin_name . '-public-css', $url_base . 'js/admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . '-admin-js', $url_base . 'js/admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 
