@@ -1154,23 +1154,21 @@ class ST_BB_ACF_Module_Manager {
 	 */
 	public static function get_module_content( $post_id, $acf_module_id ) {
 
-		$module_fields = self::$display_modules[ $acf_module_id ]['content_module_fields'];
-		$settings = (object) self::$display_modules[ $acf_module_id ]['settings'];
-		
-		// Work out whether we are getting fields from the page / post or from a fixed module.
-		$is_fixed_content = ( 'fixed' == $module_fields[ 'acf_module_content_type' ] );
-		
-		if ( $is_fixed_content ) {
-			$post_id = $acf_module_id;
-			$field_sections = $module_fields;
-		} else {
-			$field_sections = get_fields( $post_id );
+		// End here if all settings are empty.
+		$field_settings = self::$display_modules[ $acf_module_id ]['settings'];
+		$no_content = true;
+		foreach ( $field_settings as $field_setting ) {
+			if ( ! empty( $field_setting) ) {
+				$no_content = false;
+			break;
+			}
 		}
-
-		// End here if there are no fields.
-		if ( empty( $field_sections ) ) {
+		if ( $no_content ) {
 			return '';
 		}
+		
+		$module_fields = self::$display_modules[ $acf_module_id ]['content_module_fields'];
+		$settings = (object) $field_settings;
 
 		$registered_modules = ST_BB_Module_Manager::get_registered_modules();
 
