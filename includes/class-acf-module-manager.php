@@ -56,6 +56,15 @@ class ST_BB_ACF_Module_Manager {
 	private static $bb_module_field_types;
 
 	/**
+	 * Module CSS added - used to prevent BB from adding a second time.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $module_generic_css    Key: slug, value: css as string.
+	 */
+	private static $module_generic_css;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -98,6 +107,12 @@ class ST_BB_ACF_Module_Manager {
 
 		// Set the modules to be displayed on page / post.
 		add_action( 'get_header', array( $this, 'set_modules_to_display' ) );
+
+		// Set the modules CSS to be added on get_header so we can later strip it from BB styles if needed.
+		add_action( 'get_header', array( $this, 'set_modules_css' ), 11, 1 );
+
+		// Remove any duplicate module CSS from BB CSS.
+		add_filter( 'fl_builder_render_css', array( $this, 'remove_duplicate_BB_CSS' ), 10, 4 );
 
 		// Enqueue CSS for modules to be displayed.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_modules_css' ) );
@@ -1101,7 +1116,7 @@ class ST_BB_ACF_Module_Manager {
 	 * @hooked	the_content
 	 */
 	public function add_modules_content( $content ) {
-		
+
 		global $post;
 		
 		$modules = self::$display_modules;
@@ -1298,12 +1313,66 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
+	 * Set the modules CSS to be added. We do this on get_header so we can later
+	 * use the fl_builder_render_css filter to remove any duplicate CSS.
+	 *
+	 * @since    1.0.0
+	 * @hooked	get_header
+	 */
+	public function set_modules_css( $name ) {
+
+		$content_modules = self::$display_modules;
+
+		// Do nothing if no modules to display.
+		if ( empty( $content_modules ) ) {
+			return false;
+		}
+
+		// Get the BB modules.
+		$bb_modules = ST_BB_Module_Manager::get_registered_modules();
+
+		foreach ( $content_modules as $content_module_id => $content_module ) {
+
+			$content_module_fields = $content_module['content_module_fields'];
+
+			// Add the module CSS if it hasn't already been added.
+			$slug = $content_module_fields['choose_st_bb_module'];
+			$bb_module_dir = $bb_modules[ $slug ]->dir;
+		
+			if ( ! isset( self::$module_generic_css[ $slug ] ) ) {
+				$path = $bb_module_dir . 'css/frontend.css';
+				$module_css = '';
+				if ( file_exists( $path ) ) {
+					$module_css = file_get_contents( $path );
+				}
+				self::$module_generic_css[ $slug ] = $module_css;
+			}
+
+		}
+
+	}
+
+	/**
+	 * Remove any duplicate module CSS from BB CSS.
+	 *
+	 * @since    1.0.0
+	 * @hooked	fl_builder_render_css
+	 */
+	public function remove_duplicate_BB_CSS( $css, $nodes, $global_settings, $include_global ) {
+		foreach ( self::$module_generic_css as $module_css ) {
+			$css = str_replace( $module_css, '', $css );
+		}
+		return $css;
+	}
+
+
+	/**
 	 * Enqueue CSS for modules to be displayed.
 	 *
 	 * @since    1.0.0
 	 * @hooked	wp_enqueue_scripts
 	 */
-	public function enqueue_modules_css( $name ) {
+	public function enqueue_modules_css() {
 
 		$content_modules = self::$display_modules;
 
@@ -1318,13 +1387,18 @@ class ST_BB_ACF_Module_Manager {
 		$bb_modules = ST_BB_Module_Manager::get_registered_modules();
 		
 		$css = '';
+
+		// Add the modules CSS.
+		foreach ( self::$module_generic_css as $module_css ) {
+			$css .= $module_css;
+		}
 		
-		// Add the CSS.
+		// Add the instance-specific CSS.
 		foreach ( $content_modules as $content_module_id => $content_module ) {
 
 			$content_module_fields = $content_module['content_module_fields'];
-			
-			// Add in the all-instance instance-specific CSS.
+
+			// Add in the all-modules instance-specific CSS.
 			$content_location_post_id = $post->ID;
 			if ( 'fixed' == $content_module_fields['acf_module_content_type'] ) {
 				$content_location_post_id = $content_module_id;
@@ -1337,11 +1411,18 @@ class ST_BB_ACF_Module_Manager {
 			include ST_BB_DIR . 'public/bb-modules/includes/frontend.css.php';
 			$css .= ob_get_clean();
 
+			// Add the instance-specific CSS.
 			$slug = $content_module_fields['choose_st_bb_module'];
-
 			$bb_module_dir = $bb_modules[ $slug ]->dir;
+			$path = $bb_module_dir . 'includes/frontend.css.php';
+			if ( file_exists( $path ) ) {
+				ob_start();
+				include $path;
+				$css .= ob_get_clean();
+			}
 
 		}
+		cwine_error_log($css);
 
 		if ( $css ) {
 			$dep_handle = $this->plugin_name . '-public';
