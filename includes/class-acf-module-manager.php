@@ -634,8 +634,8 @@ class ST_BB_ACF_Module_Manager {
 
 		$acf_field = array(
 			'key' => $field_key,
-			'default' => isset( $field_contents['default'] ) ? $field_contents['default'] : '',
-			'label' => $field_contents['label'],
+			'default_value' => isset( $field_contents['default'] ) ? $field_contents['default'] : '',
+			'label' => isset( $field_contents['label'] ) ? $field_contents['label'] : '',
 			'name' => $field_key,
 			'instructions' => isset( $field_contents['help'] ) ? $field_contents['help'] : '',
 			'required' => 0,
@@ -649,6 +649,22 @@ class ST_BB_ACF_Module_Manager {
 		
 		switch ( $field_contents['type'] ) {
 
+			case 'editor' :
+				$media_buttons = 0;
+				if ( isset( $field_contents['media_buttons'] ) ) {
+					if ( $field_contents['media_buttons'] ) {
+						$media_buttons = 1;
+					}
+				}
+				$acf_field = array_merge( $acf_field, array(
+					'type' => 'wysiwyg',
+					'tabs' => 'all',
+					'toolbar' => 'full',
+					'media_upload' => $media_buttons,
+					'delay' => 0,
+				) );			
+				break;
+			
 			case 'text' :
 				$acf_field = array_merge( $acf_field, array(
 					'type' => 'text',
@@ -689,6 +705,19 @@ class ST_BB_ACF_Module_Manager {
 					'max_height' => '',
 					'max_size' => '',
 					'mime_types' => '',
+				) );
+				break;
+
+			case 'select' :
+				$acf_field = array_merge( $acf_field, array(
+					'type' => 'select',
+					'choices' => $field_contents['options'],
+					'allow_null' => 0,
+					'multiple' => 0,
+					'ui' => 0,
+					'ajax' => 0,
+					'return_format' => 'value',
+					'placeholder' => '',
 				) );
 				break;
 
@@ -791,12 +820,10 @@ class ST_BB_ACF_Module_Manager {
 
 		$module_id = $post_id;
 
-		// If this is a content module for fixed content, then delete the associated content editor.
-		if ( 'fixed' == get_field( 'acf_module_content_type', $module_id ) ) {
-			$fc_editor_id = get_post_meta( $module_id, 'st_fc_editor_id', true );
-			if ( ! empty( $fc_editor_id ) ) {
-				wp_delete_post( $fc_editor_id, true );
-			}
+		// If there is an associated content editor, then delete it.
+		$fc_editor_id = get_post_meta( $module_id, 'st_fc_editor_id', true );
+		if ( ! empty( $fc_editor_id ) ) {
+			wp_delete_post( $fc_editor_id, true );
 		}
 		
 		// Get all postmeta entries that are ACF module data.
@@ -846,21 +873,31 @@ class ST_BB_ACF_Module_Manager {
 			return false;
 		}
 
-		// Only when dealing with fixed content.
-		if ( 'fixed' != get_field( 'acf_module_content_type', $post_id ) ) {
-			return false;
-		}
+		$fields = get_fields( $post_id );
 
 		// Add fixed content editor if needed.
-		$fc_editor_id = self::maybe_add_fixed_content_editor( $post_id );
+		if ( 'fixed' != $fields['acf_module_content_type'] ) {
+			self::maybe_add_fixed_content_editor( $post_id );
+		}
 
 		/**
 		 * Record whether the content editor is enabled or not.
-		 * Only enabled if content module is active and published status.
+		 * Only enabled if content module is active, fixed content type and published status.
+		 * Maybe used to be a fixed content type but now variable, so may need to update even if variable
 		 */
-		$content_module = get_post( $post_id );
-		$is_enabled = 'publish' == $content_module->post_status && get_field( 'acf_module_is_active', $post_id );
-		update_post_meta( $fc_editor_id, 'st_fc_editor_enabled', $is_enabled );
+		$fc_editor_id = get_post_meta( $post_id, 'st_fc_editor_id', true );
+		if ( ! empty( $fc_editor_id ) ) {
+			$content_module = get_post( $post_id );
+			$is_enabled = false;
+			if (
+				'publish' == $content_module->post_status &&
+				$fields['acf_module_is_active'] &&
+				'fixed' == $fields['acf_module_content_type']
+			) {
+				$is_enabled = true;
+			}
+			update_post_meta( $fc_editor_id, 'st_fc_editor_enabled', $is_enabled );
+		}
 
 	}
 
@@ -869,7 +906,6 @@ class ST_BB_ACF_Module_Manager {
 	 *
 	 * @since    1.0.0
 	 * @param	int		$content_module_id	ID of associated content module.
-	 * @return	int		id of fixed content editor.
 	 */
 	private static function maybe_add_fixed_content_editor( $content_module_id ) {
 		$fc_editor_id = get_post_meta( $content_module_id, 'st_fc_editor_id', true );
@@ -883,7 +919,6 @@ class ST_BB_ACF_Module_Manager {
 			update_post_meta( $content_module_id, 'st_fc_editor_id', $fc_editor_id );
 			update_post_meta( $fc_editor_id, 'st_content_module_id', $content_module_id );
 		}
-		return $fc_editor_id;
 	}
 
 	/**
@@ -1153,6 +1188,7 @@ class ST_BB_ACF_Module_Manager {
 				$fields_location_post_id = $post->ID;
 			}
 			$field_sections = get_fields( $fields_location_post_id );
+			
 			if ( ! is_array( $field_sections ) ) {
 				$field_sections = array();
 			}
