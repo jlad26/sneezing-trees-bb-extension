@@ -1,9 +1,6 @@
 <?php
 /**
  * Hero module template.
- *
- * @params array    $mod_params   Array of settings.
- * 
  * @since      1.0.0
  */
 ?>
