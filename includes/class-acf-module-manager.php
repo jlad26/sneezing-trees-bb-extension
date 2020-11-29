@@ -1250,8 +1250,12 @@ class ST_BB_ACF_Module_Manager {
 	 * @hooked	fl_builder_render_css
 	 */
 	public function remove_duplicate_BB_CSS( $css, $nodes, $global_settings, $include_global ) {
-		foreach ( self::$module_generic_css as $module_css ) {
-			$css = str_replace( $module_css, '', $css );
+		if ( is_array( self::$module_generic_css ) ) {
+			foreach ( self::$module_generic_css as $module_css ) {
+				if ( ! empty( $module_css ) ) {
+					$css = str_replace( $module_css, '', $css );
+				}
+			}
 		}
 		return $css;
 	}
