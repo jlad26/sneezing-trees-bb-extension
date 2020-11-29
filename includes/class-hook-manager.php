@@ -104,8 +104,43 @@ class ST_BB_Hook_Manager {
 		// Bootstrap grid.
 		wp_enqueue_style( $this->plugin_name . '-bootstrap', $url_base . 'css/bootstrap-grid.' . $min . 'css', array(), $this->version, 'all' );
 
+		// Remove the bootstrap tour
+		wp_dequeue_style( 'bootstrap-tour' );
+		wp_dequeue_script( 'bootstrap-tour' );
+		
 		// wp_enqueue_script( $this->plugin_name . '-public-js', $url_base . 'js/public.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	/**
+	 * Disable all standard BB modules.
+	 *
+	 * @since    1.0.0
+	 * @hooked fl_builder_register_module
+	 */
+	public function disable_standard_modules( $enabled, $instance ) {
+		if ( ! is_subclass_of( $instance, 'ST_BB_Module' ) ) {
+			$enabled = false;
+		}
+		return $enabled;
+	}
+
+	/**
+     * Remove rows functionality from panel.
+     * @hooked	fl_builder_content_panel_data
+     */
+	public static function remove_panel_rows_functionality( $data ) {
+		unset( $data['tabs']['rows'] );
+		return $data;
+	}
+
+	/**
+	 * Remove the bootstrap dep
+	 * @hooked	wp_enqueue_scripts
+	 */
+	public static function remove_bb_styles() {
+		wp_dequeue_style( 'bootstrap-tour' );
+		wp_dequeue_script( 'bootstrap-tour' );
 	}
 	
 	/**

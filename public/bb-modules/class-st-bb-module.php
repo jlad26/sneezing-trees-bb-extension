@@ -41,7 +41,6 @@ abstract class ST_BB_Module extends FLBuilderModule {
         // Set defaults.
         $defaults = array(
             'category'  =>  __( 'Sneezing Trees', ST_BB_TD ),
-            'group'     =>  __( 'Sneezing Trees', ST_BB_TD ),
             'dir'       =>  ST_BB_DIR . 'public/bb-modules/modules/' . $class_dir,
             'url'       =>  ST_BB_URL . 'public/bb-modules/modules/' . $class_dir,
         );

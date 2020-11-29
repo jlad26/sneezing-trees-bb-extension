@@ -165,8 +165,14 @@ class ST_BB {
 
 		$plugin_hook_mgr = new ST_BB_Hook_Manager( $this->get_plugin_name(), $this->get_version() );
 
-		// Initialize all BB modules.
+		// Initialize all our BB modules.
 		$this->loader->add_action( 'init', $plugin_hook_mgr, 'init_bb_modules' );
+
+		// Disable all standard BB modules.
+		$this->loader->add_filter( 'fl_builder_register_module', $plugin_hook_mgr, 'disable_standard_modules', 10, 2 );
+
+		// Remove rows functionality from panel.
+		$this->loader->add_action( 'fl_builder_content_panel_data', $plugin_hook_mgr, 'remove_panel_rows_functionality' );
 
 		// Initialize ACF component of the plugin.
 		$this->loader->add_action( 'plugins_loaded', $plugin_hook_mgr, 'init_acf_module_mgr' );
