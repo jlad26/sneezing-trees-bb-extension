@@ -181,9 +181,6 @@ class ST_BB {
 		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_hook_mgr, 'enqueue_admin_styles_and_scripts' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_hook_mgr, 'enqueue_public_styles_and_scripts' );
 
-		// Disable Gutenberg editor.
-		$this->loader->add_filter( 'use_block_editor_for_post', $plugin_hook_mgr, 'disable_gutenburg' );
-		
 		// Amend BB global settings.
 		$this->loader->add_action( 'fl_builder_register_settings_form', $plugin_hook_mgr, 'amend_bb_global_settings', 10, 2 );
 		

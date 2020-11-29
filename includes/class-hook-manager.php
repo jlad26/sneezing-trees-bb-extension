@@ -142,16 +142,6 @@ class ST_BB_Hook_Manager {
 		wp_dequeue_style( 'bootstrap-tour' );
 		wp_dequeue_script( 'bootstrap-tour' );
 	}
-	
-	/**
-	 * Disable Gutenberg editor.
-	 *
-	 * @since    1.0.0
-	 * @hooked use_block_editor_for_post
-	 */
-	public function disable_gutenburg( $enable ) {
-		return false;
-	}
 
 	/**
 	 * Amend global BB settings, stripping out default padding and margins.
