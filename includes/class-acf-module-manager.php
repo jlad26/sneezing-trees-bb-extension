@@ -666,6 +666,7 @@ class ST_BB_ACF_Module_Manager {
 			case 'unit' :
 				$acf_field = array_merge( $acf_field, array(
 					'type' => 'range',
+					'default_value' => isset( $field_contents['default'] ) ? $field_contents['default'] : 0,
 					'min' => isset( $field_contents['slider']['min'] ) ? $field_contents['slider']['min'] : '',
 					'max' => isset( $field_contents['slider']['max'] ) ? $field_contents['slider']['max'] : '',
 					'step' => isset( $field_contents['slider']['step'] ) ? $field_contents['slider']['step'] : '',
