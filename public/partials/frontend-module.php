@@ -67,7 +67,7 @@ $on_backend = is_admin() || isset( $_GET['fl_builder'] );
 		/**
 		 * The module content container.
 		 */ ?>
-		<div class="<?php $module->module_classes( 'module' ); ?>">
+		<div class="<?php if ( is_subclass_of( $module, 'ST_BB_MODULE' ) ) $module->module_classes( 'module' ); ?>">
 			<?php // Render module content.
 			ob_start();
 			include apply_filters( 'st_bb_module_frontend_file', $module->dir . 'includes/frontend.php', $module );
