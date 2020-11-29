@@ -129,6 +129,11 @@ class ST_BB {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-acf-module-manager.php';
 
+		/**
+		 * The class responsible for defining ACF content module field groups.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/bb-modules/class-content-module-fields-group.php';
+
 		$this->loader = new ST_BB_Loader();
 
 	}

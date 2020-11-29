@@ -29,17 +29,6 @@ class ST_BB_Module_Manager {
 	public static $modules = array();
 
 	/**
-	 * ACF Modules available for use by the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   public
-	 * @var      array    $modules    Array of available ACF module settings with slugs as keys.
-	 */
-	public static $acf_modules = array();
-
-	
-	
-	/**
 	 * Initialize all BB modules.
 	 *
 	 * @since    1.0.0
@@ -65,9 +54,6 @@ class ST_BB_Module_Manager {
 				// Register module with plugin.
 				$instance = new $class_name();
 				self::$modules[] = $instance->slug;
-
-				// Generate ACF field.
-				self::$acf_modules[ $instance->slug ] = ST_BB_ACF_Module_Manager::get_acf_settings_from_bb_module( $instance->slug );
 
 			}
 		}
