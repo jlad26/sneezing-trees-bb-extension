@@ -191,13 +191,13 @@ abstract class ST_BB_Module extends FLBuilderModule {
     private static function get_generic_config() {
         return array(
             'module'      => array(
-                'title'         =>  'Content',
+                'title'         =>  __( 'Content', ST_BB_TD ),
             ),
             'background'      => array(
-                'title'         =>  'Background',
+                'title'         =>  __( 'Background', ST_BB_TD ),
                 'sections'		=>  array(
                     'row_colour'     =>  array(
-                        'title'         =>  'Colour',
+                        'title'         =>  __( 'Colour', ST_BB_TD ),
                         'fields'        =>  array(
                             'row_bg_color'  =>  array(
                                 'type'          =>  'color',
@@ -220,7 +220,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
                         ),
                     ),
                     'row_image'     =>  array(
-                        'title'         =>  'Image',
+                        'title'         =>  __( 'Image', ST_BB_TD ),
                         'fields'        =>  array(
                             'row_image' => array(
                                 'type'          => 'photo',
@@ -231,6 +231,21 @@ abstract class ST_BB_Module extends FLBuilderModule {
                                 'type'          =>  'text',
                                 'label'         =>  __( 'Image alt', ST_BB_TD ),
                                 'preview'       =>  false,
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
+                        ),
+                    ),
+                    'layout'     =>  array(
+                        'title'         =>  __( 'Layout', ST_BB_TD ),
+                        'fields'        =>  array(
+                            'row_height'  =>  array(
+                                'type'          =>  'select',
+                                'label'         => __( 'Height', ST_BB_TD ),
+                                'default'       =>  'content',
+                                'options'       =>  array(
+                                    'content'       =>  __( 'Fit content', ST_BB_TD ),
+                                    'screen'        =>  __( 'Full screen', ST_BB_TD ),
+                                ),
                                 'sanitize'		=>	'sanitize_text_field',
                             ),
                         ),
