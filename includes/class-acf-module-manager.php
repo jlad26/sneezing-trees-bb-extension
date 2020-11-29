@@ -876,7 +876,7 @@ class ST_BB_ACF_Module_Manager {
 		$fields = get_fields( $post_id );
 
 		// Add fixed content editor if needed.
-		if ( 'fixed' != $fields['acf_module_content_type'] ) {
+		if ( 'fixed' == $fields['acf_module_content_type'] ) {
 			self::maybe_add_fixed_content_editor( $post_id );
 		}
 
