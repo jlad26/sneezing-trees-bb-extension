@@ -1422,7 +1422,6 @@ class ST_BB_ACF_Module_Manager {
 			}
 
 		}
-		cwine_error_log($css);
 
 		if ( $css ) {
 			$dep_handle = $this->plugin_name . '-public';
