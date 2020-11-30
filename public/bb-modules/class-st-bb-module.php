@@ -22,10 +22,10 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 * Configuration settings.
 	 *
 	 * @since    1.0.0
-	 * @access   public
+	 * @access   private
 	 * @var      array    $config    Settings used to initialize module.
 	 */
-    public $config = array();
+    private $config = array();
 
     /**
 	 * Constructor.
