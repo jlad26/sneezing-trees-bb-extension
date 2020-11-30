@@ -208,7 +208,7 @@ class ST_BB_Content_Module_Fields_Group {
 				'label' => __( 'Add to page / post content automatically', ST_BB_TD ),
 				'name' => 'acf_module_the_content',
 				'type' => 'true_false',
-				'instructions' => __( 'If selected, content will be added automatically. If not, content must be displayed using the function <code>echo ST_BB_ACF_Module_Manager::get_modules_content();<?code>', ST_BB_TD ),
+				'instructions' => __( 'If selected, content will be added automatically. If not, content must be displayed using the function <code>echo ST_BB_ACF_Module_Manager::get_modules_content();</code>', ST_BB_TD ),
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
