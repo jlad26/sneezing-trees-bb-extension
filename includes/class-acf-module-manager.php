@@ -1043,8 +1043,8 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 * Get modules content for display. This is function to be used when hooking to a
-	 * theme's action or filter.
+	 * Get modules content for display. This is function only to be used when hooking to a
+	 * theme's action or filter, as it only gets modules that are not hooked to the_content. 
 	 *
 	 * @since    1.0.0
 	 */
@@ -1059,7 +1059,13 @@ class ST_BB_ACF_Module_Manager {
 
 		$out = '';
 		foreach ( $modules as $module_id => $module ) {
-			$out .= self::get_module_content( $post->ID, $module_id );
+			
+			// Only display if module is not hooked to the_content.
+			$module_settings = self::$display_modules[ $module_id ]['content_module_fields'];
+			if ( ! $module_settings['acf_module_the_content'] ) {
+				$out .= self::get_module_content( $post->ID, $module_id );
+			}
+			
 		}
 		return $out;
 
