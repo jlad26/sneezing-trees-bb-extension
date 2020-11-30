@@ -98,86 +98,33 @@ abstract class ST_BB_Module extends FLBuilderModule {
      * 
      * @return  array
 	 */
-    protected static function get_initial_config() {
+    protected static function get_config() {
         $generic_config = self::get_generic_config();
-        $initial_config = static::get_module_config();
+        $config = static::get_module_config();
 
         // Add in generic config sections if not overridden by module config.
         
         if ( empty( $generic_config ) ) {
-            return $initial_config;
+            return $config;
         }
 
         foreach ( $generic_config as $tab => $tab_settings ) {
-            if ( ! isset( $initial_config[ $tab ] ) ) {
-                $initial_config[ $tab ] = $tab_settings;
+            if ( ! isset( $config[ $tab ] ) ) {
+                $config[ $tab ] = $tab_settings;
             } else {
 
                 // Add in tab title if needed.
                 if (
                     isset( $generic_config[ $tab ]['title'] ) &&
-                    ! isset( $initial_config[ $tab ]['title'] )
+                    ! isset( $config[ $tab ]['title'] )
                 ) {
-                    $initial_config[ $tab ]['title'] = $generic_config[ $tab ]['title'];
+                    $config[ $tab ]['title'] = $generic_config[ $tab ]['title'];
                 }
 
             }
         }
-        
-        // if ( isset( $generic_config['module'] ) ) {
-
-        //     // Add in module title if needed.
-        //     if (
-        //         isset( $generic_config['module']['title'] ) &&
-        //         ! isset( $initial_config['module']['title'] )
-        //     ) {
-        //         $initial_config['module']['title'] = $generic_config['module']['title'];
-        //     }
-
-        //     if ( isset( $generic_config['module']['sections'] ) ) {
-                
-        //         $add_generic_sections_before = array();
-                
-        //         foreach ( $generic_config['module']['sections'] as $section => $section_params ) {
-
-        //             if ( ! isset( $initial_config['module']['sections'][ $section ] ) ) {
-                        
-        //                 // Record section to add if not defined by child module.
-        //                 $section_before = isset( $section_params['before'] ) ? $section_params['before'] : 'beginning';
-        //                 $add_generic_sections_before[ $section_before ][] = $section;
-                        
-        //             }
-
-        //         }
-
-        //         // Add in the generic sections at the right location.
-        //         if ( ! empty( $add_generic_sections_before) ) {
-                    
-        //             $module_sections = array();
-                    
-        //             if ( isset( $add_generic_sections_before['beginning'] ) ) {
-        //                 foreach ( $add_generic_sections_before['beginning'] as $section ) {
-        //                     $module_sections[ $section ] = $generic_config['module']['sections'][ $section ];
-        //                 }
-        //             }
-        //             foreach ( $initial_config['module']['sections'] as $before_section => $section_params ) {
-        //                 if ( isset( $add_generic_sections_before[ $before_section ] ) ) {
-        //                     foreach ( $add_generic_sections_before[ $before_section ] as $section ) {
-        //                         $module_sections[ $section ] = $generic_config['module']['sections'][ $section ];
-        //                     }
-        //                 }
-        //                 $module_sections[ $before_section ] = $section_params;
-        //             }
-                    
-        //             $initial_config['module']['sections'] = $module_sections;
-
-        //         }
-
-        //     }
-
-        // }
-
-        return $initial_config;
+ 
+        return $config;
     }
 
     /**
@@ -270,7 +217,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 * @since    1.0.0
 	 */
     public static function init() {
-        FLBuilder::register_module( static::class, static::get_initial_config() );
+        FLBuilder::register_module( static::class, static::get_config() );
     }
     
 }
