@@ -119,8 +119,10 @@ class ST_BB_ACF_Module_Manager {
 		// When deleting content modules, also delete all associated data.
 		add_action( 'before_delete_post', array( $this, 'remove_data_on_content_module_deletion' ), 10, 2 );
 		
-		// When saving a content module, create / update fixed content editor as required.
+		// When saving, trashing or restoring a content module, create / update fixed content editor as required.
 		add_action( 'acf/save_post', array( $this, 'update_fixed_content_editor' ) );
+		add_action( 'trashed_post', array( $this, 'update_fixed_content_editor' ) );
+		add_action( 'untrashed_post', array( $this, 'update_fixed_content_editor' ) );
 		
 		// When updating or deleting a content module, record in options where it appears.
 		add_action( 'save_post', array( $this, 'update_registered_content_modules' ) );
@@ -861,10 +863,11 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 * When saving a content module, create / update fixed content editor as required.
+	 * When saving, trashing or restoring a content module, create / update
+	 * fixed content editor as required.
 	 *
 	 * @since    1.0.0
-	 * @hooked	acf/save_post
+	 * @hooked	acf/save_post, trashed_post, untrashed_post
 	 */
 	public function update_fixed_content_editor( $post_id ) {
 
@@ -887,7 +890,10 @@ class ST_BB_ACF_Module_Manager {
 		 */
 		$fc_editor_id = get_post_meta( $post_id, 'st_fc_editor_id', true );
 		if ( ! empty( $fc_editor_id ) ) {
+			
 			$content_module = get_post( $post_id );
+			
+			// Set fixed content editor enabled status.
 			$is_enabled = false;
 			if (
 				'publish' == $content_module->post_status &&
@@ -897,12 +903,13 @@ class ST_BB_ACF_Module_Manager {
 				$is_enabled = true;
 			}
 			update_post_meta( $fc_editor_id, 'st_fc_editor_enabled', $is_enabled );
+
 		}
 
 	}
 
 	/**
-	 * Add a fixed content editor if not alreay in existence.
+	 * Add a fixed content editor if not already in existence.
 	 *
 	 * @since    1.0.0
 	 * @param	int		$content_module_id	ID of associated content module.
@@ -922,23 +929,10 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 * Returns whether a fixed content editor is enabled.
-	 * Enabled if content module editor is published and set to active.
-	 *
-	 * @since    1.0.0
-	 * 
-	 * @param	int		$content_module_id	the editor's corresponding content module id.
-	 * @return	bool
-	 */
-	public function is_fc_editor_enabled( $content_module_id ) {
-
-	}
-
-	/**
 	 * When updating or deleting a content module, record in options where it appears.
 	 *
 	 * @since    1.0.0
-	 * @hooked	save_post, delete_post
+	 * @hooked	acf/save_post, delete_post
 	 */
 	public function update_registered_content_modules( $post_id ) {
 		
