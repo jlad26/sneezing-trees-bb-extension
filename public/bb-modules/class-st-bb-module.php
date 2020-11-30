@@ -36,7 +36,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
         
         $class_info     = new ReflectionClass( $this );
 		$class_path     = $class_info->getFileName();
-        $class_dir           = basename( dirname( $class_path ) ) . '/';
+        $class_dir      = basename( dirname( $class_path ) ) . '/';
         
         // Set defaults.
         $defaults = array(
