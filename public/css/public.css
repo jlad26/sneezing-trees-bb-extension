@@ -27,16 +27,14 @@ img.st-bb-background-img {
 }
 
 /*===========================================================================================*/
-/* BB Controls */
+/* Beaver Builder */
 
-/* Hide BB row setting controls */
 .fl-row-overlay i.fa-wrench,
-.fl-row-overlay i.fa-bars {
-	display: none !important;
-}
-
-/* Hide BB module Advanced tab */
+.fl-row-overlay i.fa-bars,
 #fl-builder-settings-tab-advanced,
-a[href="#fl-builder-settings-tab-advanced"] {
+a[href="#fl-builder-settings-tab-advanced"],
+#fl-builder-blocks-pro,
+.fl-builder--panel-content button.fl-builder-blocks-pro-expand,
+.fl-builder--panel-cta {
     display: none !important;
 }
