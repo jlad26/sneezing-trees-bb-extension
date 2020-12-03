@@ -876,10 +876,9 @@ class ST_BB_ACF_Module_Manager {
 			return false;
 		}
 
-		$fields = get_fields( $post_id );
-
 		// Add fixed content editor if needed.
-		if ( 'fixed' == $fields['acf_module_content_type'] ) {
+		$is_fixed = 'fixed' == get_field( 'acf_module_content_type', $post_id );
+		if ( $is_fixed ) {
 			self::maybe_add_fixed_content_editor( $post_id );
 		}
 
@@ -897,8 +896,8 @@ class ST_BB_ACF_Module_Manager {
 			$is_enabled = false;
 			if (
 				'publish' == $content_module->post_status &&
-				$fields['acf_module_is_active'] &&
-				'fixed' == $fields['acf_module_content_type']
+				get_field( 'acf_module_is_active', $post_id ) &&
+				$is_fixed
 			) {
 				$is_enabled = true;
 			}
