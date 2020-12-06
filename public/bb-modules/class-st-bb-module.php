@@ -51,9 +51,9 @@ abstract class ST_BB_Module extends FLBuilderModule {
         }
         
         parent::__construct( $args );
-
+        
         // Set generic config.
-        $this->set_config();
+        $this->set_config( $args );
         
     }
 
@@ -61,19 +61,31 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 * Set the generic config for all modules.
 	 *
 	 * @since    1.0.0
+     * @param   array   $args   Arguments passed to the constructor.
 	 */
-    protected function set_config() {
-        
-        // Set defaults.
-        $config = array(
-            'container_classes' => array( 'st-bb-module-container', 'container' ),
-            'section_classes'   =>  array( 'st-bb-section' )
-        );
+    protected function set_config( $args ) {
 
+        // Set generic config here that can be over-written
+        $config = array();
+        
         if ( isset( $args['config'] ) ) {
             $config = array_merge(  $config, $args['config'] );
         }
-        $this->config = $config;
+
+        // Add additional required classes.
+        $class_types = array( 'container', 'section' );
+        $required_classes = array(
+            'container_classes' =>  array( 'st-bb-module-container', 'container' ),
+            'section_classes'   =>  array( 'st-bb-section', $this->slug )
+        );
+        foreach ( $class_types as $class_type ) {
+            if ( ! isset( $config[ $class_type . '_classes' ] ) ) {
+                $config[ $class_type . '_classes' ] = array();
+            }
+            $config[ $class_type . '_classes' ] = array_merge( $config[ $class_type . '_classes' ], $required_classes[ $class_type . '_classes' ] );
+        }
+
+        $this->config = apply_filters( 'st_bb_module_config', $config, $this );
         
     }
 
@@ -83,7 +95,6 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 * @since    1.0.0
 	 */
     public function get_section_classes() {
-        $classes = array();
         if ( isset ( $this->config['section_classes'] ) ) {
             $classes = $this->config['section_classes'];
         }
@@ -97,7 +108,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 */
     public function container_classes( $echo = true ) {
         $out = '';
-        $classes = array( $this->slug );
+        $classes = array( $this->slug . '-container' );
         if ( isset( $this->config['container_classes'] ) ) {
             $classes = array_merge( $classes, $this->config['container_classes'] );
         }
