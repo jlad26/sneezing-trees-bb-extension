@@ -203,7 +203,6 @@ class ST_BB_Hook_Manager {
 	 * @hooked	fl_builder_module_attributes
 	 */
 	public function add_section_classes( $attrs, $module ) {
-		cwine_error_log($module);
 		if ( isset( $module->config['section_classes'] ) ) {
 			$attrs['class'] = array_merge( $attrs['class'],  $module->config['section_classes'] );
 		}
