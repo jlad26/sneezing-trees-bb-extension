@@ -22,10 +22,10 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 * Configuration settings.
 	 *
 	 * @since    1.0.0
-	 * @access   private
-	 * @var      array    $config    Settings used to initialize module.
+	 * @access   public
+	 * @var      array    $config    Configuration specific to the module.
 	 */
-    private $config = array();
+    public $config = array();
 
     /**
 	 * Constructor.
@@ -63,9 +63,31 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 * @since    1.0.0
 	 */
     protected function set_config() {
-        $this->config = apply_filters( 'st_bb_module_config', array(
-            'module_classes' => array( 'st-bb-module', 'container' )
-        ), $this );
+        
+        // Set defaults.
+        $config = array(
+            'container_classes' => array( 'st-bb-module-container', 'container' ),
+            'section_classes'   =>  array( 'st-bb-section' )
+        );
+
+        if ( isset( $args['config'] ) ) {
+            $config = array_merge(  $config, $args['config'] );
+        }
+        $this->config = $config;
+        
+    }
+
+    /**
+	 * Get module section classes. Used only for ACF versions of modules.
+	 *
+	 * @since    1.0.0
+	 */
+    public function get_section_classes() {
+        $classes = array();
+        if ( isset ( $this->config['section_classes'] ) ) {
+            $classes = $this->config['section_classes'];
+        }
+        return $classes;
     }
 
     /**
@@ -73,21 +95,19 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 *
 	 * @since    1.0.0
 	 */
-    public function module_classes( $class_type, $echo = true ) {
+    public function container_classes( $echo = true ) {
         $out = '';
-        if ( 'module' == $class_type ) {
-            $classes = array( $this->slug );
-            if ( isset( $this->config['module_classes'] ) ) {
-                $classes = array_merge( $classes, $this->config['module_classes'] );
-            }
-            $out = implode( ' ', $classes );
-            if ( $echo ) {
-                echo esc_attr( $out );
-            } else {
-                return $out;
-            }
-
+        $classes = array( $this->slug );
+        if ( isset( $this->config['container_classes'] ) ) {
+            $classes = array_merge( $classes, $this->config['container_classes'] );
         }
+        $out = implode( ' ', $classes );
+        if ( $echo ) {
+            echo esc_attr( $out );
+        } else {
+            return $out;
+        }
+
     }
 
     /**

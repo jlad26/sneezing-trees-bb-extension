@@ -199,13 +199,13 @@ class ST_BB_Hook_Manager {
 	}
 
 	/**
-	 * Add class to sections.
+	 * Add classes to sections.
 	 * @hooked	fl_builder_module_attributes
 	 */
-	public function add_class_to_sections( $attrs, $module ) {
-		if ( is_subclass_of( $module, 'ST_BB_Module' ) ) {
-			$attrs['class'][] = 'st-bb-section';
-			$attrs['class'] = apply_filters( 'st_bb_section_classes', $attrs['class'], $module );
+	public function add_section_classes( $attrs, $module ) {
+		cwine_error_log($module);
+		if ( isset( $module->config['section_classes'] ) ) {
+			$attrs['class'] = array_merge( $attrs['class'],  $module->config['section_classes'] );
 		}
 		return $attrs;
 	}

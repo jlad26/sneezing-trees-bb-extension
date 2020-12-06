@@ -85,4 +85,21 @@ class ST_BB_Module_Manager {
 		return $modules;
 	}
 
+	/**
+	 * Render module section classes, putting together the BB module classes if
+	 * they exist and the section classes.
+	 */
+	public static function render_section_classes( $module ) {
+		
+		// If this is a BB module then display the BB attributes and our section classes...
+		if ( ! empty( $module->form ) ) {
+			FlBuilder::render_module_attributes( $module );
+		// ...otherwise just use our section classes.
+		} else {
+			if ( $section_classes = $module->get_section_classes() ) {
+				echo 'class="' . esc_attr( implode( ' ',  $section_classes ) ) . ' fl-node-' . $module->node . '"';
+			}
+		}
+	}
+
 }

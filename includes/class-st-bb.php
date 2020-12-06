@@ -188,8 +188,8 @@ class ST_BB {
 		$this->loader->add_action( 'fl_builder_after_render_content', $plugin_hook_mgr, 'remove_bb_frontend_content_wrap' );
 		$this->loader->add_filter( 'fl_builder_template_path', $plugin_hook_mgr, 'remove_bb_frontend_row_and_module_wrap', 10, 3 );
 
-		// Add a standard class to all sections.
-		$this->loader->add_filter( 'fl_builder_module_attributes', $plugin_hook_mgr, 'add_class_to_sections', 10, 2 );
+		// Add classes to sections.
+		$this->loader->add_filter( 'fl_builder_module_attributes', $plugin_hook_mgr, 'add_section_classes', 10, 2 );
 
 		// Add in instance CSS for all ST BB modules to handle row background image and colour.
 		$this->loader->add_filter( 'fl_builder_render_css', $plugin_hook_mgr, 'add_instance_css', 10, 4 );

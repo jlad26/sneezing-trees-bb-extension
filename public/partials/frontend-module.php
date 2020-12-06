@@ -12,44 +12,17 @@ if ( ! isset( $module ) ) {
 // Define module parameters.
 $mod_params = get_object_vars( $settings );
 
-// If this is a full BB module...
-if ( ! empty( $module->form ) ) {
-
-	// Get BB section classes.
-	ob_start();
-	FLBuilder::render_module_attributes( $module );
-	$mod_params['section_attributes'] = ltrim( ob_get_clean() );
-
-} else { // ...this is an ACF version.
-
-	$acf_section_classes = apply_filters( 'st_bb_section_classes', array( 'st-bb-section', 'fl-node-' . $module->node ), $module );
-	$mod_params['section_attributes'] = 'class="' . implode( ' ', $acf_section_classes ) . '"';
-
-}
-
-// Set defaults.
-$defaults = array(
-    'button_classes'        =>  '',
-    'button_url'            =>  '#',
-);
-foreach ( $defaults as $param => $default ) {
-    if ( ! isset( $mod_params[ $param ] ) ) {
-        $mod_params[ $param ] = $default;
-    }
-}
-
 // Work out whether we are on back end editing end or not.
-$on_backend = is_admin() || isset( $_GET['fl_builder'] );
+$is_edit_mode = is_admin() || isset( $_GET['fl_builder'] );
 
 /**
  * Add classes to the section using the filter fl_builder_module_attributes.
- * By default the class st-bb-section is added.
  */ ?>
-<section <?php echo $mod_params['section_attributes']; ?>>
+<section <?php ST_BB_Module_Manager::render_section_classes( $module ); ?>>
 	
 	<?php
 	// If we are on the backend we need to include the BB wrapper to support editing functionality.
-	if ( $on_backend ) :
+	if ( $is_edit_mode ) :
 	?>
 	<div class="fl-module-content fl-node-content">
 	<?php endif; ?>
@@ -67,7 +40,7 @@ $on_backend = is_admin() || isset( $_GET['fl_builder'] );
 		/**
 		 * The module content container.
 		 */ ?>
-		<div class="<?php if ( is_subclass_of( $module, 'ST_BB_MODULE' ) ) $module->module_classes( 'module' ); ?>">
+		<div class="<?php if ( is_subclass_of( $module, 'ST_BB_MODULE' ) ) $module->container_classes(); ?>">
 			<?php // Render module content.
 			ob_start();
 			include apply_filters( 'st_bb_module_frontend_file', $module->dir . 'includes/frontend.php', $module );
@@ -76,7 +49,7 @@ $on_backend = is_admin() || isset( $_GET['fl_builder'] );
 			?>
 		</div>
 	
-	<?php if ( $on_backend ) : ?>
+	<?php if ( $is_edit_mode ) : ?>
 	</div>
 	<?php endif; ?>
 	
