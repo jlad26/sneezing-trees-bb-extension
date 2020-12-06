@@ -34,8 +34,10 @@ $is_edit_mode = is_admin() || isset( $_GET['fl_builder'] );
 		<?php if ( ! empty( $mod_params['row_image_src'] ) ) : ?>
 		<img class="st-bb-background-img" src="<?php echo esc_url( $mod_params['row_image_src'] ); ?>" alt="<?php esc_attr_e( $mod_params['row_image_alt'] ); ?>" />
 		<?php endif; ?>
+		<?php if ( ! empty( $mod_params['row_bg_color'] ) ) : ?>
 		<div class="st-bb-row-overlay"></div>
-		
+		<?php endif; ?>
+
 		<?php
 		/**
 		 * The module content container.
