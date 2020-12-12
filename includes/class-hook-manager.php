@@ -215,7 +215,11 @@ class ST_BB_Hook_Manager {
 	 */
 	public function add_section_classes( $attrs, $module ) {
 		if ( isset( $module->config['section_classes'] ) ) {
-			$attrs['class'] = array_merge( $attrs['class'],  $module->config['section_classes'] );
+			$section_classes = array();
+			foreach ( $module->config['section_classes'] as $section_class ) {
+				$section_classes[] = $section_class;
+			}
+			$attrs['class'] = array_merge( $attrs['class'],  $section_classes );
 		}
 		return $attrs;
 	}

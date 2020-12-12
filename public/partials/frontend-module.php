@@ -9,11 +9,32 @@ if ( ! isset( $module ) ) {
 	return false;
 }
 
-// Define module parameters.
-$mod_params = get_object_vars( $settings );
-
 // Work out whether we are on back end editing end or not.
 $is_edit_mode = is_admin() || isset( $_GET['fl_builder'] );
+
+/**
+ * Work out container classes. If one of our modules, add in the the required classes.
+ * If a standard BB module, just set as "container" to give backward compatibility for page / post
+ * content that has been automatically been placed in a BB classic editor module.
+ */
+if ( is_subclass_of( $module, 'ST_BB_MODULE' ) ) {
+	$rendered_container_classes = $module->container_classes( $echo = false );
+} else {
+	$container_classes = apply_filters( 'st_bb_module_container_classes',
+		array( 'container' => 'container' ),
+		$module
+	);
+	$rendered_container_classes = implode( ' ',  $container_classes );
+}
+
+// Only render the container if it has some classes.
+$container = array(
+	'open'	=>	$rendered_container_classes ? '<div class="' . esc_attr( $rendered_container_classes ) . '">' : '',
+	'close'	=>	$rendered_container_classes ? '</div>' : ''
+);
+
+// Define module parameters.
+$mod_params = get_object_vars( $settings );
 
 /**
  * Add classes to the section using the filter fl_builder_module_attributes.
@@ -42,14 +63,14 @@ $is_edit_mode = is_admin() || isset( $_GET['fl_builder'] );
 		/**
 		 * The module content container.
 		 */ ?>
-		<div class="<?php if ( is_subclass_of( $module, 'ST_BB_MODULE' ) ) $module->container_classes(); ?>">
+		<?php echo $container['open']; ?>
 			<?php // Render module content.
 			ob_start();
 			include apply_filters( 'st_bb_module_frontend_file', $module->dir . 'includes/frontend.php', $module );
 			$out = ob_get_clean();
 			echo apply_filters( 'st_bb_render_module_content', $out, $module );
 			?>
-		</div>
+		<?php echo $container['close']; ?>
 	
 	<?php if ( $is_edit_mode ) : ?>
 	</div>

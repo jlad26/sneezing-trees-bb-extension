@@ -72,11 +72,17 @@ abstract class ST_BB_Module extends FLBuilderModule {
             $config = array_merge(  $config, $args['config'] );
         }
 
-        // Add additional required classes.
+        // Add additional required classes, using matched key and value for easy unsetting using filters.
         $class_types = array( 'container', 'section' );
         $required_classes = array(
-            'container_classes' =>  array( 'st-bb-module-container', 'container' ),
-            'section_classes'   =>  array( 'st-bb-section', $this->slug )
+            'container_classes' =>  array( 
+                'st-bb-module-container'    =>  'st-bb-module-container',
+                'container'                 =>  'container'
+            ),
+            'section_classes'   =>  array( 
+                'st-bb-section' =>  'st-bb-section',
+                $this->slug     =>  $this->slug
+            )
         );
         foreach ( $class_types as $class_type ) {
             if ( ! isset( $config[ $class_type . '_classes' ] ) ) {
@@ -102,7 +108,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
     }
 
     /**
-	 * Get module classes.
+	 * Get module container classes.
 	 *
 	 * @since    1.0.0
 	 */
@@ -112,6 +118,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
         if ( isset( $this->config['container_classes'] ) ) {
             $classes = array_merge( $classes, $this->config['container_classes'] );
         }
+        $classes = apply_filters( 'st_bb_module_container_classes', $classes, $this );
         $out = implode( ' ', $classes );
         if ( $echo ) {
             echo esc_attr( $out );
