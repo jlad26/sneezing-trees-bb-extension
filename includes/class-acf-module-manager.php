@@ -1042,7 +1042,7 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 * Get modules content for display. This is function only to be used when hooking to a
+	 * Get modules content for display. This function is only to be used when hooking to a
 	 * theme's action or filter, as it only gets modules that are not hooked to the_content. 
 	 *
 	 * @since    1.0.0
