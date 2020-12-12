@@ -128,6 +128,9 @@ class ST_BB_ACF_Module_Manager {
 		add_action( 'save_post', array( $this, 'update_registered_content_modules' ) );
 		add_action( 'delete_post', array( $this, 'update_registered_content_modules' ) );
 
+		// When updating a content module title, update any corresponding fixed content editor title.
+		add_action( 'save_post_st-content-module', array( $this, 'update_fixed_content_editor_title' ), 10, 3 );
+
 		/*====================================================================================================*/
 		/* Content editors */
 		
@@ -988,6 +991,28 @@ class ST_BB_ACF_Module_Manager {
 		}
 
 		update_option( 'st_acf_module_registration', $module_registration );
+
+	}
+
+	/**
+	 * When updating a content module title, update any corresponding fixed content editor title.
+	 *
+	 * @since    1.0.0
+	 * @hooked	save_post_st-content-module
+	 */
+	public function update_fixed_content_editor_title( $post_id, $post, $update ) {
+
+		if ( ! $update ) {
+			return false;
+		}
+
+		// If this content module has a fixed content editor, update the title
+		if ( $fc_editor_id = get_post_meta( $post_id, 'st_fc_editor_id', true ) ) {
+			wp_update_post( array(
+				'ID'			=>	$fc_editor_id,
+				'post_title'	=>	$post->post_title
+			) );
+		}
 
 	}
 
