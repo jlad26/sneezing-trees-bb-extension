@@ -199,6 +199,17 @@ class ST_BB_Hook_Manager {
 	}
 
 	/**
+	 * Set the location of the module html file for when saving content to the standard DB location.
+	 * @hooked	fl_builder_render_module_html
+	 */
+	public static function render_modules_html_file( $path, $type, $settings, $module ) {
+		if ( is_subclass_of( $module, 'ST_BB_Module' ) ) {
+			$path = ST_BB_DIR . 'public/partials/frontend-module.php';
+		}
+		return $path;
+	}
+
+	/**
 	 * Add classes to sections.
 	 * @hooked	fl_builder_module_attributes
 	 */
