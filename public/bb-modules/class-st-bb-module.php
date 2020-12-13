@@ -101,9 +101,17 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 * @since    1.0.0
 	 */
     public function get_section_classes() {
+        
+        // Get classes generic to this type of module.
         if ( isset ( $this->config['section_classes'] ) ) {
             $classes = $this->config['section_classes'];
         }
+
+        // Get any classes specific to this module.
+        if ( isset ( $this->settings->section_classes ) ) {
+            $classes = array_merge( $classes, explode( ' ', $this->settings->section_classes ) );
+        }
+
         return $classes;
     }
 
@@ -232,6 +240,24 @@ abstract class ST_BB_Module extends FLBuilderModule {
                                     'screen'        =>  __( 'Full screen', ST_BB_TD ),
                                 ),
                                 'sanitize'		=>	'sanitize_text_field',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            'styling'      => array(
+                'title'         =>  __( 'Styling', ST_BB_TD ),
+                'sections'		=>  array(
+                    'css_classes'     =>  array(
+                        'title'         =>  __( 'CSS classes', ST_BB_TD ),
+                        'fields'        =>  array(
+                            'section_classes'  =>  array(
+                                'type'          =>  'text',
+                                'label'         => __( 'Section classes', ST_BB_TD ),
+                                'default'       =>  '',
+                                'preview'       =>  false,
+                                'sanitize'		=>	'sanitize_text_field',
+                                'help'          =>  __( 'Classes to add to the section element. Separate with spaces.', ST_BB_TD ),
                             ),
                         ),
                     ),

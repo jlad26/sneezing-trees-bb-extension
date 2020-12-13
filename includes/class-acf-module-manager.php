@@ -1127,6 +1127,7 @@ class ST_BB_ACF_Module_Manager {
 		// Get the class name.
 		$module_class = get_class( $registered_modules[ $module_fields['choose_st_bb_module'] ] );
 		$module = new $module_class();
+		$module->settings = $settings;
 		$module->node = $content_module_id . '-' . $post_id;
 		
 		ob_start();

@@ -214,11 +214,25 @@ class ST_BB_Hook_Manager {
 	 * @hooked	fl_builder_module_attributes
 	 */
 	public function add_section_classes( $attrs, $module ) {
+		
+		$section_classes = array();
+
+		// Add in classes generic to this module type.
 		if ( isset( $module->config['section_classes'] ) ) {
-			$section_classes = array();
 			foreach ( $module->config['section_classes'] as $section_class ) {
 				$section_classes[] = $section_class;
 			}
+		}
+
+		// Add in classes specific to this instance.
+		if ( isset( $module->settings->section_classes ) ) {
+			if ( ! empty( $module->settings->section_classes ) ) {
+				$instance_classes = explode( ' ', $module->settings->section_classes );
+				$section_classes = array_merge( $section_classes, $instance_classes );
+			}
+		}
+
+		if ( ! empty( $section_classes ) ) {
 			$attrs['class'] = array_merge( $attrs['class'],  $section_classes );
 		}
 		return $attrs;
