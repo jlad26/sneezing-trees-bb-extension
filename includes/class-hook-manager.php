@@ -199,6 +199,27 @@ class ST_BB_Hook_Manager {
 	}
 
 	/**
+	 * Set defaults on vertical spacing.
+	 * @hooked	fl_builder_register_settings_form
+	 */
+	public static function add_padding_settings( $form, $id ) {
+
+		// Only add if there is a default padding to add.
+		if ( ! isset( FlBuilderModel::$modules[ $id ]->config['default_padding'] ) ) {
+			return $form;
+		}
+
+		$module_padding_default = FlBuilderModel::$modules[ $id ]->config['default_padding'];
+		
+		// Set the default padding
+		$form['styling']['sections']['layout']['fields']['vspace']['options'][ $module_padding_default ] .= ' (' . __( 'Default', ST_BB_TD ) . ')';
+		$form['styling']['sections']['layout']['fields']['vspace']['default'] = $module_padding_default;
+		
+		return $form;
+
+	}
+
+	/**
 	 * Set the location of the module html file for when saving content to the standard DB location.
 	 * @hooked	fl_builder_render_module_html
 	 */
@@ -229,6 +250,13 @@ class ST_BB_Hook_Manager {
 			if ( ! empty( $module->settings->section_classes ) ) {
 				$instance_classes = explode( ' ', $module->settings->section_classes );
 				$section_classes = array_merge( $section_classes, $instance_classes );
+			}
+		}
+
+		// Add in padding class.
+		if ( isset( $module->settings->vspace ) ) {
+			if ( 'none' != $module->settings->vspace ) {
+				$section_classes = array_merge( $section_classes, array( $module->settings->vspace ) );
 			}
 		}
 

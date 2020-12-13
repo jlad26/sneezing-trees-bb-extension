@@ -66,7 +66,9 @@ abstract class ST_BB_Module extends FLBuilderModule {
     protected function set_config( $args ) {
 
         // Set generic config here that can be over-written
-        $config = array();
+        $config = array(
+            'default_padding'   =>  'st-bb-pad-y-1'
+        );
         
         if ( isset( $args['config'] ) ) {
             $config = array_merge(  $config, $args['config'] );
@@ -110,6 +112,13 @@ abstract class ST_BB_Module extends FLBuilderModule {
         // Get any classes specific to this module.
         if ( isset ( $this->settings->section_classes ) ) {
             $classes = array_merge( $classes, explode( ' ', $this->settings->section_classes ) );
+        }
+
+        // Get the padding class.
+        if ( isset ( $this->settings->vspace ) ) {
+            if ( 'none' != $this->settings->vspace ) {
+                $classes = array_merge( $classes, array( $this->settings->vspace ) );
+            }
         }
 
         return $classes;
@@ -228,6 +237,11 @@ abstract class ST_BB_Module extends FLBuilderModule {
                             ),
                         ),
                     ),
+                ),
+            ),
+            'styling'      => array(
+                'title'         =>  __( 'Styling', ST_BB_TD ),
+                'sections'		=>  array(
                     'layout'     =>  array(
                         'title'         =>  __( 'Layout', ST_BB_TD ),
                         'fields'        =>  array(
@@ -241,13 +255,19 @@ abstract class ST_BB_Module extends FLBuilderModule {
                                 ),
                                 'sanitize'		=>	'sanitize_text_field',
                             ),
+                            'vspace'    =>  array(
+                                'type'		=> 'select',
+                                'label'		=> __( 'Vertical Spacing', ST_BB_TD ),
+                                'options'	=> array(
+                                    'none'          =>  __( 'None', ST_BB_TD ),
+                                    'st-bb-pad-y-1' =>	__( 'Small', ST_BB_TD ),
+                                    'st-bb-pad-y-2'	=>	__( 'Medium', ST_BB_TD ),
+                                    'st-bb-pad-y-3'	=>	__( 'Large', ST_BB_TD ),
+                                    'st-bb-pad-y'   =>	__( 'X-Large', ST_BB_TD ),
+                                ),
+                            ),
                         ),
                     ),
-                ),
-            ),
-            'styling'      => array(
-                'title'         =>  __( 'Styling', ST_BB_TD ),
-                'sections'		=>  array(
                     'css_classes'     =>  array(
                         'title'         =>  __( 'CSS classes', ST_BB_TD ),
                         'fields'        =>  array(

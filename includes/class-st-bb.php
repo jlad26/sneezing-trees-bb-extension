@@ -188,6 +188,9 @@ class ST_BB {
 		$this->loader->add_action( 'fl_builder_after_render_content', $plugin_hook_mgr, 'remove_bb_frontend_content_wrap' );
 		$this->loader->add_filter( 'fl_builder_template_path', $plugin_hook_mgr, 'remove_bb_frontend_row_and_module_wrap', 10, 3 );
 
+		// Set defaults on vertical spacing.
+		$this->loader->add_filter( 'fl_builder_register_settings_form', $plugin_hook_mgr, 'add_padding_settings', 10, 2 );
+		
 		// Set the location of the module html file for when saving content to the standard DB location.
 	 	$this->loader->add_filter( 'fl_builder_render_module_html', $plugin_hook_mgr, 'render_modules_html_file', 10, 4 );
 		
