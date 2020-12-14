@@ -46,6 +46,17 @@ img.st-bb-background-img {
 }
 
 /*===========================================================================================*/
+/* Alignment */
+
+.st-bb-text-align-center {
+    text-align: center;
+}
+
+.st-bb-text-align-right {
+    text-align: right;
+}
+
+/*===========================================================================================*/
 /* Beaver Builder */
 
 /* Hide settings */
