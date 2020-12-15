@@ -697,10 +697,9 @@ class ST_BB_ACF_Module_Manager {
 				break;
 
 			case 'photo' :
-				$acf_field['name'] = $acf_field['name'] . '_src';
 				$acf_field = array_merge( $acf_field, array(
 					'type' => 'image',
-					'return_format' => 'url',
+					'return_format' => 'id',
 					'preview_size' => 'medium',
 					'library' => 'all',
 					'min_width' => '',

@@ -36,6 +36,11 @@ $container = array(
 // Define module parameters.
 $mod_params = get_object_vars( $settings );
 
+$image_attr = array(
+	'class'	=>	apply_filters( 'st_bb_background_image_classesl', 'st-bb-background-img', $module, $settings ),
+	'alt'	=>	$mod_params['row_image_alt']
+);
+
 /**
  * Add classes to the section using the filter fl_builder_module_attributes.
  */ ?>
@@ -52,8 +57,8 @@ $mod_params = get_object_vars( $settings );
 		/**
 		 * The row background image and overlay.
 		 */ ?>
-		<?php if ( ! empty( $mod_params['row_image_src'] ) ) : ?>
-		<img class="st-bb-background-img" src="<?php echo esc_url( $mod_params['row_image_src'] ); ?>" alt="<?php esc_attr_e( $mod_params['row_image_alt'] ); ?>" />
+		<?php if ( ! empty( $mod_params['row_image'] ) ) : ?>
+		<?php echo wp_get_attachment_image( $mod_params['row_image'], 'full', false, $image_attr ); ?>
 		<?php endif; ?>
 		<?php if ( ! empty( $mod_params['row_bg_color'] ) ) : ?>
 		<div class="st-bb-row-overlay"></div>
