@@ -260,6 +260,13 @@ class ST_BB_Hook_Manager {
 			}
 		}
 
+		// Add in vertical centering if set to full screen.
+		if ( isset( $module->settings->row_height ) ) {
+			if ( 'screen' == $module->settings->row_height ) {
+				$section_classes = array_merge( $section_classes, array( 'd-flex', 'align-items-center' ) );
+			}
+		}
+
 		if ( ! empty( $section_classes ) ) {
 			$attrs['class'] = array_merge( $attrs['class'],  $section_classes );
 		}

@@ -122,6 +122,13 @@ abstract class ST_BB_Module extends FLBuilderModule {
             }
         }
 
+        // Add in vertical centering if set to full screen.
+		if ( isset( $this->settings->row_height ) ) {
+			if ( 'screen' == $this->settings->row_height ) {
+				$classes = array_merge( $classes, array( 'd-flex', 'align-items-center' ) );
+			}
+		}
+
         return $classes;
     }
 
