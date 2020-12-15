@@ -599,7 +599,11 @@ class ST_BB_ACF_Module_Manager {
 	public function populate_st_bb_module_choice( $field ) {
 		$field['choices'] = array();
 		foreach ( ST_BB_Module_Manager::get_registered_modules() as $slug => $module ) {
-			$field['choices'][ $slug ] = $module->name;
+			if ( isset( $module->config['acf_version'] ) ) {
+				if ( $module->config['acf_version'] ) {
+					$field['choices'][ $slug ] = $module->name;
+				}
+			}
 		}
 		return $field;
 	}

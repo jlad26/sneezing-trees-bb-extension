@@ -30,7 +30,8 @@ class ST_BB_Hero_Module extends ST_BB_Module {
             'icon'              =>  'button.svg',
             'partial_refresh'   =>  true,
             'config'            =>  array(
-                'section_classes'    =>  array( 'd-flex', 'align-items-center' )
+                'section_classes'   =>  array( 'd-flex', 'align-items-center' ),
+                'acf_version'       =>  true
             )
         ) );
 
