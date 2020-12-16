@@ -67,7 +67,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
 
         // Set generic config here that can be over-written
         $config = array(
-            'default_padding'   =>  'st-bb-pad-y-1',
+            'default_padding'   =>  'none',
             'acf_version'       =>  false
         );
         
