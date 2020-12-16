@@ -165,24 +165,67 @@ abstract class ST_BB_Module extends FLBuilderModule {
         $generic_config = self::get_generic_config();
         $config = static::get_module_config();
 
-        // Add in generic config sections if not overridden by module config.
+        // Add in generic config sections if not already set by module config.
         
         if ( empty( $generic_config ) ) {
             return $config;
         }
 
-        foreach ( $generic_config as $tab => $tab_settings ) {
-            if ( ! isset( $config[ $tab ] ) ) {
-                $config[ $tab ] = $tab_settings;
+        foreach ( $generic_config as $tab_key => $generic_tab_contents ) {
+            
+            // If tab only exists in generic config...
+            if ( ! isset( $config[ $tab_key ] ) ) {
+                
+                // Set config to generic version.
+                $config[ $tab_key ] = $generic_tab_contents;
+            
+            // ...but if tab exists in both generic and module...
             } else {
 
-                // Add in tab title if needed.
-                if (
-                    isset( $generic_config[ $tab ]['title'] ) &&
-                    ! isset( $config[ $tab ]['title'] )
-                ) {
-                    $config[ $tab ]['title'] = $generic_config[ $tab ]['title'];
+                $default_title = apply_filters( 'st_bb_module_settings_default_title', __( 'General', ST_BB_TD ) );
+                
+                // Use module tab title as priority, fallback to generic.
+                if ( ! isset( $config[ $tab_key ]['title'] ) ) {
+                    if ( isset( $generic_config[ $tab_key ]['title'] ) ) {
+                        $config[ $tab_key ]['title'] = $generic_config[ $tab_key ]['title'];
+                    } else {
+                        $config[ $tab_key ]['title'] = $default_title;
+                    }
                 }
+
+                // Cycle through sections.
+                $sections = isset( $generic_tab_contents['sections'] ) ? $generic_tab_contents['sections'] : array();
+                foreach ( $sections as $section_key => $section_contents ) {
+
+                    // Set whole section if not set by module.
+                    if ( ! isset( $config[ $tab_key ]['sections'][ $section_key ] ) ) {
+                        $config[ $tab_key ]['sections'][ $section_key ] = $section_contents;
+                    } else {
+
+                        // Use module section title as priority, fallback to generic.
+                        if ( ! isset( $config[ $tab_key ]['sections'][ $section_key ]['title'] ) ) {
+                            if ( isset( $section_contents['title'] ) ) {
+                                $config[ $tab_key ]['sections'][ $section_key ]['title'] = $section_contents['title'];
+                            } else {
+                                $config[ $tab_key ]['sections'][ $section_key ]['title'];
+                            }
+                        }
+
+                        // Cycle through the fields.
+                        $fields = isset( $section_contents['fields'] ) ? $section_contents['fields'] : array();
+                        foreach ( $fields as $field_key => $field_contents ) {
+
+                            // Set whole field if not set by section.
+                            if ( ! isset( $config[ $tab_key ]['sections'][ $section_key ]['fields'][ $field_key ] ) ) {
+                                $config[ $tab_key ]['sections'][ $section_key ]['fields'][ $field_key ] = $field_contents;
+                            }
+
+                        }
+
+                    }
+
+                }
+
 
             }
         }
@@ -255,7 +298,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
                         'fields'        =>  array(
                             'row_height'  =>  array(
                                 'type'          =>  'select',
-                                'label'         => __( 'Height', ST_BB_TD ),
+                                'label'         => __( 'Minimum Height', ST_BB_TD ),
                                 'default'       =>  'content',
                                 'options'       =>  array(
                                     'content'       =>  __( 'Fit content', ST_BB_TD ),
