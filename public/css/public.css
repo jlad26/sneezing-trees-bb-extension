@@ -70,6 +70,11 @@ a[href="#fl-builder-settings-tab-advanced"],
     display: none !important;
 }
 
+/* Hide image size choices */
+.fl-photo-preview select {
+    display: none !important;
+}
+
 /* Make Flex work in Bootstrap when on backend */
 .fl-module-content {
     width: 100%;
