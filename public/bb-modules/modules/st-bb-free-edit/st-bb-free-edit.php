@@ -26,11 +26,10 @@ class ST_BB_Free_Edit_Module extends ST_BB_Module {
     public function __construct() {
         parent::__construct( array(
             'name'              =>  __( 'Free Edit', ST_BB_TD ),
-            'description'       =>  __( 'Free editing using the classic WP editor', ST_BB_TD ),
+            'description'       =>  __( 'Free editing', ST_BB_TD ),
             'icon'              =>  'text.svg',
             'partial_refresh'   =>  true,
             'config'            =>  array(
-                'section_classes'   =>  array( 'd-flex', 'align-items-center' ),
                 'acf_version'       =>  true
             )
         ) );
