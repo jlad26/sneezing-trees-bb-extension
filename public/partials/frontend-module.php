@@ -38,7 +38,7 @@ $mod_params = get_object_vars( $settings );
 
 $image_attr = array(
 	'class'	=>	apply_filters( 'st_bb_background_img_classes', 'st-bb-background-img', $module, $settings ),
-	'alt'	=>	$mod_params['row_image_alt'],
+	'alt'	=>	isset( $mod_params['row_image_alt'] ) ? $mod_params['row_image_alt'] : '',
 	'sizes'	=>	'100vw'
 );
 
