@@ -57,7 +57,7 @@ class ST_BB_Free_Edit_Module extends ST_BB_Module {
                                 'media_buttons'	=>  true,
                                 'preview'		=> array(
                                     'type'		=> 'text',
-                                    'selector'	=> '.st-bb-free-edit',
+                                    'selector'	=> '.st-bb-free-edit-container',
                                 ),
                                 'sanitize'		=>	'wp_kses_post',
                             ),
