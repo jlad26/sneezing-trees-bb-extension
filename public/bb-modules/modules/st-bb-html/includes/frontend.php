@@ -1,6 +1,6 @@
 <?php
 /**
- * Free Edit module template.
+ * Html module template.
  * @since      1.0.0
  */
 
