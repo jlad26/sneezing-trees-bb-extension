@@ -17,7 +17,7 @@ $mod_params['text_content'] = wpautop( $wp_embed->autoembed( $mod_params['text_c
  */
 $mod_params['image_attr'] = array(
 	'alt'	=>	isset( $mod_params['row_image_alt'] ) ? $mod_params['row_image_alt'] : '',
-	'sizes'	=>	'(min-width: 1200px) 445px, (min-width: 992px) 450px, (min-width: 768px) 330px, (min-width: 576px) 510px, calc(100vw - 30px)'
+	'sizes'	=>	'(min-width: 1200px) 445px, (min-width: 992px) 450px, (min-width: 768px) 690px, (min-width: 576px) 510px, calc(100vw - 30px)'
 );
 
 // Set column ordering classes.
@@ -50,10 +50,10 @@ $order_classes['second_col'] = implode( ' ', $order_classes['second_col'] );
 
 ?>
 <div class="row">
-    <div class="st-bb-img-col col-md-6 col-xl-5 offset-xl-1 <?php echo $order_classes['first_col']; ?>">
+    <div class="st-bb-img-col col-lg-6 col-xl-5 offset-xl-1 <?php echo $order_classes['first_col']; ?>">
         <?php include ST_BB_DIR . 'public/partials/figure.php'; ?>
     </div>
-    <div class="st-bb-text-col col-md-6 col-xl-5 <?php echo $order_classes['second_col']; ?>">
+    <div class="st-bb-text-col col-lg-6 col-xl-5 <?php echo $order_classes['second_col']; ?>">
     <?php if ( $mod_params['text_content'] ) : ?>
         <div class="st-bb-text"><?php echo $mod_params['text_content']; ?></div>
     <?php endif; ?>
