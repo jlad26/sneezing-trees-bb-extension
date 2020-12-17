@@ -154,6 +154,26 @@ abstract class ST_BB_Module extends FLBuilderModule {
     }
 
     /**
+	 * Returns button link rel based on settings
+     * 
+	 * @since 1.0.0
+	 */
+	public function get_rel() {
+        $rel = array();
+        if ( 'yes' == $this->settings->button_new_window ) {
+            $rel[] = 'noopener';
+        }
+		if ( 'yes' == $this->settings->button_nofollow ) {
+			$rel[] = 'nofollow';
+		}
+		$rel = implode( ' ', $rel );
+		if ( $rel ) {
+			$rel = ' rel="' . $rel . '" ';
+		}
+		return $rel;
+	}
+
+    /**
 	 * Get the settings to be applied on module registration.
      * Adds to or overrides the generic module settings with the child module settings.
 	 *

@@ -88,6 +88,8 @@ class ST_BB_Module_Manager {
 	/**
 	 * Render module section classes, putting together the BB module classes if
 	 * they exist and the section classes.
+	 * 
+	 * @since    1.0.0
 	 */
 	public static function render_section_classes( $module ) {
 		
@@ -100,6 +102,143 @@ class ST_BB_Module_Manager {
 				echo 'class="' . esc_attr( implode( ' ',  $section_classes ) ) . ' fl-node-' . $module->node . '"';
 			}
 		}
+	}
+
+	/**
+	 * Get settings array for a button.
+	 * 
+	 * @since    1.0.0
+	 * 
+	 * @param	string	$tab		the tab that the fields are in.
+	 * @param	string	$section	the section the fields are in.
+	 * @return	array
+	 */
+	public static function get_button_settings_fields( $tab = 'module', $section = 'button' ) {
+		
+		// Generate a dropdown for each available post type.
+		$post_types = ST_BB_Utility::get_post_types();
+
+		$posts = $dropdown_fields = array();
+
+		// Make the first choice a standard url
+		$link_types = array(
+			'url'		=> __( 'URL', ST_BB_TD ),
+			'anchor'	=> __( 'Anchor', ST_BB_TD ),
+		);
+
+		$toggle_fields = array(
+			'url'	=>	array(
+				'fields'    =>  array( 'button_url', 'button_new_window', 'button_nofollow' ),
+				'sections'  =>  array( 'button' ),
+				'tabs'      =>  array( 'module' ),
+			),
+			'anchor'	=>	array(
+				'fields'    =>  array( 'button_anchor_target' ),
+				'sections'  =>  array( 'button' ),
+				'tabs'      =>  array( 'module' ),
+			),
+		);
+
+		// Add in link type and toggle field for each post type.
+		foreach ( $post_types as $post_type => $post_type_object ) {
+
+			$link_types[ $post_type ] = $post_type_object->labels->singular_name;
+			
+			$toggle_fields[ $post_type ] = array(
+				'fields'	=>	array( 'select_' . $post_type . '_id' ),
+				'sections'	=>	array( $section ),
+				'tabs'		=>	array( $tab )
+			);
+			
+			$args = array(
+				'post_type'			=>	$post_type,
+				'post_status'		=>	'publish',
+				'orderby'			=>	'title',
+				'order'				=>	'ASC',
+				'posts_per_page'	=>	-1,
+			);
+
+			// Get the posts for this post type.
+			$posts = get_posts( $args );
+			if ( $posts ) {
+				
+				// Make the dropdown for this post type.
+				$options = array();
+				foreach ( $posts as $post ) {
+					$options['id_' . $post->ID] = $post->post_title;
+				}
+
+				$dropdown_fields['select_' . $post_type . '_id'] = array(
+					'type'          => 'select',
+					'label'         => $post_type_object->labels->singular_name,
+					'default'       => '',
+					'options'       =>  $options,
+					'sanitize'		=>	'sanitize_text_field',
+				);
+
+			}
+
+		}
+		
+		$fields = array(
+			'button_text'	=> array(
+				'type'          => 'text',
+				'label'         => 'Text',
+				'default'       => '',
+				'preview'	=> array(
+					'type'		=> 'text',
+					'selector'	=> '.st-bb-btn',
+				),
+				'sanitize'	=>	'sanitize_text_field',
+			),
+			'button_url_type'	=> array(
+				'type'          =>	'select',
+				'label'         =>	__( 'Link type', ST_BB_TD ),
+				'default'       =>	'url',
+				'options'       =>  $link_types,
+				'toggle'		=>  $toggle_fields,
+				'sanitize'		=>	'sanitize_text_field',
+			),
+			'button_url'	=> array(
+				'type'          =>	'link',
+				'label'         =>	__( 'Link', ST_BB_TD ),
+				'default'       =>	'',
+				'sanitize'		=>	'esc_url_raw',
+			),
+			'button_new_window'	=> array(
+				'type'          =>	'select',
+				'label'         =>	__( 'New window', ST_BB_TD ),
+				'default'       =>	'no',
+				'options'       =>  array(
+					'no'	=>	__( 'No', ST_BB_TD ),
+					'yes'	=>	__( 'Yes', ST_BB_TD ),
+				),
+				'help'	=>	__( 'Choose Yes to make the link open in a new tab or window.', ST_BB_TD ),
+				'sanitize'		=>	'sanitize_text_field',
+			),
+			'button_nofollow'	=> array(
+				'type'          =>	'select',
+				'label'         =>	__( 'No follow', ST_BB_TD ),
+				'default'       =>	'no',
+				'options'       =>  array(
+					'no'	=>	__( 'No', ST_BB_TD ),
+					'yes'	=>	__( 'Yes', ST_BB_TD ),
+				),
+				'help'	=>	__( 'Choose Yes to indicate to search engines that the link links to an unendorsed document, like a paid link.', ST_BB_TD ),
+				'sanitize'		=>	'sanitize_text_field',
+			),
+			'button_anchor_target'	=> array(
+				'type'          =>	'text',
+				'label'         =>	__( 'Anchor target', ST_BB_TD ),
+				'default'       =>	'#',
+				'sanitize'		=>	'sanitize_text_field',
+			),
+		);
+
+		$fields = array_merge( $fields, $dropdown_fields );
+
+		return $fields;
+
 	}
 
 }

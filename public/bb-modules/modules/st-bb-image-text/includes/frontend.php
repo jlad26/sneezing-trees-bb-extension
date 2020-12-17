@@ -4,9 +4,6 @@
  * @since      1.0.0
  */
 
-// Set button classes.
-$button_classes = apply_filters( 'st_bb_button_classes', 'st-bb-btn', $module );
-
 // Enable embedding.
 global $wp_embed;
 $mod_params['text_content'] = wpautop( $wp_embed->autoembed( $mod_params['text_content'] ) );
@@ -58,13 +55,7 @@ $order_classes['second_col'] = implode( ' ', $order_classes['second_col'] );
         <?php if ( $mod_params['text_content'] ) : ?>
             <div class="st-bb-text"><?php echo $mod_params['text_content']; ?></div>
         <?php endif; ?>
-        <?php if ( $mod_params['button_text'] && $mod_params['button_url'] ) : ?>
-            <p>
-                <a class="<?php esc_attr_e( $button_classes ); ?>" href="<?php echo esc_url( $mod_params['button_url'] ); ?>">
-                    <?php esc_html_e( $mod_params['button_text'] ); ?>
-                </a>
-            </p>
-        <?php endif; ?>
+        <?php include ST_BB_DIR . 'public/partials/button.php'; ?>
         </div>
     </div>
 </div>

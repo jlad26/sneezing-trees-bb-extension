@@ -454,6 +454,13 @@ class ST_BB_ACF_Module_Manager {
 					foreach ( $content_editor_fields['fields'][ $key ]['sub_fields'] as $sub_field_key => $sub_field ) {
 						$content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['key'] .= '**' . $content_module_id;
 						$content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['name'] .= '**' . $content_module_id;
+						
+						// Handle conditional logic settings.
+						if ( $content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['conditional_logic'] ) {
+							// NB works only with one condition - which is acceptable as BB will only set one condition.
+							$content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['conditional_logic'][0][0]['field'] .= '**' . $content_module_id;					
+						}
+						
 					}
 				}
 
@@ -615,11 +622,8 @@ class ST_BB_ACF_Module_Manager {
 	 * @hooked acf/load_field/name=acf_module_location_post_type
 	 */
 	public function populate_post_type_choice( $field ) {
-		$field['choices'] = array();
 		$post_types = ST_BB_Utility::get_post_types();
-		foreach ( $post_types as $name => $post_type ) {
-			$field['choices'][ $name ] = $post_type->labels->singular_name;
-		}
+		$field['choices'] = ST_BB_Utility::get_post_types_dropdown_options( $post_types );
 		return $field;
 	}
 
@@ -678,6 +682,10 @@ class ST_BB_ACF_Module_Manager {
 
 			case 'color' :
 				$acf_field['type'] = 'color_picker';
+				break;
+
+			case 'link' :
+				$acf_field['type'] = 'url';
 				break;
 
 			case 'unit' :
@@ -739,6 +747,9 @@ class ST_BB_ACF_Module_Manager {
 		$field_group['fields'] = array();
 		
 		$form = FLBuilderModel::$modules[ $slug ]->form;
+
+		// BB toggle settings (to be converted to ACF conditional logic).
+		$toggles = array();
 		
 		// Cycle through tabs.
 		foreach ( $form as $tab => $tab_contents ) {
@@ -791,16 +802,47 @@ class ST_BB_ACF_Module_Manager {
 				foreach( $section_contents['fields'] as $field_key => $field_contents ) {
 					$sub_field = self::convert_bb_to_acf_field( $field_key, $field_contents );
 
-					$section_group['sub_fields'][] = $sub_field;
+					$section_group['sub_fields'][ $sub_field['key'] ] = $sub_field;
+
+					// Add any conditional_logic_rules
+					if ( isset( $field_contents['toggle'] ) && ! empty ( $field_contents['toggle'] ) ) {
+						$toggles[ $section_group['key'] ][ $sub_field['key'] ] = $field_contents['toggle'];
+					}
 
 				}
 
-				$field_group['fields'][] = $section_group;
+				$field_group['fields'][ $section_group['key'] ] = $section_group;
 
 			}
 
 		}
-		
+
+		// Add in conditional logic.
+		foreach ( $toggles as $section_group_key => $section_group ) {
+			foreach ( $section_group as $sub_field_key => $field_toggles ) {
+
+				foreach ( $field_toggles as $selected_value => $data ) {
+					$show_fields = $data['fields'];
+					foreach ( $show_fields as $show_field_key ) {
+
+						$sub_field = $field_group['fields'][ $section_group_key ]['sub_fields'][ $show_field_key ];
+						$sub_field['conditional_logic'] = array(
+							array(
+								array(
+									'field'		=> $sub_field_key,
+									'operator'	=> '==',
+									'value'		=> $selected_value,
+								),
+							),
+						);
+						$field_group['fields'][ $section_group_key ]['sub_fields'][ $show_field_key ] = $sub_field;
+
+					}
+				}
+
+			}
+		}
+
 		return $field_group;
 
 	}

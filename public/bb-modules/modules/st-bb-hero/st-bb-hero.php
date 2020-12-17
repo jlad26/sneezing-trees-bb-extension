@@ -71,25 +71,8 @@ class ST_BB_Hero_Module extends ST_BB_Module {
                         ),
                     ),
                     'button'	=> array(
-						'title'		=>	'Button',
-						'fields'	=>	array(
-							'button_text'	=> array(
-								'type'          => 'text',
-								'label'         => 'Text',
-								'default'       => '',
-								'preview'         => array(
-									'type'            => 'text',
-									'selector'        => '.st-bb-btn',
-								),
-								'sanitize'		=>	'sanitize_text_field',
-							),
-							'button_url'	=> array(
-								'type'          => 'text',
-								'label'         => 'Link',
-								'default'       => '',
-								'sanitize'		=>	'esc_url_raw',
-							),
-						),
+						'title'		=>	__( 'Button', ST_BB_TD ),
+						'fields'	=>	ST_BB_Module_Manager::get_button_settings_fields()
 					),
                     'h_align'		=>  array(
                         'title'         =>  __( 'Horizontal alignment', ST_BB_TD ),
