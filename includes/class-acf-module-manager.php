@@ -616,15 +616,7 @@ class ST_BB_ACF_Module_Manager {
 	 */
 	public function populate_post_type_choice( $field ) {
 		$field['choices'] = array();
-		$args = array(
-			'public'	=>	true,
-			'_builtin'	=>	false
-		);
-		$post_types = array(
-			'page'	=>	get_post_type_object( 'page' ),
-			'post'	=>	get_post_type_object( 'post' ),
-		);
-		$post_types = array_merge( $post_types, get_post_types( $args, 'objects' ) );
+		$post_types = ST_BB_Utility::get_post_types();
 		foreach ( $post_types as $name => $post_type ) {
 			$field['choices'][ $name ] = $post_type->labels->singular_name;
 		}

@@ -40,4 +40,24 @@ class ST_BB_Utility {
 
     }
 
+    /**
+	 * Get all post types.
+	 *
+	 * @since    1.0.0
+     * 
+     * @param   bool    $public_only     Whether to return only public post types.
+     * @return  array
+     */
+    public static function get_post_types( $public_only = true ) {
+        $args = array(
+			'public'	=>	$public_only,
+			'_builtin'	=>	false
+		);
+        $post_types = array(
+            'page'	=>	get_post_type_object( 'page' ),
+            'post'	=>	get_post_type_object( 'post' ),
+        );
+        return array_merge( $post_types, get_post_types( $args, 'objects' ) );
+    }
+
 }
