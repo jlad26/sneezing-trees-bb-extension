@@ -21,7 +21,7 @@ if ( 'center' == $mod_params['text_align'] ) {
 }
 
 // Set button classes.
-$button_classes = apply_filters( 'st_bb_hero_button_classes', 'st-bb-btn', $module );
+$button_classes = apply_filters( 'st_bb_button_classes', 'st-bb-btn', $module );
 
 ?>
 <div class="st-bb-hero-content row">

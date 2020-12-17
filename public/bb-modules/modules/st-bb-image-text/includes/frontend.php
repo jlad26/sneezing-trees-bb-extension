@@ -5,7 +5,7 @@
  */
 
 // Set button classes.
-$button_classes = apply_filters( 'st_bb_image_text_button_classes', 'st-bb-btn', $module );
+$button_classes = apply_filters( 'st_bb_button_classes', 'st-bb-btn', $module );
 
 // Enable embedding.
 global $wp_embed;
@@ -54,13 +54,17 @@ $order_classes['second_col'] = implode( ' ', $order_classes['second_col'] );
         <?php include ST_BB_DIR . 'public/partials/figure.php'; ?>
     </div>
     <div class="st-bb-text-col col-lg-6 col-xl-5 <?php echo $order_classes['second_col']; ?>">
-    <?php if ( $mod_params['text_content'] ) : ?>
-        <div class="st-bb-text"><?php echo $mod_params['text_content']; ?></div>
-    <?php endif; ?>
-    <?php if ( $mod_params['button_text'] && $mod_params['button_url'] ) : ?>
-        <a class="<?php esc_attr_e( $button_classes ); ?>" href="<?php echo esc_url( $mod_params['button_url'] ); ?>">
-            <?php esc_html_e( $mod_params['button_text'] ); ?>
-        </a>
-    <?php endif; ?>
+    <div class="st-bb-col-content">
+        <?php if ( $mod_params['text_content'] ) : ?>
+            <div class="st-bb-text"><?php echo $mod_params['text_content']; ?></div>
+        <?php endif; ?>
+        <?php if ( $mod_params['button_text'] && $mod_params['button_url'] ) : ?>
+            <p>
+                <a class="<?php esc_attr_e( $button_classes ); ?>" href="<?php echo esc_url( $mod_params['button_url'] ); ?>">
+                    <?php esc_html_e( $mod_params['button_text'] ); ?>
+                </a>
+            </p>
+        <?php endif; ?>
+        </div>
     </div>
 </div>
