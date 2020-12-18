@@ -825,17 +825,19 @@ class ST_BB_ACF_Module_Manager {
 					$show_fields = $data['fields'];
 					foreach ( $show_fields as $show_field_key ) {
 
-						$sub_field = $field_group['fields'][ $section_group_key ]['sub_fields'][ $show_field_key ];
-						$sub_field['conditional_logic'] = array(
-							array(
+						if ( isset( $field_group['fields'][ $section_group_key ]['sub_fields'][ $show_field_key ] ) ) {
+							$sub_field = $field_group['fields'][ $section_group_key ]['sub_fields'][ $show_field_key ];
+							$sub_field['conditional_logic'] = array(
 								array(
-									'field'		=> $sub_field_key,
-									'operator'	=> '==',
-									'value'		=> $selected_value,
+									array(
+										'field'		=> $sub_field_key,
+										'operator'	=> '==',
+										'value'		=> $selected_value,
+									),
 								),
-							),
-						);
-						$field_group['fields'][ $section_group_key ]['sub_fields'][ $show_field_key ] = $sub_field;
+							);
+							$field_group['fields'][ $section_group_key ]['sub_fields'][ $show_field_key ] = $sub_field;
+						}
 
 					}
 				}
