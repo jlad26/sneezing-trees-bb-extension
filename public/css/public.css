@@ -79,3 +79,33 @@ a[href="#fl-builder-settings-tab-advanced"],
 .fl-module-content {
     width: 100%;
 }
+
+/* Scrolldown link */
+.st-bb-scrolldown-container {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-bottom: 0.5rem;
+}
+
+.st-bb-scrolldown-container a.st-bb-scrolldown {
+    color: rgba( 0, 0, 0, 0);
+    font-size: 1.5rem;
+}
+
+.st-bb-scrolldown-container:hover a.st-bb-scrolldown {
+    color: inherit;
+}
+
+.st-bb-scrolldown-container svg {
+    position: absolute;
+    left: calc(50% - 2rem);
+    bottom: -0.5rem;
+    height: 4rem;
+    width: 4rem;
+}
+
+.st-bb-scrolldown-container:hover svg {
+    display: none;
+}

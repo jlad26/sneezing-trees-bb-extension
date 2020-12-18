@@ -308,6 +308,25 @@ abstract class ST_BB_Module extends FLBuilderModule {
                             ),
                         ),
                     ),
+                    'row_scrolldown'     =>  array(
+                        'title'         =>  __( 'Scrolldown link', ST_BB_TD ),
+                        'fields'        =>  array(
+                            'row_scrolldown_hover_text' =>  array(
+                                'type'          =>  'text',
+                                'label'         =>  __( 'Text on hover', ST_BB_TD ),
+                                'preview'       =>  false,
+                                'help'          =>  __( 'Text that displays on hover over the icon', ST_BB_TD ),
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
+                            'row_scrolldown_target' =>    array(
+                                'type'          =>  'text',
+                                'label'         =>  __( 'Target', ST_BB_TD ),
+                                'preview'       =>  false,
+                                'help'          =>  __( 'Enter the id of the element you wish to scroll to (excluding the # symbol).', ST_BB_TD ),
+                                'sanitize'		=>	'ST_BB_Module_Manager::sanitize_anchor_target',
+                            ),
+                        ),
+                    ),
                 ),
             ),
             'styling'      => array(
