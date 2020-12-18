@@ -43,7 +43,7 @@ $image_attr = array(
 );
 
 // Set section id.
-$section_id = $mod_params['section_id'] ? 'id="' . esc_attr( $mod_params['section_id'] ) . '" ' : '';
+$section_id = ( isset( $mod_params['section_id'] ) && $mod_params['section_id'] ) ? 'id="' . esc_attr( $mod_params['section_id'] ) . '" ' : '';
 
 /**
  * Add id if necessary, and classes using the filter fl_builder_module_attributes.
