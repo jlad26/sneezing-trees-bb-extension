@@ -20,13 +20,10 @@ $image_size = isset( $mod_params['image_size'] ) ? $mod_params['image_size'] : a
 ?>
 <figure class="<?php echo $figure_classes; ?>">
     <?php echo wp_get_attachment_image( $mod_params['image_id'], $image_size, false, $image_attr ); ?>
-	<?php if ( isset( $mod_params['caption_header'] ) || isset( $mod_params['caption'] ) ) : ?>
+	<?php if ( isset( $mod_params['caption'] ) ) : ?>
         <figcaption class="<?php echo $figure_classes; ?>">
-            <?php if ( isset( $mod_params['caption_header'] ) ) : ?>
-            <span class="caption__header"><?php esc_html_e( $mod_params['caption_header'] ); ?></span>
-            <?php endif; ?>
             <?php if ( isset( $mod_params['caption'] ) ) : ?>
-            <span class="caption__content"><?php esc_html_e( $mod_params['caption'] ); ?></span>
+            <span class="st-bb-caption"><?php esc_html_e( $mod_params['caption'] ); ?></span>
             <?php endif; ?>
         </figcaption>
     <?php endif; ?>
