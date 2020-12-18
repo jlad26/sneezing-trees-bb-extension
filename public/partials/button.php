@@ -12,7 +12,7 @@ $target = $rel = '';
 if ( $mod_params['button_text'] ) {
     if ( in_array( $mod_params['button_url_type'], array( 'url', 'anchor' ) ) ) {
         
-        $button_url = esc_url( $mod_params['button_url'] );
+        $button_url = esc_url( 'url' == $mod_params['button_url_type'] ? $mod_params['button_url'] : '#' . $mod_params['button_anchor_target'] );
         
         if ( 'url' == $mod_params['button_url_type'] ) {
             if ( 'yes' == $mod_params['button_new_window'] ) {

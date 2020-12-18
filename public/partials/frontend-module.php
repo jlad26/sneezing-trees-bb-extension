@@ -42,10 +42,13 @@ $image_attr = array(
 	'sizes'	=>	'100vw'
 );
 
+// Set section id.
+$section_id = $mod_params['section_id'] ? 'id="' . esc_attr( $mod_params['section_id'] ) . '" ' : '';
+
 /**
- * Add classes to the section using the filter fl_builder_module_attributes.
+ * Add id if necessary, and classes using the filter fl_builder_module_attributes.
  */ ?>
-<section <?php ST_BB_Module_Manager::render_section_classes( $module ); ?>>
+<section <?php echo $section_id; ?><?php ST_BB_Module_Manager::render_section_classes( $module ); ?>>
 	
 	<?php
 	// If we are on the backend we need to include the BB wrapper to support editing functionality.

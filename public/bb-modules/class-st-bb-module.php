@@ -339,8 +339,8 @@ abstract class ST_BB_Module extends FLBuilderModule {
                             ),
                         ),
                     ),
-                    'css_classes'     =>  array(
-                        'title'         =>  __( 'CSS classes', ST_BB_TD ),
+                    'css_attributes'     =>  array(
+                        'title'         =>  __( 'CSS attributes', ST_BB_TD ),
                         'fields'        =>  array(
                             'section_classes'  =>  array(
                                 'type'          =>  'text',
@@ -349,6 +349,14 @@ abstract class ST_BB_Module extends FLBuilderModule {
                                 'preview'       =>  false,
                                 'sanitize'		=>	'sanitize_text_field',
                                 'help'          =>  __( 'Classes to add to the section element. Separate with spaces.', ST_BB_TD ),
+                            ),
+                            'section_id'  =>  array(
+                                'type'          =>  'text',
+                                'label'         => __( 'Section ID', ST_BB_TD ),
+                                'default'       =>  '',
+                                'preview'       =>  false,
+                                'sanitize'		=>	'sanitize_text_field',
+                                'help'          =>  __( 'ID to add to the section element. Do not include the # symbol.', ST_BB_TD ),
                             ),
                         ),
                     ),

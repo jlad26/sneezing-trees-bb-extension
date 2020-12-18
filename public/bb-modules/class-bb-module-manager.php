@@ -105,6 +105,24 @@ class ST_BB_Module_Manager {
 	}
 
 	/**
+	 * Sanitize anchor target field, stripping off # if accidentally included.
+	 * 
+	 * @since    1.0.0
+	 * 
+	 * @param	string	$anchor		value to sanitize.
+	 * @return	string	sanitized string
+	 */
+	public static function sanitize_anchor_target( $anchor ) {
+		cwine_error_log($anchor);
+		$anchor = sanitize_text_field( $anchor );
+		if ( 0 === strpos( $anchor, '#' ) ) {
+			$anchor = substr( $anchor, 1 );
+		}
+		
+		return $anchor;
+	}
+
+	/**
 	 * Get settings array for a button.
 	 * 
 	 * @since    1.0.0
@@ -230,8 +248,8 @@ class ST_BB_Module_Manager {
 			'button_anchor_target'	=> array(
 				'type'          =>	'text',
 				'label'         =>	__( 'Anchor target', ST_BB_TD ),
-				'default'       =>	'#',
-				'sanitize'		=>	'sanitize_text_field',
+				'help'			=>	__( 'Do not include the # symbol', ST_BB_TD ),
+				'sanitize'		=>	'ST_BB_Module_Manager::sanitize_anchor_target',
 			),
 		);
 
