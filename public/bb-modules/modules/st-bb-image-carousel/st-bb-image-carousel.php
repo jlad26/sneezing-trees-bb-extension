@@ -45,7 +45,7 @@ class ST_BB_Image_Carousel_Module extends ST_BB_Module {
 	 */
     public function enqueue_scripts() {
         $this->add_js( 'bb-swiper', 'https://unpkg.com/swiper/swiper-bundle.min.js', array(), false, true );
-        $this->add_css( 'bb-swiper', 'https://unpkg.com/swiper/swiper-bundle.css', array(), false, false );
+        $this->add_css( 'bb-swiper', 'https://unpkg.com/swiper/swiper-bundle.css', array(), false );
     }
 
     /**
