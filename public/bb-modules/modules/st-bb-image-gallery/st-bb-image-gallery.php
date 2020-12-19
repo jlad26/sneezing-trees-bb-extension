@@ -30,29 +30,37 @@ class ST_BB_Image_Gallery_Module extends ST_BB_Module {
             'icon'              =>  'format-image.svg',
             'partial_refresh'   =>  true,
             'config'            =>  array(
-                'acf_version'       =>  false
+                'acf_version'       =>  true,
+                'js'                =>  array(
+                    array(
+                        'handle'    =>  'lightgallery',
+                        'src'       =>  ST_BB_URL . 'public/lightgallery/lightgallery/dist/js/lightgallery.min.js',
+                    ),
+                    array(
+                        'handle'    =>  'lg-thumbnail',
+                        'src'       =>  ST_BB_URL . 'public/lightgallery/lg-thumbnail/dist/lg-thumbnail.min.js',
+                        'deps'      =>  array( 'lightgallery' ),
+                    ),
+                    array(
+                        'handle'    =>  'lg-share',
+                        'src'       =>  ST_BB_URL . 'public/lightgallery/lg-share/dist/lg-share.min.js',
+                        'deps'      =>  array( 'lightgallery' ),
+                    ),
+                    array(
+                        'handle'    =>  'lg-fullscreen',
+                        'src'       =>  ST_BB_URL . 'public/lightgallery/lg-fullscreen/dist/lg-fullscreen.min.js',
+                        'deps'      =>  array( 'lightgallery' ),
+                    ),
+                ),
+                'css'                =>  array(
+                    array(
+                        'handle'    =>  'lightgallery',
+                        'src'       =>  ST_BB_URL . 'public/lightgallery/lightgallery/dist/css/lightgallery.min.css',
+                    ),
+                ),
             )
         ) );
 
-    }
-
-    /**
-	 * Enqueue LightGallery JS and CSS.
-	 *
-	 * @since    1.0.0
-     * 
-     * @return  array
-	 */
-    public function enqueue_scripts() {
-        
-        $this->add_js( 'lightgallery', ST_BB_URL . 'public/lightgallery/lightgallery/dist/js/lightgallery.min.js', array(), false );
-        $lightgallery_plugins = array( 'thumbnail', 'share', 'fullscreen' );
-        foreach ( $lightgallery_plugins as $lightgallery_plugin ) {
-            $this->add_js( 'lg-' . $lightgallery_plugin, ST_BB_URL . 'public/lightgallery/lg-' . $lightgallery_plugin .'/dist/lg-' . $lightgallery_plugin . '.min.js', array( 'lightgallery' ), false );
-        }
-
-
-        $this->add_css( 'lightgallery', ST_BB_URL . 'public/lightgallery/lightgallery/dist/css/lightgallery.min.css', array(), false );
     }
 
     /**

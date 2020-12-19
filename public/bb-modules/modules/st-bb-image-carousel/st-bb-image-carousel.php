@@ -30,22 +30,23 @@ class ST_BB_Image_Carousel_Module extends ST_BB_Module {
             'icon'              =>  'format-image.svg',
             'partial_refresh'   =>  true,
             'config'            =>  array(
-                'acf_version'       =>  false
+                'acf_version'       =>  true,
+                'js'                =>  array(
+                    array(
+                        'handle'    =>  'bb-swiper',
+                        'src'       =>  'https://unpkg.com/swiper/swiper-bundle.min.js',
+                    ),
+                ),
+                'css'                =>  array(
+                    array(
+                        'handle'    =>  'bb-swiper',
+                        'src'       =>  'https://unpkg.com/swiper/swiper-bundle.css'
+                    ),
+                ),
+
             )
         ) );
 
-    }
-
-    /**
-	 * Enqueue Swiper JS and CSS.
-	 *
-	 * @since    1.0.0
-     * 
-     * @return  array
-	 */
-    public function enqueue_scripts() {
-        $this->add_js( 'bb-swiper', 'https://unpkg.com/swiper/swiper-bundle.min.js', array(), false, true );
-        $this->add_css( 'bb-swiper', 'https://unpkg.com/swiper/swiper-bundle.css', array(), false );
     }
 
     /**

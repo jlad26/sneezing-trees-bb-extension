@@ -68,7 +68,9 @@ abstract class ST_BB_Module extends FLBuilderModule {
         // Set generic config here that can be over-written
         $config = array(
             'default_padding'   =>  'none',
-            'acf_version'       =>  false
+            'acf_version'       =>  false,
+            'js'                =>  array(),
+            'css'               =>  array()
         );
         
         if ( isset( $args['config'] ) ) {
@@ -96,6 +98,60 @@ abstract class ST_BB_Module extends FLBuilderModule {
 
         $this->config = apply_filters( 'st_bb_module_config', $config, $this );
         
+    }
+
+    /**
+	 * Add in any js or css.
+	 *
+	 * @since    1.0.0
+	 */
+    public function enqueue_scripts() {
+        if ( $this->config['js'] ) {
+            foreach ( $this->config['js'] as $script_params ) {
+                $script_params = $this->parse_enqueue_params( $script_params, 'js' );
+                extract( $script_params );
+                if ( $handle ) {
+                    $this->add_js( $handle, $src, $deps, $ver, $in_footer );
+                }
+            }
+        }
+
+        if ( $this->config['css'] ) {
+            foreach ( $this->config['css'] as $script_params ) {
+                $script_params = $this->parse_enqueue_params( $script_params, 'css' );
+                extract( $script_params );
+                if ( $handle ) {
+                    $this->add_css( $handle, $src, $deps, $ver, $media );
+                }
+            }
+        }
+
+    }
+
+    /**
+	 * Parse parameters for enqueuing.
+	 *
+	 * @since    1.0.0
+     * 
+     * @param   array   $params     parameters to be parsed
+     * @param   string  $type       either 'css' or 'js'
+	 */
+    public function parse_enqueue_params( $params, $type ) {
+        
+        $param_defaults = array(
+            'handle'    =>  '',
+            'src'       =>  '',
+            'deps'      =>  array(),
+            'ver'       =>  false,
+        );
+        if ( 'js' == $type ) {
+            $param_defaults['in_footer'] = false;
+        } else {
+            $param_defaults['media'] = 'all';
+        }
+
+        return wp_parse_args( $params, $param_defaults );
+
     }
 
     /**

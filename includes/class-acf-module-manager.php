@@ -158,8 +158,12 @@ class ST_BB_ACF_Module_Manager {
 		// Remove any duplicate module CSS from BB CSS.
 		add_filter( 'fl_builder_render_css', array( $this, 'remove_duplicate_BB_CSS' ), 10, 4 );
 
-		// Enqueue CSS for modules to be displayed.
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_modules_css' ) );
+		// Enqueue any script and style dependencies for modules.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css_and_js_dependencies' ) );
+		
+		// Enqueue CSS and JS for modules to be displayed.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_modules_css' ), 15 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_modules_js' ), 15 );
 
 		// Add in modules content to post / page content.
 		add_filter( 'the_content', array( $this, 'add_modules_content' ) );
@@ -1278,6 +1282,11 @@ class ST_BB_ACF_Module_Manager {
 
 			$modules[ $module_id ]['settings'] = self::get_acf_module_data( $module_id, $module['content_module_fields'], $field_sections );
 
+			// Unset module if it has no settings - means ACF fields have never been saved and should not be displayed.
+			if ( empty( $modules[ $module_id ]['settings'] ) ) {
+				unset( $modules[ $module_id ] );
+			}
+
 		}
 
 		self::$display_modules = $modules;
@@ -1379,6 +1388,52 @@ class ST_BB_ACF_Module_Manager {
 		return $css;
 	}
 
+	/**
+	 * Enqueue any script and style dependencies for modules. These are generally libraries
+	 * like Swiper and LightGallery.
+	 *
+	 * @since    1.0.0
+	 * @hooked	wp_enqueue_scripts
+	 */
+	public function enqueue_css_and_js_dependencies() {
+
+		$content_modules = self::$display_modules;
+
+		// Do nothing if no modules to display.
+		if ( empty( $content_modules ) ) {
+			return false;
+		}
+
+		global $post;
+
+		// Get the BB modules.
+		$bb_modules = ST_BB_Module_Manager::get_registered_modules();
+
+		// Enqueue scripts and styles.
+		foreach ( $content_modules as $content_module_id => $content_module ) {
+			
+			$module_slug = $content_module['content_module_fields']['choose_st_bb_module'];
+			$module = $bb_modules[ $module_slug ];
+			
+			if ( $scripts = $module->config['js'] ) {
+				foreach ( $scripts as $script_params ) {
+					$script_params = $module->parse_enqueue_params( $script_params, 'js' );
+					extract( $script_params );
+					wp_enqueue_script( $handle, $src, $deps, $ver, $in_footer );
+				}
+			}
+
+			if ( $styles = $module->config['css'] ) {
+				foreach ( $styles as $style_params ) {
+					$style_params = $module->parse_enqueue_params( $style_params, 'css' );
+					extract( $style_params );
+					wp_enqueue_style( $handle, $src, $deps, $ver, $media );
+				}
+			}
+
+		}
+
+	}
 
 	/**
 	 * Enqueue CSS for modules to be displayed.
@@ -1436,6 +1491,54 @@ class ST_BB_ACF_Module_Manager {
 		if ( $css ) {
 			$dep_handle = $this->plugin_name . '-public';
 			wp_add_inline_style( $dep_handle, $css );
+		}
+
+	}
+
+	/**
+	 * Enqueue JS for modules to be displayed.
+	 *
+	 * @since    1.0.0
+	 * @hooked	wp_enqueue_scripts
+	 */
+	public function enqueue_modules_js() {
+
+		$content_modules = self::$display_modules;
+
+		// Do nothing if no modules to display.
+		if ( empty( $content_modules ) ) {
+			return false;
+		}
+
+		global $post;
+		
+		// Get the BB modules.
+		$bb_modules = ST_BB_Module_Manager::get_registered_modules();
+		
+		$js = '';
+		
+		// Add the instance-specific JS.
+		foreach ( $content_modules as $content_module_id => $content_module ) {
+
+			$content_module_fields = $content_module['content_module_fields'];
+
+			$id = $content_module_id . '-' . $post->ID;
+			$settings = (object) $content_module['settings'];
+
+			$slug = $content_module_fields['choose_st_bb_module'];
+			$bb_module_dir = $bb_modules[ $slug ]->dir;
+			$path = $bb_module_dir . 'includes/frontend.js.php';
+			if ( file_exists( $path ) ) {
+				ob_start();
+				include $path;
+				$js .= ob_get_clean();
+			}
+
+		}
+		
+		if ( $js ) {
+			$dep_handle = $this->plugin_name . '-public';
+			wp_add_inline_script( $dep_handle, $js );
 		}
 
 	}

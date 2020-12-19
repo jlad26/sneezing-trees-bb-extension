@@ -23,11 +23,18 @@ $mod_params['image_size'] = 'thumbnail';
             if ( is_array( $mod_params['gallery_image_ids'] ) ) {
                 foreach ( $mod_params['gallery_image_ids'] as $image_id ) {
                     
+                    $full_image_size = apply_filters( 'st_bb_default_img_size', '2048x2048' );
+                    $full_image_data = wp_get_attachment_image_src( $image_id, $full_image_size );
+                    
+                    // Don't include this image if we have no data (e.g., is a video.)
+                    if ( ! $full_image_data ) {
+                        continue;
+                    }
+                    
                     $mod_params['image_id'] = $image_id;
                     $caption = wp_get_attachment_caption( $image_id );
                     $mod_params['image_attr']['alt'] = $caption ? $caption : '';
-                    $full_image_size = apply_filters( 'st_bb_default_img_size', '2048x2048' );
-                    $full_image_data = wp_get_attachment_image_src( $image_id, $full_image_size );
+
                     $full_image_srcset = wp_get_attachment_image_srcset( $image_id, $full_image_size );
                     $caption_attr = 'yes' == $mod_params['show_captions'] ? ' data-sub-html=".st-bb-gallery-caption"' : '';
                     

@@ -1,4 +1,1 @@
-/* Public-facing jQuery */
-jQuery( function( $ ) {
-
-});
+/* Public-facing JS */

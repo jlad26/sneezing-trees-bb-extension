@@ -108,7 +108,11 @@ class ST_BB_Hook_Manager {
 		wp_dequeue_style( 'bootstrap-tour' );
 		wp_dequeue_script( 'bootstrap-tour' );
 		
-		// wp_enqueue_script( $this->plugin_name . '-public-js', $url_base . 'js/public.js', array( 'jquery' ), $this->version, false );
+		/**
+		 * We enqueue this only so that we have a handle for ACF module-specific JS to depend on,
+		 * and set to enqueue in footer as required for LightGallery.
+		 */
+		wp_enqueue_script( $this->plugin_name . '-public', $url_base . 'js/public.js', array(), $this->version, true );
 
 	}
 
