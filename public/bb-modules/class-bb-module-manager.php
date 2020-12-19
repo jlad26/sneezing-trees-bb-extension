@@ -113,7 +113,7 @@ class ST_BB_Module_Manager {
 	 * @return	string	sanitized string
 	 */
 	public static function sanitize_anchor_target( $anchor ) {
-		cwine_error_log($anchor);
+
 		$anchor = sanitize_text_field( $anchor );
 		if ( 0 === strpos( $anchor, '#' ) ) {
 			$anchor = substr( $anchor, 1 );
