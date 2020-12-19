@@ -716,6 +716,25 @@ class ST_BB_ACF_Module_Manager {
 				) );
 				break;
 
+			case 'multiple-photos' :
+				$acf_field = array_merge( $acf_field, array(
+					'type' => 'relationship',
+					'post_type' => array(
+						0 => 'attachment',
+					),
+					'taxonomy' => '',
+					'filters' => array(
+						0 => 'search',
+					),
+					'elements' => array(
+						0 => 'featured_image',
+					),
+					'min' => '',
+					'max' => '',
+					'return_format' => 'id',
+				) );
+				break;
+
 			case 'select' :
 				$acf_field = array_merge( $acf_field, array(
 					'type' => 'select',
