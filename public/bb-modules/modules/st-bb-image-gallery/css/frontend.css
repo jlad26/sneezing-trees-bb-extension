@@ -1,0 +1,17 @@
+.st-bb-gallery {
+    text-align: center;
+}
+
+.st-bb-gallery figure {
+    text-align: center;
+    margin: 0;
+}
+
+.st-bb-gallery-thumbnail {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.st-bb-gallery-caption {
+    display: none;
+}
