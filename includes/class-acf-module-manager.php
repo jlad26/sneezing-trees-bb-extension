@@ -74,6 +74,15 @@ class ST_BB_ACF_Module_Manager {
 	private static $module_generic_css;
 
 	/**
+	 * Module JS added - used to prevent BB from adding a second time.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $module_generic_js    Key: slug, value: js as string.
+	 */
+	private static $module_generic_js;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -153,17 +162,17 @@ class ST_BB_ACF_Module_Manager {
 		add_action( 'get_header', array( $this, 'set_modules_to_display' ) );
 
 		// Set the modules CSS to be added on get_header so we can later strip it from BB styles if needed.
-		add_action( 'get_header', array( $this, 'set_modules_css' ), 11, 1 );
+		add_action( 'get_header', array( $this, 'set_modules_css_and_js' ), 11, 1 );
 
-		// Remove any duplicate module CSS from BB CSS.
-		add_filter( 'fl_builder_render_css', array( $this, 'remove_duplicate_BB_CSS' ), 10, 4 );
+		// Remove any duplicate module CSS / JS from BB CSS / JS.
+		add_filter( 'fl_builder_render_css', array( $this, 'remove_duplicate_BB_css' ), 10, 4 );
+		add_filter( 'fl_builder_render_js', array( $this, 'remove_duplicate_BB_js' ), 10, 4 );
 
 		// Enqueue any script and style dependencies for modules.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css_and_js_dependencies' ) );
 		
 		// Enqueue CSS and JS for modules to be displayed.
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_modules_css' ), 15 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_modules_js' ), 15 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_modules_css_and_js' ), 15 );
 
 		// Add in modules content to post / page content.
 		add_filter( 'the_content', array( $this, 'add_modules_content' ) );
@@ -1330,15 +1339,15 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 * Set the modules CSS to be added. We do this on get_header so we can later
-	 * use the fl_builder_render_css filter to remove any duplicate CSS.
+	 * Set the modules CSS to be added. We do this on get_header so we can later use the
+	 * fl_builder_render_css and fl_builder_render_js filters to remove any duplicate CSS / JS.
 	 *
 	 * @since    1.0.0
 	 * @hooked	get_header
 	 */
-	public function set_modules_css( $name ) {
+	public function set_modules_css_and_js( $name ) {
 
-		self::$module_generic_css = array();
+		self::$module_generic_css = self::$module_generic_js = array();
 		
 		$content_modules = self::$display_modules;
 
@@ -1354,7 +1363,7 @@ class ST_BB_ACF_Module_Manager {
 
 			$content_module_fields = $content_module['content_module_fields'];
 
-			// Add the module CSS if it hasn't already been added.
+			// Add the module CSS / JS if it hasn't already been added.
 			$slug = $content_module_fields['choose_st_bb_module'];
 			$bb_module_dir = $bb_modules[ $slug ]->dir;
 		
@@ -1367,6 +1376,15 @@ class ST_BB_ACF_Module_Manager {
 				self::$module_generic_css[ $slug ] = $module_css;
 			}
 
+			if ( ! isset( self::$module_generic_js[ $slug ] ) ) {
+				$path = $bb_module_dir . 'js/frontend.js';
+				$module_js = '';
+				if ( file_exists( $path ) ) {
+					$module_js = file_get_contents( $path );
+				}
+				self::$module_generic_js[ $slug ] = $module_js;
+			}
+
 		}
 
 	}
@@ -1377,7 +1395,7 @@ class ST_BB_ACF_Module_Manager {
 	 * @since    1.0.0
 	 * @hooked	fl_builder_render_css
 	 */
-	public function remove_duplicate_BB_CSS( $css, $nodes, $global_settings, $include_global ) {
+	public function remove_duplicate_BB_css( $css, $nodes, $global_settings, $include_global ) {
 		if ( is_array( self::$module_generic_css ) ) {
 			foreach ( self::$module_generic_css as $module_css ) {
 				if ( ! empty( $module_css ) ) {
@@ -1386,6 +1404,23 @@ class ST_BB_ACF_Module_Manager {
 			}
 		}
 		return $css;
+	}
+
+	/**
+	 * Remove any duplicate module JS from BB JS.
+	 *
+	 * @since    1.0.0
+	 * @hooked	fl_builder_render_js
+	 */
+	public function remove_duplicate_BB_js( $js, $nodes, $global_settings, $include_global ) {
+		if ( is_array( self::$module_generic_js ) ) {
+			foreach ( self::$module_generic_js as $module_js ) {
+				if ( ! empty( $module_js ) ) {
+					$js = str_replace( $module_js, '', $js );
+				}
+			}
+		}
+		return $js;
 	}
 
 	/**
@@ -1436,12 +1471,12 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 * Enqueue CSS for modules to be displayed.
+	 * Enqueue CSS and JS for modules to be displayed.
 	 *
 	 * @since    1.0.0
 	 * @hooked	wp_enqueue_scripts
 	 */
-	public function enqueue_modules_css() {
+	public function enqueue_modules_css_and_js() {
 
 		$content_modules = self::$display_modules;
 
@@ -1455,14 +1490,19 @@ class ST_BB_ACF_Module_Manager {
 		// Get the BB modules.
 		$bb_modules = ST_BB_Module_Manager::get_registered_modules();
 		
-		$css = '';
+		$css = $js = '';
 
 		// Add the modules CSS.
 		foreach ( self::$module_generic_css as $module_css ) {
 			$css .= $module_css;
 		}
+
+		// Add the modules JS.
+		foreach ( self::$module_generic_js as $module_js ) {
+			$js .= $module_js;
+		}
 		
-		// Add the instance-specific CSS.
+		// Add the instance-specific CSS and JS.
 		foreach ( $content_modules as $content_module_id => $content_module ) {
 
 			$content_module_fields = $content_module['content_module_fields'];
@@ -1486,47 +1526,6 @@ class ST_BB_ACF_Module_Manager {
 				$css .= ob_get_clean();
 			}
 
-		}
-		
-		if ( $css ) {
-			$dep_handle = $this->plugin_name . '-public';
-			wp_add_inline_style( $dep_handle, $css );
-		}
-
-	}
-
-	/**
-	 * Enqueue JS for modules to be displayed.
-	 *
-	 * @since    1.0.0
-	 * @hooked	wp_enqueue_scripts
-	 */
-	public function enqueue_modules_js() {
-
-		$content_modules = self::$display_modules;
-
-		// Do nothing if no modules to display.
-		if ( empty( $content_modules ) ) {
-			return false;
-		}
-
-		global $post;
-		
-		// Get the BB modules.
-		$bb_modules = ST_BB_Module_Manager::get_registered_modules();
-		
-		$js = '';
-		
-		// Add the instance-specific JS.
-		foreach ( $content_modules as $content_module_id => $content_module ) {
-
-			$content_module_fields = $content_module['content_module_fields'];
-
-			$id = $content_module_id . '-' . $post->ID;
-			$settings = (object) $content_module['settings'];
-
-			$slug = $content_module_fields['choose_st_bb_module'];
-			$bb_module_dir = $bb_modules[ $slug ]->dir;
 			$path = $bb_module_dir . 'includes/frontend.js.php';
 			if ( file_exists( $path ) ) {
 				ob_start();
@@ -1536,8 +1535,11 @@ class ST_BB_ACF_Module_Manager {
 
 		}
 		
+		$dep_handle = $this->plugin_name . '-public';
+		if ( $css ) {
+			wp_add_inline_style( $dep_handle, $css );
+		}
 		if ( $js ) {
-			$dep_handle = $this->plugin_name . '-public';
 			wp_add_inline_script( $dep_handle, $js );
 		}
 
