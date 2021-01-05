@@ -42,6 +42,14 @@ $image_attr = array(
 	'sizes'	=>	'100vw'
 );
 
+// Set to scrolldown to empty values in case this is not one of our modules.
+if ( ! isset( $mod_params['row_scrolldown_hover_text'] ) ) {
+	$mod_params['row_scrolldown_hover_text'] = '';
+}
+if ( ! isset( $mod_params['row_scrolldown_target'] ) ) {
+	$mod_params['row_scrolldown_target'] = '';
+}
+
 // Set section id.
 $section_id = ( isset( $mod_params['section_id'] ) && $mod_params['section_id'] ) ? 'id="' . esc_attr( $mod_params['section_id'] ) . '" ' : '';
 
