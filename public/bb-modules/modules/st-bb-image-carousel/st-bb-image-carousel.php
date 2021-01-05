@@ -9,9 +9,9 @@
  */
 
 /**
- * Defines the  Image Carousel module.
+ * Defines the Image Carousel module.
  *
- * Defines the  Image Carousel module class and settings.
+ * Defines the Image Carousel module class and settings.
  *
  * @package    ST_BB
  * @subpackage ST_BB/public
