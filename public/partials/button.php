@@ -14,6 +14,11 @@ if ( $mod_params['button_text'] ) {
         
         $button_url = esc_url( 'url' == $mod_params['button_url_type'] ? $mod_params['button_url'] : '#' . $mod_params['button_anchor_target'] );
         
+        // If no anchor has been specified, make sure the url value is empty.
+        if ( '#' == $button_url && 'anchor' == $mod_params['button_url_type'] ) {
+            $button_url = '';
+        }
+
         if ( 'url' == $mod_params['button_url_type'] ) {
             if ( 'yes' == $mod_params['button_new_window'] ) {
                 $target = ' target="_blank"';
