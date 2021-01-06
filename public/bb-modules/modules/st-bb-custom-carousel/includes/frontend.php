@@ -23,8 +23,10 @@ $mod_params['slides'] = apply_filters( 'st-bb-custom-carousel-slides-' . $mod_pa
             }
         ?>
             </div>
+            <?php if ( 'yes' == $mod_params['include_nav'] ) : ?>
             <div class="swiper-button-prev"></div>
             <div class="swiper-button-next"></div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

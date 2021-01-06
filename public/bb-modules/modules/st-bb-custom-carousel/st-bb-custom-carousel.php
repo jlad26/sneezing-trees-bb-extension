@@ -59,9 +59,9 @@ class ST_BB_Custom_Carousel_Module extends ST_BB_Module {
     protected static function get_module_config() {
         return array(
             'module'    =>  array(
-                'title' =>  __( 'Contents', ST_BB_TD ),
+                'title' =>  __( 'Configuration', ST_BB_TD ),
                 'sections'		=>  array(
-                    'carousel_id'     =>  array(
+                    'carousel_config'     =>  array(
                         'title'         =>  __( 'Carousel ID', ST_BB_TD ),
                         'fields'        =>  array(
                             'custom_carousel_id'  => array(
@@ -69,6 +69,16 @@ class ST_BB_Custom_Carousel_Module extends ST_BB_Module {
                                 'label'         =>  __( 'Carousel ID', ST_BB_TD ),
                                 'help'          =>  __( 'Give the carousel a unique ID. Slides content can then be added using the filter \'st-bb-custom-carousel-slides-{$your_id}\'.', ST_BB_TD ),
                                 'sanitize'		=>	'sanitize_text_field',
+                            ),
+                            'include_nav'       =>  array(
+                                'type'      =>  'select',
+                                'label'     => __( 'Show left-right navigation arrows', ST_BB_TD ),
+                                'default'   =>  'yes',
+                                'options'   =>  array(
+                                    'yes'   =>  'Yes',
+                                    'no'    =>  'No'
+                                ),
+                                'sanitize'  =>  'sanitize_text_field'
                             ),
                         ),
                     ),
