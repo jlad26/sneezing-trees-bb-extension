@@ -1219,8 +1219,8 @@ class ST_BB_ACF_Module_Manager {
 		// Work out whether we have content to display.
 		$module_registration = get_option( 'st_acf_module_registration' );
 
-		// Stop if no content or this post type is not permitted.
-		if ( empty( $module_registration ) ) {
+		// Stop if no content or this post type is not permitted or does not exist.
+		if ( empty( $module_registration ) || empty( $post ) ) {
 			return array();
 		}
 		if ( ! isset( $module_registration['post_types'][ $post->post_type ] ) ) {
