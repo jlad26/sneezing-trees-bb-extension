@@ -11,3 +11,8 @@
     <?php endif; ?>
 }
 <?php endif; ?>
+<?php if ( isset( $settings->row_image_xpos ) && isset( $settings->row_image_ypos ) ) : ?>
+.fl-node-<?php echo $id; ?> .st-bb-background-img {
+    object-position: <?php echo $settings->row_image_xpos . ' ' . $settings->row_image_ypos; ?>
+}
+<?php endif; ?>

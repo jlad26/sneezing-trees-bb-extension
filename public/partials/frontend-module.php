@@ -53,6 +53,9 @@ if ( ! isset( $mod_params['row_scrolldown_target'] ) ) {
 // Set section id.
 $section_id = ( isset( $mod_params['section_id'] ) && $mod_params['section_id'] ) ? 'id="' . esc_attr( $mod_params['section_id'] ) . '" ' : '';
 
+// Global for editors.
+global $wp_embed;
+
 /**
  * Add id if necessary, and classes using the filter fl_builder_module_attributes.
  */ ?>
@@ -82,10 +85,25 @@ $section_id = ( isset( $mod_params['section_id'] ) && $mod_params['section_id'] 
 		 */ ?>
 		<?php echo $container['open']; ?>
 			<?php // Render module content.
+			
+			// Display any pre content.
+			if ( isset( $mod_params['before_content'] ) && $mod_params['before_content'] ) {
+				?><div class="st-bb-before-content"><?php
+					echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['before_content'] ) ) );
+				?></div><?php
+			}
 			ob_start();
 			include apply_filters( 'st_bb_module_frontend_file', $module->dir . 'includes/frontend.php', $module );
 			$out = ob_get_clean();
 			echo apply_filters( 'st_bb_render_module_content', $out, $module );
+
+			// Display any post content.
+			if ( isset( $mod_params['after_content'] ) && $mod_params['after_content'] ) {
+				?><div class="st-bb-after-content"><?php
+					echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['after_content'] ) ) );
+				?></div><?php
+			}
+
 			?>
 		<?php echo $container['close']; ?>
 

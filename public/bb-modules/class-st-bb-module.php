@@ -322,6 +322,43 @@ abstract class ST_BB_Module extends FLBuilderModule {
             'module'      => array(
                 'title'         =>  __( 'Content', ST_BB_TD ),
             ),
+            'top_and_tail'      => array(
+                'title'         =>  __( 'Top and Tail', ST_BB_TD ),
+                'sections'		=>  array(
+                    'before_content'     =>  array(
+                        'title'         =>  __( 'Before main content', ST_BB_TD ),
+                        'fields'        =>  array(
+                            'before_content'    =>  array(
+                                'type'          =>  'editor',
+                                'rows'			=>  13,
+                                'wpautop'		=>  false,
+                                'media_buttons'	=>  true,
+                                'preview'		=>  array(
+                                    'type'		=> 'text',
+                                    'selector'	=> '.st-bb-before-content',
+                                ),
+                                'sanitize'		=>	'wp_kses_post',
+                            ),
+                        ),
+                    ),
+                    'after_content'     =>  array(
+                        'title'         =>  __( 'After main content', ST_BB_TD ),
+                        'fields'        =>  array(
+                            'after_content'    =>  array(
+                                'type'          =>  'editor',
+                                'rows'			=>  13,
+                                'wpautop'		=>  false,
+                                'media_buttons'	=>  true,
+                                'preview'		=>  array(
+                                    'type'		=> 'text',
+                                    'selector'	=> '.st-bb-after-content',
+                                ),
+                                'sanitize'		=>	'wp_kses_post',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
             'background'      => array(
                 'title'         =>  __( 'Background', ST_BB_TD ),
                 'sections'		=>  array(
@@ -360,6 +397,28 @@ abstract class ST_BB_Module extends FLBuilderModule {
                                 'type'          =>  'text',
                                 'label'         =>  __( 'Image alt', ST_BB_TD ),
                                 'preview'       =>  false,
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
+                            'row_image_xpos'  =>  array(
+                                'type'          =>  'select',
+                                'label'         => __( 'Image horizontal position', ST_BB_TD ),
+                                'default'       =>  'center',
+                                'options'       =>  array(
+                                    'center'    =>  __( 'Center', ST_BB_TD ),
+                                    'left'      =>  __( 'Left', ST_BB_TD ),
+                                    'right'     =>  __( 'Right', ST_BB_TD ),
+                                ),
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
+                            'row_image_ypos'  =>  array(
+                                'type'          =>  'select',
+                                'label'         => __( 'Image vertical position', ST_BB_TD ),
+                                'default'       =>  'center',
+                                'options'       =>  array(
+                                    'center'    =>  __( 'Center', ST_BB_TD ),
+                                    'top'      =>  __( 'Top', ST_BB_TD ),
+                                    'bottom'     =>  __( 'Bottom', ST_BB_TD ),
+                                ),
                                 'sanitize'		=>	'sanitize_text_field',
                             ),
                         ),
