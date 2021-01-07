@@ -84,6 +84,26 @@ class ST_BB_Custom_Carousel_Module extends ST_BB_Module {
                     ),
                 ),
             ),
+            'styling'      => array(
+                'title'         =>  __( 'Styling', ST_BB_TD ),
+                'sections'		=>  array(
+                    'layout'     =>  array(
+                        'title'         =>  __( 'Layout', ST_BB_TD ),
+                        'fields'        =>  array(
+                            'full_width'  =>  array(
+                                'type'          =>  'select',
+                                'label'         => __( 'Full width', ST_BB_TD ),
+                                'default'       =>  'no',
+                                'options'       =>  array(
+                                    'no'    =>  __( 'No', ST_BB_TD ),
+                                    'yes'   =>  __( 'Yes', ST_BB_TD ),
+                                ),
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         );
     }
     

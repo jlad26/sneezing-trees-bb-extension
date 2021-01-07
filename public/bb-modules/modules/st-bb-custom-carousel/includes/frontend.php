@@ -5,10 +5,10 @@
  */
 
 $mod_params['slides'] = apply_filters( 'st-bb-custom-carousel-slides-' . $mod_params['custom_carousel_id'], array() );
-
+$is_full_width = ( isset( $mod_params['full_width'] ) && 'yes' == $mod_params['full_width'] );
 ?>
 <div class="row">
-    <div class="col-lg-10 offset-lg-1">
+    <div class="<?php echo $is_full_width ? 'col' : 'col-lg-10 offset-lg-1'; ?>">
         <div class="swiper-container">
             <div class="swiper-wrapper">
         <?php

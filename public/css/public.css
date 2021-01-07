@@ -26,6 +26,9 @@ img.st-bb-background-img {
 .st-bb-module-container {
     position: relative;
 }
+.st-bb-module-container.st-bb-full-width {
+    max-width: 100%;
+}
 
 .st-bb-pad-y-1 {
     padding-top: 0.5rem;

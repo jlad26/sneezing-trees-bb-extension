@@ -199,6 +199,13 @@ abstract class ST_BB_Module extends FLBuilderModule {
         if ( isset( $this->config['container_classes'] ) ) {
             $classes = array_merge( $classes, $this->config['container_classes'] );
         }
+
+        /**
+         * Add in a class for full width if required.
+         */
+        if ( isset( $this->settings->full_width ) && 'yes' == $this->settings->full_width ) {
+            $classes[] = 'st-bb-full-width';
+        }
         $classes = apply_filters( 'st_bb_module_container_classes', $classes, $this );
         $out = implode( ' ', $classes );
         if ( $echo ) {
