@@ -127,11 +127,16 @@ class ST_BB_Module_Manager {
 	 * 
 	 * @since    1.0.0
 	 * 
-	 * @param	string	$tab		the tab that the fields are in.
-	 * @param	string	$section	the section the fields are in.
+	 * @param	string	$field_prefix	prefix to use for fields (required if more than one button in module)
+	 * @param	string	$tab			the tab that the fields are in.
+	 * @param	string	$section		the section the fields are in.
 	 * @return	array
 	 */
-	public static function get_button_settings_fields( $tab = 'module', $section = 'button' ) {
+	public static function get_button_settings_fields( $field_prefix = '', $tabs = array( 'module' ), $sections = array( 'button' ) ) {
+		
+		if ( $field_prefix ) {
+			$field_prefix .= '_';
+		}
 		
 		// Generate a dropdown for each available post type.
 		$post_types = ST_BB_Utility::get_post_types();
@@ -146,14 +151,18 @@ class ST_BB_Module_Manager {
 
 		$toggle_fields = array(
 			'url'	=>	array(
-				'fields'    =>  array( 'button_url', 'button_new_window', 'button_nofollow' ),
-				'sections'  =>  array( 'button' ),
-				'tabs'      =>  array( 'module' ),
+				'fields'    =>  array(
+					$field_prefix . 'button_url',
+					$field_prefix . 'button_new_window',
+					$field_prefix . 'button_nofollow'
+				),
+				'sections'  =>  $sections,
+				'tabs'      =>  $tabs,
 			),
 			'anchor'	=>	array(
-				'fields'    =>  array( 'button_anchor_target' ),
-				'sections'  =>  array( 'button' ),
-				'tabs'      =>  array( 'module' ),
+				'fields'    =>  array( $field_prefix . 'button_anchor_target' ),
+				'sections'  =>  $sections,
+				'tabs'      =>  $tabs,
 			),
 		);
 
@@ -163,9 +172,9 @@ class ST_BB_Module_Manager {
 			$link_types[ $post_type ] = $post_type_object->labels->singular_name;
 			
 			$toggle_fields[ $post_type ] = array(
-				'fields'	=>	array( 'select_' . $post_type . '_id' ),
-				'sections'	=>	array( $section ),
-				'tabs'		=>	array( $tab )
+				'fields'	=>	array( $field_prefix . 'select_' . $post_type . '_id' ),
+				'sections'  =>  $sections,
+				'tabs'      =>  $tabs,
 			);
 			
 			$args = array(
@@ -186,7 +195,7 @@ class ST_BB_Module_Manager {
 					$options['id_' . $post->ID] = $post->post_title;
 				}
 
-				$dropdown_fields['select_' . $post_type . '_id'] = array(
+				$dropdown_fields[ $field_prefix . 'select_' . $post_type . '_id' ] = array(
 					'type'          => 'select',
 					'label'         => $post_type_object->labels->singular_name,
 					'default'       => '',
@@ -199,17 +208,17 @@ class ST_BB_Module_Manager {
 		}
 		
 		$fields = array(
-			'button_text'	=> array(
+			$field_prefix . 'button_text'	=> array(
 				'type'          => 'text',
 				'label'         => 'Text',
 				'default'       => '',
 				'preview'	=> array(
 					'type'		=> 'text',
-					'selector'	=> '.st-bb-btn',
+					'selector'	=> '.' . $field_prefix . 'st-bb-btn',
 				),
 				'sanitize'	=>	'sanitize_text_field',
 			),
-			'button_url_type'	=> array(
+			$field_prefix . 'button_url_type'	=> array(
 				'type'          =>	'select',
 				'label'         =>	__( 'Link type', ST_BB_TD ),
 				'default'       =>	'url',
@@ -217,13 +226,13 @@ class ST_BB_Module_Manager {
 				'toggle'		=>  $toggle_fields,
 				'sanitize'		=>	'sanitize_text_field',
 			),
-			'button_url'	=> array(
+			$field_prefix . 'button_url'	=> array(
 				'type'          =>	'link',
 				'label'         =>	__( 'Link', ST_BB_TD ),
 				'default'       =>	'',
 				'sanitize'		=>	'esc_url_raw',
 			),
-			'button_new_window'	=> array(
+			$field_prefix . 'button_new_window'	=> array(
 				'type'          =>	'select',
 				'label'         =>	__( 'New window', ST_BB_TD ),
 				'default'       =>	'no',
@@ -234,7 +243,7 @@ class ST_BB_Module_Manager {
 				'help'	=>	__( 'Choose Yes to make the link open in a new tab or window.', ST_BB_TD ),
 				'sanitize'		=>	'sanitize_text_field',
 			),
-			'button_nofollow'	=> array(
+			$field_prefix . 'button_nofollow'	=> array(
 				'type'          =>	'select',
 				'label'         =>	__( 'No follow', ST_BB_TD ),
 				'default'       =>	'no',
@@ -245,7 +254,7 @@ class ST_BB_Module_Manager {
 				'help'	=>	__( 'Choose Yes to indicate to search engines that the link links to an unendorsed document, like a paid link.', ST_BB_TD ),
 				'sanitize'		=>	'sanitize_text_field',
 			),
-			'button_anchor_target'	=> array(
+			$field_prefix . 'button_anchor_target'	=> array(
 				'type'          =>	'text',
 				'label'         =>	__( 'Anchor target', ST_BB_TD ),
 				'help'			=>	__( 'Do not include the # symbol', ST_BB_TD ),
@@ -254,7 +263,7 @@ class ST_BB_Module_Manager {
 		);
 
 		$fields = array_merge( $fields, $dropdown_fields );
-
+cwine_error_log($fields);
 		return $fields;
 
 	}

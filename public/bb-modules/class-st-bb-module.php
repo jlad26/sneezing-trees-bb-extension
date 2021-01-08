@@ -224,12 +224,12 @@ abstract class ST_BB_Module extends FLBuilderModule {
      * 
 	 * @since 1.0.0
 	 */
-	public function get_rel() {
+	public function get_rel( $field_prefix = '' ) {
         $rel = array();
-        if ( 'yes' == $this->settings->button_new_window ) {
+        if ( 'yes' == $this->settings->{$field_prefix . 'button_new_window'} ) {
             $rel[] = 'noopener';
         }
-		if ( 'yes' == $this->settings->button_nofollow ) {
+		if ( 'yes' == $this->settings->{$field_prefix . 'button_nofollow'} ) {
 			$rel[] = 'nofollow';
 		}
 		$rel = implode( ' ', $rel );
