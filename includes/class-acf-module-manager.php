@@ -361,6 +361,11 @@ class ST_BB_ACF_Module_Manager {
 							'operator' => '==',
 							'value' => 'st-fc-editor',
 						),
+						array(
+							'param' => 'post',
+							'operator' => '==',
+							'value' => get_post_meta( $content_module->ID, 'st_fc_editor_id', true ),
+						)
 					);
 				} else { // ...variable content editor so we are displaying on pages / posts.
 					
@@ -1121,6 +1126,9 @@ class ST_BB_ACF_Module_Manager {
 		asort( $display_modules['before'] );
 		asort( $display_modules['after'] );
 
+		// Remove the filter so we don't get caught in a loop if the module uses post content.
+		remove_filter( 'the_content', array( $this, 'add_modules_content' ) );
+		
 		// Set the modules contents.
 		$before_content = '';
 		foreach ( $display_modules['before'] as $content_module_id => $order ) {
@@ -1132,6 +1140,9 @@ class ST_BB_ACF_Module_Manager {
 		foreach ( $display_modules['after'] as $content_module_id => $order ) {
 			$content .= self::get_module_content( $post->ID, $content_module_id );
 		}
+
+		// Add the_content filter back in.
+		add_filter( 'the_content', array( $this, 'add_modules_content' ) );
 
 		return $content;
 	
@@ -1511,12 +1522,14 @@ class ST_BB_ACF_Module_Manager {
 			
 			$id = $content_module_id . '-' . $post->ID;
 			$settings = (object) $content_module['settings'];
+			$module_class = get_class( $bb_modules[ $content_module_fields['choose_st_bb_module'] ] );
+			$module = new $module_class();
 
 			ob_start();
 			include ST_BB_DIR . 'public/bb-modules/includes/frontend.css.php';
 			$css .= ob_get_clean();
 
-			// Add the instance-specific CSS.
+			// Add the instance-specific CSS and JS.
 			$slug = $content_module_fields['choose_st_bb_module'];
 			$bb_module_dir = $bb_modules[ $slug ]->dir;
 			$path = $bb_module_dir . 'includes/frontend.css.php';
