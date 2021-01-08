@@ -49,7 +49,7 @@ class ST_BB_Module_Manager {
 				
 				// Init module.
 				$class_name = self::get_class_name_from_dir( $dir, 'ST_BB_', '_Module' );
-				call_user_func( array( $class_name, 'init' ) );
+				call_user_func( array( $class_name, 'init' ), $class_name );
 
 				// Register module with plugin.
 				$instance = new $class_name();

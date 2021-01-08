@@ -183,7 +183,10 @@ abstract class ST_BB_Module extends FLBuilderModule {
 			if ( 'screen' == $this->settings->row_height ) {
 				$classes = array_merge( $classes, array( 'd-flex', 'align-items-center' ) );
 			}
-		}
+        }
+        
+        // Allow amendment of section classes.
+		$classes = apply_filters( 'st_bb_section_classes', $classes, $this );
 
         return $classes;
     }
@@ -242,9 +245,10 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 *
 	 * @since    1.0.0
      * 
+     * @param   string  $child_class_name     name of child class
      * @return  array
 	 */
-    protected static function get_config() {
+    protected static function get_config( $child_class_name ) {
         $generic_config = self::get_generic_config();
         $config = static::get_module_config();
 
@@ -312,8 +316,9 @@ abstract class ST_BB_Module extends FLBuilderModule {
 
             }
         }
- 
-        return $config;
+
+        return apply_filters( 'st_bb_module_settings', $config, $child_class_name );
+
     }
 
     /**
@@ -518,10 +523,11 @@ abstract class ST_BB_Module extends FLBuilderModule {
     /**
 	 * Register the module using intial config settings.
 	 *
-	 * @since    1.0.0
+	 * @param   string  $child_class_name     name of child class
+     * @since    1.0.0
 	 */
-    public static function init() {
-        FLBuilder::register_module( static::class, static::get_config() );
+    public static function init( $child_class_name ) {
+        FLBuilder::register_module( static::class, static::get_config( $child_class_name ) );
     }
     
 }

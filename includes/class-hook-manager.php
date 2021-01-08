@@ -271,6 +271,9 @@ class ST_BB_Hook_Manager {
 			}
 		}
 
+		// Allow amendment of section classes.
+		$section_classes = apply_filters( 'st_bb_section_classes', $section_classes, $module );
+
 		if ( ! empty( $section_classes ) ) {
 			$attrs['class'] = array_merge( $attrs['class'],  $section_classes );
 		}
