@@ -7,7 +7,7 @@
 global $wp_embed;
 ?>
 <div class="row">
-    <div class="st-bb-free-edit-1-container col-lg-6 col-xl-5 offset-xl-1 st-bb-text-col-1">
+    <div class="st-bb-rich-text-1 col-lg-6 col-xl-5 offset-xl-1 st-bb-text-col-1">
         <?php
         if ( isset( $mod_params['free_content_1'] ) ) {
             echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['free_content_1'] ) ) );
@@ -16,7 +16,7 @@ global $wp_embed;
         include ST_BB_DIR . 'public/partials/button.php';
         ?>
     </div>
-    <div class="st-bb-free-edit-2-container col-lg-6 col-xl-5 st-bb-text-col-2">
+    <div class="st-bb-rich-text-2 col-lg-6 col-xl-5 st-bb-text-col-2">
         <?php
         if ( isset( $mod_params['free_content_2'] ) ) {
             echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['free_content_2'] ) ) );
