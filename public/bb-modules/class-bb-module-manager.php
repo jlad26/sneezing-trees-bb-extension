@@ -263,7 +263,7 @@ class ST_BB_Module_Manager {
 		);
 
 		$fields = array_merge( $fields, $dropdown_fields );
-cwine_error_log($fields);
+
 		return $fields;
 
 	}
