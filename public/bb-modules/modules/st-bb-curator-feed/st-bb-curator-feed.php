@@ -1,6 +1,6 @@
 <?php
 /**
- * Defines the Shortcode module.
+ * Defines the Curator Feed module.
  *
  * @since      1.0.0
  *

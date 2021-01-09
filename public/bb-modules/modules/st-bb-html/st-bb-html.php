@@ -1,6 +1,6 @@
 <?php
 /**
- * Defines the Shortcode module.
+ * Defines the Html module.
  *
  * @since      1.0.0
  *
@@ -25,8 +25,8 @@ class ST_BB_Html_Module extends ST_BB_Module {
 	 */
     public function __construct() {
         parent::__construct( array(
-            'name'              =>  __( 'Shortcode', ST_BB_TD ),
-            'description'       =>  __( 'Shortcode', ST_BB_TD ),
+            'name'              =>  __( 'Html', ST_BB_TD ),
+            'description'       =>  __( 'Html', ST_BB_TD ),
             'icon'              =>  'text.svg',
             'partial_refresh'   =>  true,
         ) );
