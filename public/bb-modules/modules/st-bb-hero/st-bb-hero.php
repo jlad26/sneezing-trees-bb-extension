@@ -50,23 +50,16 @@ class ST_BB_Hero_Module extends ST_BB_Module {
                     'text'		=>  array(
                         'title'         =>  __( 'Text', ST_BB_TD ),
                         'fields'        =>  array(
-                            'title'		=>  array(
-                                'type'          =>  'text',
-                                'label'         =>  __( 'Heading', ST_BB_TD ),
-                                'preview'       =>   array(
-                                    'type'          =>    'text',
-                                    'selector'      =>    '.st-bb-hero-title',
+                            'free_content'		=>  array(
+                                'type'          =>  'editor',
+                                'rows'			=>  8,
+                                'wpautop'		=>  false,
+                                'media_buttons'	=>  true,
+                                'preview'		=>  array(
+                                    'type'		=>  'text',
+                                    'selector'	=>  '.st-bb-rich-text',
                                 ),
-                                'sanitize'		=>	'sanitize_text_field',
-                            ),
-                            'subtitle'		=>  array(
-                                'type'          =>  'text',
-                                'label'         =>  __( 'Sub-heading', ST_BB_TD ),
-                                'preview'       =>   array(
-                                    'type'          =>    'text',
-                                    'selector'      =>    '.st-bb-hero-subtitle',
-                                ),
-                                'sanitize'		=>	'sanitize_text_field',
+                                'sanitize'		=>	'wp_kses_post',
                             ),
                         ),
                     ),
