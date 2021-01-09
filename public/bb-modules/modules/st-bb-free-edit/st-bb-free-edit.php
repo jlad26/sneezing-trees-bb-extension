@@ -52,7 +52,6 @@ class ST_BB_Free_Edit_Module extends ST_BB_Module {
                         'fields'        =>  array(
                             'free_content'		=>  array(
                                 'type'          =>  'editor',
-                                'rows'			=>  13,
                                 'wpautop'		=>  false,
                                 'media_buttons'	=>  true,
                                 'preview'		=> array(

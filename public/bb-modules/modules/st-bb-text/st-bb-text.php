@@ -52,7 +52,6 @@ class ST_BB_Text_Module extends ST_BB_Module {
                         'fields'        =>  array(
                             'text_content'		=>  array(
                                 'type'          =>  'editor',
-                                'rows'			=>  13,
                                 'wpautop'		=>  false,
                                 'media_buttons'	=>  false,
                                 'preview'		=> array(

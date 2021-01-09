@@ -69,7 +69,6 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
                         'fields'        =>  array(
                             'free_content_1'		=>  array(
                                 'type'          =>  'editor',
-                                'rows'			=>  8,
                                 'wpautop'		=>  false,
                                 'media_buttons'	=>  true,
                                 'preview'		=> array(
@@ -110,7 +109,6 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
                         'fields'        =>  array(
                             'free_content_2'		=>  array(
                                 'type'          =>  'editor',
-                                'rows'			=>  8,
                                 'wpautop'		=>  false,
                                 'media_buttons'	=>  true,
                                 'preview'		=> array(

@@ -52,7 +52,6 @@ class ST_BB_Hero_Module extends ST_BB_Module {
                         'fields'        =>  array(
                             'free_content'		=>  array(
                                 'type'          =>  'editor',
-                                'rows'			=>  8,
                                 'wpautop'		=>  false,
                                 'media_buttons'	=>  true,
                                 'preview'		=>  array(

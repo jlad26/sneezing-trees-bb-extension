@@ -342,7 +342,6 @@ abstract class ST_BB_Module extends FLBuilderModule {
                         'fields'        =>  array(
                             'before_content'    =>  array(
                                 'type'          =>  'editor',
-                                'rows'			=>  13,
                                 'wpautop'		=>  false,
                                 'media_buttons'	=>  true,
                                 'preview'		=>  array(
@@ -358,7 +357,6 @@ abstract class ST_BB_Module extends FLBuilderModule {
                         'fields'        =>  array(
                             'after_content'    =>  array(
                                 'type'          =>  'editor',
-                                'rows'			=>  13,
                                 'wpautop'		=>  false,
                                 'media_buttons'	=>  true,
                                 'preview'		=>  array(
