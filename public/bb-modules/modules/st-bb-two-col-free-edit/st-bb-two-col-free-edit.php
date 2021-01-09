@@ -74,7 +74,7 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
                                 'media_buttons'	=>  true,
                                 'preview'		=> array(
                                     'type'		=> 'text',
-                                    'selector'	=> '.st-bb-free-edit-1-container',
+                                    'selector'	=> '.st-bb-rich-text-1',
                                 ),
                                 'sanitize'		=>	'wp_kses_post',
                             ),
@@ -115,7 +115,7 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
                                 'media_buttons'	=>  true,
                                 'preview'		=> array(
                                     'type'		=> 'text',
-                                    'selector'	=> '.st-bb-free-edit-2-container',
+                                    'selector'	=> '.st-bb-rich-text-2',
                                 ),
                                 'sanitize'		=>	'wp_kses_post',
                             ),
