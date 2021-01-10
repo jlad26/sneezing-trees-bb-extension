@@ -53,7 +53,7 @@ class ST_BB_ACF_Module_Manager {
 	 * @access   private
 	 * @var      array    $display_modules    Key: module id, value: array of fields.
 	 */
-	private static $display_modules;
+	private static $display_modules = array();
 
 	/**
 	 * The field types of the BB modules to be displayed.
@@ -161,8 +161,11 @@ class ST_BB_ACF_Module_Manager {
 		// Set the modules to be displayed on page / post.
 		add_action( 'get_header', array( $this, 'set_modules_to_display' ) );
 
+		// Set the hooks that fixed content modules should to be displayed for.
+		add_action( 'get_header', array( $this, 'set_fixed_content_hooks' ), 11 );
+
 		// Set the modules CSS to be added on get_header so we can later strip it from BB styles if needed.
-		add_action( 'get_header', array( $this, 'set_modules_css_and_js' ), 11, 1 );
+		add_action( 'get_header', array( $this, 'set_modules_css_and_js' ), 11 );
 
 		// Remove any duplicate module CSS / JS from BB CSS / JS.
 		add_filter( 'fl_builder_render_css', array( $this, 'remove_duplicate_BB_css' ), 10, 4 );
@@ -195,7 +198,7 @@ class ST_BB_ACF_Module_Manager {
 
 		// Cycle through each field sections.
 		foreach ( $bb_field_sections as $section => $fields ) {
-			
+
 			// Ignore any that haven't been stored by us.
 			if ( 0 !== strpos( $section, 'section*_' ) ) {
 				continue;
@@ -203,10 +206,17 @@ class ST_BB_ACF_Module_Manager {
 
 			if( $content_module_id == self::get_acf_module_id_from_section_name( $section ) ) {
 
-				// Store the fields.
-				foreach ( $fields as $field_key => $field_value ) {
-					$data_key = str_replace( '**' . $content_module_id, '', $field_key );
-					$module_data[ $data_key ] = self::convert_value_to_bb_format( $content_module_fields['choose_st_bb_module'], $data_key, $field_value );
+				// Handle any activation setting.
+				if ( strpos( $section, 'acf_content_editor_is_active') ) {
+					$module_data[ $section ] = $fields;
+				} else { // ...standard field group rather than activation setting.
+				
+					// Store the fields.
+					foreach ( $fields as $field_key => $field_value ) {
+						$data_key = str_replace( '**' . $content_module_id, '', $field_key );
+						$module_data[ $data_key ] = self::convert_value_to_bb_format( $content_module_fields['choose_st_bb_module'], $data_key, $field_value );
+					}
+
 				}
 
 			}
@@ -425,7 +435,7 @@ class ST_BB_ACF_Module_Manager {
 
 				$content_editor_field_group = array_merge( $content_editor_field_group, array(
 					'location' => $location,
-					'menu_order' => $content_module_fields['acf_module_order'] ? $content_module_fields['acf_module_order'] : 0,
+					'menu_order' => ( isset( $content_module_fields['acf_module_order'] ) && $content_module_fields['acf_module_order'] ) ? $content_module_fields['acf_module_order'] : 0,
 					'position' => 'normal',
 					'style' => 'default',
 					'label_placement' => 'top',
@@ -461,6 +471,47 @@ class ST_BB_ACF_Module_Manager {
 			// Set overall key and title.
 			$content_editor_fields['key'] = '**st_acf_module_' . $content_module_id;
 			$content_editor_fields['title'] = $content_module_title;
+
+			// Add in Activation tab and setting.
+			$activation_fields = array(
+				array(
+					'key' => 'st_content_editor_active_tab',
+					'label' => __( 'Activation', ST_BB_TD ),
+					'name' => '',
+					'type' => 'tab',
+					'instructions' => '',
+					'required' => 0,
+					'conditional_logic' => 0,
+					'wrapper' => array(
+						'width' => '',
+						'class' => '',
+						'id' => '',
+					),
+					'placement' => 'top',
+					'endpoint' => 0,
+				),
+				array(
+					'key' => 'st_content_editor_active_cb',
+					'label' => __( 'Active', ST_BB_TD ),
+					'name' => 'section*_acf_content_editor_is_active',
+					'type' => 'true_false',
+					'instructions' => '',
+					'required' => 0,
+					'conditional_logic' => 0,
+					'wrapper' => array(
+						'width' => '',
+						'class' => '',
+						'id' => '',
+					),
+					'message' => '',
+					'default_value' => 1,
+					'ui' => 1,
+					'ui_on_text' => '',
+					'ui_off_text' => '',
+				)
+			);
+
+			$content_editor_fields['fields'] = array_merge( $activation_fields, $content_editor_fields['fields'] );
 
 			// Cycle through and make all tab, section and field keys and names unique by adding ACF module ID.
 			foreach ( $content_editor_fields['fields'] as $key => $field ) {
@@ -1149,35 +1200,6 @@ class ST_BB_ACF_Module_Manager {
 	}
 
 	/**
-	 * Get modules content for display. This function is only to be used when hooking to a
-	 * theme's action or filter, as it only gets modules that are not hooked to the_content. 
-	 *
-	 * @since    1.0.0
-	 */
-	public static function get_modules_content() {
-		
-		global $post;
-		
-		$modules = self::$display_modules;
-		if ( empty( $modules ) ) {
-			return '';
-		}
-
-		$out = '';
-		foreach ( $modules as $module_id => $module ) {
-			
-			// Only display if module is not hooked to the_content.
-			$module_settings = self::$display_modules[ $module_id ]['content_module_fields'];
-			if ( ! $module_settings['acf_module_the_content'] ) {
-				$out .= self::get_module_content( $post->ID, $module_id );
-			}
-			
-		}
-		return $out;
-
-	}
-
-	/**
 	 * Add in modules content to post / page content.
 	 *
 	 * @since    1.0.0
@@ -1259,15 +1281,16 @@ class ST_BB_ACF_Module_Manager {
 		}
 
 		/**
-		 * Create output format with content module fields, removing any inactive.
-		 * NB we keep in those that aren't hooked to the_content because we want the CSS
-		 * to be available for any hooked elsewhere.
-		 * They are later removed from display in add_modules_content().
+		 * Create output format with content module fields, removing any inactive and any
+		 * that are not hooked to the_content or any action hooks.
 		 */
 		$modules = array();
 		foreach ( $module_ids as $module_id ) {
 			$modules[ $module_id ]['content_module_fields'] = get_fields( $module_id );
-			if ( ! $modules[ $module_id ]['content_module_fields']['acf_module_is_active'] ) {
+			$is_active_module = $modules[ $module_id ]['content_module_fields']['acf_module_is_active'];
+			$is_hooked_to_the_content = $modules[ $module_id ]['content_module_fields']['acf_module_the_content'];
+			$has_action_hooks = ! empty( $modules[ $module_id ]['content_module_fields']['acf_module_hooks'] );
+			if ( ! $is_active_module && ! $is_hooked_to_the_content && ! $has_action_hooks ) {
 				unset( $modules[ $module_id ] );
 			}
 		}
@@ -1302,8 +1325,14 @@ class ST_BB_ACF_Module_Manager {
 
 			$modules[ $module_id ]['settings'] = self::get_acf_module_data( $module_id, $module['content_module_fields'], $field_sections );
 
-			// Unset module if it has no settings - means ACF fields have never been saved and should not be displayed.
-			if ( empty( $modules[ $module_id ]['settings'] ) ) {
+			/**
+			 * Unset module if it has no settings (means ACF fields have never been saved and should not be displayed)
+			 * or if content editor is inactive.
+			 */
+			if (
+				empty( $modules[ $module_id ]['settings'] ) ||
+				! $modules[ $module_id ]['settings']['section*_acf_content_editor_is_active**' . $module_id ]
+			) {
 				unset( $modules[ $module_id ] );
 			}
 
@@ -1347,6 +1376,49 @@ class ST_BB_ACF_Module_Manager {
 
 		return $field_types;
 
+	}
+
+	/**
+	 * Set the hooks that fixed content modules should to be displayed for.
+	 *
+	 * @since    1.0.0
+	 * @hooked	get_header
+	 */
+	public function set_fixed_content_hooks() {
+
+		foreach ( self::$display_modules as $content_module_id => $module ) {
+
+			$hooks = get_field( 'acf_module_hooks', $content_module_id );
+
+			if ( $hooks ) {
+				foreach ( explode( "\n", $hooks ) as $hook ) {
+					$hook_info = explode( ' ', $hook );
+					$name = sanitize_text_field( $hook_info[0] );
+					$priority = isset( $hook_info[1] ) ? intval( $hook_info[1] ) : 10;
+					add_action( $name, array( $this, 'display_hooked_content_' . $content_module_id ), $priority );
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Parse function called by hook into a function and variables.
+	 *
+	 * @since	1.0.0
+	 * @param	string		$method		Name of function called.
+	 * @param	array		$args		Any arguments to the called function.
+	 */
+	public function __call( $method, $args ) {
+
+		// Only do something if method called is in the form 'display_hooked_content_[positive integer]'.
+		$method = sanitize_text_field( $method );
+		$content_module_id = absint( str_replace( 'display_hooked_content_', '', $method ) );
+		if ( $content_module_id ) {
+			global $post;
+			echo self::get_module_content( $post->ID, $content_module_id );
+		}
+		
 	}
 
 	/**

@@ -208,7 +208,7 @@ class ST_BB_Content_Module_Fields_Group {
 				'label' => __( 'Add to page / post content automatically', ST_BB_TD ),
 				'name' => 'acf_module_the_content',
 				'type' => 'true_false',
-				'instructions' => __( 'If selected, content will be added automatically. If not, content must be displayed using the function <code>echo ST_BB_ACF_Module_Manager::get_modules_content();</code>', ST_BB_TD ),
+				'instructions' => __( 'If selected, content will be added automatically to the page / post content.', ST_BB_TD ),
 				'required' => 0,
 				'conditional_logic' => 0,
 				'wrapper' => array(
@@ -262,7 +262,15 @@ class ST_BB_Content_Module_Fields_Group {
 				'type' => 'number',
 				'instructions' => __( 'Lower numbers appear first', ST_BB_TD ),
 				'required' => 0,
-				'conditional_logic' => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field' => 'field_5fc107b2491f2',
+							'operator' => '==',
+							'value' => '1',
+						),
+					),
+				),
 				'wrapper' => array(
 					'width' => '50%',
 					'class' => '',
@@ -275,6 +283,24 @@ class ST_BB_Content_Module_Fields_Group {
 				'min' => -50,
 				'max' => 50,
 				'step' => 1,
+			),
+			array(
+				'key' => 'field_5fd8785e8354a',
+				'label' => 'Hooks',
+				'name' => 'acf_module_hooks',
+				'type' => 'textarea',
+				'instructions' => __( 'Action hooks where the content should be displayed. List each hook on a new line.<br>To specify priority other than the default of 10, add after the hook and a space e.g. <code>wpbf_after_header 15</code>', ST_BB_TD ),
+				'required' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'default_value' => '',
+				'placeholder' => '',
+				'maxlength' => '',
+				'rows' => 4,
+				'new_lines' => '',
 			),
 		);
 
