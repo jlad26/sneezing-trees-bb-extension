@@ -504,7 +504,7 @@ class ST_BB_ACF_Module_Manager {
 						'id' => '',
 					),
 					'message' => '',
-					'default_value' => 1,
+					'default_value' => 0,
 					'ui' => 1,
 					'ui_on_text' => '',
 					'ui_off_text' => '',
