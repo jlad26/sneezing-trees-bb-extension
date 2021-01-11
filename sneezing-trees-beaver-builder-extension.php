@@ -24,13 +24,27 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-// Only run plugin if BB is active.
+// Only run plugin if BB and ACF are active.
 // NB Check that the folder for Pro version is corect
 $st_bb_lite_activated = in_array('beaver-builder-lite-version/fl-builder.php', apply_filters('active_plugins', get_option('active_plugins')));
 $st_bb_pro_activated = in_array('beaver-builder/fl-builder.php', apply_filters('active_plugins', get_option('active_plugins')));
+$st_acf_activated = in_array('advanced-custom-fields/acf.php', apply_filters('active_plugins', get_option('active_plugins')));
+$st_acf_pro_activated = in_array('advanced-custom-fields-pro/acf.php', apply_filters('active_plugins', get_option('active_plugins')));
 
-if( ! $st_bb_lite_activated && ! $st_bb_pro_activated ){ 
-    return;
+if(
+	! ( $st_bb_lite_activated || $st_bb_pro_activated ) ||
+	! ( $st_acf_activated || $st_acf_pro_activated )
+) { 
+	add_action( 'admin_notices', 'st_bb_no_load_admin_notice' );
+	return false;
+}
+
+function st_bb_no_load_admin_notice() {
+	?>
+    <div class="notice notice-error">
+        <p><strong>Sneezing Trees Beaver Builder Extension: </strong>The plugin will not run without Beaver Builder and Advanced Custom Fields installed and activated. Please either activate those plugins, or you can deactivate Sneezing Trees Beaver Builder Extension to remove this message.</p>
+    </div>
+    <?php
 }
 
 /**
