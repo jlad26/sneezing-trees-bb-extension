@@ -2,7 +2,7 @@
 
 A WordPress plugin that creates content modules. The modules can be used both with Beaver Builder drag and drop and with Advanced Custom Fields style editing.
 
-The plugin allows theme developers to create a set of modules that adhere to a consistent design while taking full advantage of the Beaver Builder and ACF interfaces for easy editing by users.
+The plugin allows theme developers and site administrators to use a set of modules that adhere to a consistent design while taking full advantage of the Beaver Builder and ACF interfaces for easy editing by users.
 
 **NB Work in Progress!**
 
