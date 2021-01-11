@@ -1117,8 +1117,12 @@ class ST_BB_ACF_Module_Manager {
 			}
 		}
 
-		update_option( 'st_acf_module_registration', $module_registration );
-
+		// Update the stored option, deleting entirely if there is nothing to store.
+		if ( empty( $module_registration['post_types'] ) && empty( $module_registration['page_ids'] ) ) {
+			delete_option( 'st_acf_module_registration', $module_registration );
+		} else {
+			update_option( 'st_acf_module_registration', $module_registration );
+		}
 	}
 
 	/**
