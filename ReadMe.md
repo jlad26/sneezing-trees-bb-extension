@@ -34,15 +34,17 @@ Typically all this would be achieved through a template and ACF, but any design 
 
 The plugin creates two new items in the Admin Menu - **Content Modules** and **Fixed Content Editors**.
 
-### *Variable* content modules
+### Content modules
 
 When a content module is created, the essential choice is what type of module it is. Most of the plugin's Beaver Builder style of modules are available to choose from. Then you can choose where the content appears, on which post types, and for pages you can select individual pages.
 
 Content is then either selected as *Variable* or *Fixed*.
 
+**Variable content**
+
 If variable is chosen, then the same content fields as you would see in the Beaver Builder version appear (but in ACF format) whenever a page / post is being edited - provided that page / post has been selected to include that content. Thus the content can be different on each page / post where the module is present.
 
-### *Fixed* content modules
+**Fixed content editors**
 
 If fixed is chosen, then a new Fixed Content Editor is created. This again contains exactly the same fields as you would see in the Beaver Builder version of the module, but in ACF format. And this time the content can only be edited here in a single place, so the content is then identical where it appears throughout the site.
 
