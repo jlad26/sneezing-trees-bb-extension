@@ -48,7 +48,7 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
             'module'    => array(
                 'title'     =>  __( 'Column One', ST_BB_TD ),
                 'sections'		=>  array(
-                    'text_valign'     =>  array(
+                    'text_valign_1'     =>  array(
                         'title'         =>  __( 'Alignment', ST_BB_TD ),
                         'fields'        =>  array(
                             'text_valign_1'  => array(
@@ -64,7 +64,7 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
                             ),
                         ),
                     ),
-                    'editor'		=>  array(
+                    'editor_1'		=>  array(
                         'title'         =>  __( 'Editor', ST_BB_TD ),
                         'fields'        =>  array(
                             'free_content_1'		=>  array(
@@ -79,7 +79,7 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
                             ),
                         ),
                     ),
-                    'button'	=> array(
+                    'button_1'	=> array(
 						'title'		=>	__( 'Button', ST_BB_TD ),
 						'fields'	=>	ST_BB_Module_Manager::get_button_settings_fields( 'col_1', array( 'module', 'column_two' ) )
 					),
@@ -88,7 +88,7 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
             'column_two'    => array(
                 'title'     =>  __( 'Column Two', ST_BB_TD ),
                 'sections'		=>  array(
-                    'text_valign'     =>  array(
+                    'text_valign_2'     =>  array(
                         'title'         =>  __( 'Alignment', ST_BB_TD ),
                         'fields'        =>  array(
                             'text_valign_2'  => array(
@@ -104,7 +104,7 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
                             ),
                         ),
                     ),
-                    'editor'		=>  array(
+                    'editor_2'		=>  array(
                         'title'         =>  __( 'Editor', ST_BB_TD ),
                         'fields'        =>  array(
                             'free_content_2'		=>  array(
@@ -119,7 +119,7 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
                             ),
                         ),
                     ),
-                    'button'	=> array(
+                    'button_2'	=> array(
 						'title'		=>	__( 'Button', ST_BB_TD ),
 						'fields'	=>	ST_BB_Module_Manager::get_button_settings_fields( 'col_2', array( 'module', 'column_two' ) )
 					),
