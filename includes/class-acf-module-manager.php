@@ -1611,7 +1611,7 @@ class ST_BB_ACF_Module_Manager {
 				$js .= ob_get_clean();
 			}
 
-			// Add in the all-modules instance-specific CSS.
+			// Add in the all-modules instance-specific CSS and JS.
 			$id = $content_module_id . '-' . $post->ID;
 			$settings = (object) $content_module['settings'];
 			$module_class = get_class( $bb_modules[ $content_module_fields['choose_st_bb_module'] ] );
@@ -1619,6 +1619,9 @@ class ST_BB_ACF_Module_Manager {
 			ob_start();
 			include ST_BB_DIR . 'public/bb-modules/includes/frontend.css.php';
 			$css .= ob_get_clean();
+			ob_start();
+			include ST_BB_DIR . 'public/bb-modules/includes/frontend.js.php';
+			$js .= ob_get_clean();
 
 		}
 		

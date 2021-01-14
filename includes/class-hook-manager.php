@@ -297,4 +297,21 @@ class ST_BB_Hook_Manager {
 		return $css;
 	}
 
+	/**
+	 * Add instance JS to all modules.
+	 * @hooked	fl_builder_render_js
+	 */
+	public function add_instance_js( $js, $nodes, $global_settings, $include_global ) {
+		
+		foreach ( $nodes['modules'] as $module ) {
+			$settings = $module->settings;
+			$id       = $module->node;
+			ob_start();
+			include ST_BB_DIR . 'public/bb-modules/includes/frontend.js.php';
+			FLBuilderCSS::render();
+			$js .= ob_get_clean();
+		}
+		return $js;
+	}
+
 }

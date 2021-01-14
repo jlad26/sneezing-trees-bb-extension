@@ -1,0 +1,1 @@
+<?php do_action( 'st_bb_instance_custom_js', $id, $settings, $module ); ?>
