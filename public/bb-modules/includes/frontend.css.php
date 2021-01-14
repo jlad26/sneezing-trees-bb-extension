@@ -16,3 +16,4 @@
     object-position: <?php echo $settings->row_image_xpos . ' ' . $settings->row_image_ypos; ?>
 }
 <?php endif; ?>
+<?php do_action( 'st_bb_instance_custom_css', $id, $settings, $module ); ?>
