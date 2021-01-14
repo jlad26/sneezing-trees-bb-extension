@@ -504,6 +504,17 @@ abstract class ST_BB_Module extends FLBuilderModule {
                             ),
                         ),
                     ),
+                    'developer'     =>  array(
+                        'title'     =>  __( 'Developer', ST_BB_TD ),
+                        'fields'        =>  array(
+                            'instance_id'    =>  array(
+                                'type'          =>  'text',
+                                'label'         =>  __( 'Module ID', ST_BB_TD ),
+                                'help'          =>  __( 'Give the module a unique ID. This is not displayed but can then be used by developers in filters to add custom CSS for example.', ST_BB_TD ),
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
+                        ),
+                    )
                 ),
             ),
         );
