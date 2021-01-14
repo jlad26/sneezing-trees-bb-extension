@@ -48,6 +48,10 @@ img.st-bb-background-img {
     padding-bottom: 6rem;
 }
 
+.st-bb-module-container .row > div > div {
+    flex-grow: 1;
+}
+
 /*===========================================================================================*/
 /* Alignment */
 
