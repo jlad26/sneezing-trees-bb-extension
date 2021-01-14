@@ -64,12 +64,6 @@ class ST_BB_Custom_Carousel_Module extends ST_BB_Module {
                     'carousel_config'     =>  array(
                         'title'         =>  __( 'Carousel ID', ST_BB_TD ),
                         'fields'        =>  array(
-                            'custom_carousel_id'  => array(
-                                'type'          =>  'text',
-                                'label'         =>  __( 'Carousel ID', ST_BB_TD ),
-                                'help'          =>  __( 'Give the carousel a unique ID. Slides content can then be added using the filter \'st-bb-custom-carousel-slides-{$your_id}\'.', ST_BB_TD ),
-                                'sanitize'		=>	'sanitize_text_field',
-                            ),
                             'include_nav'       =>  array(
                                 'type'      =>  'select',
                                 'label'     => __( 'Show left-right navigation arrows', ST_BB_TD ),
