@@ -1623,8 +1623,28 @@ class ST_BB_ACF_Module_Manager {
 			include ST_BB_DIR . 'public/bb-modules/includes/frontend.js.php';
 			$js .= ob_get_clean();
 
+			$instance_scripts = apply_filters( 'st_bb_js_scripts', array(), $settings->instance_id );
+			if ( $instance_scripts ) {
+				foreach( $instance_scripts as $script ) {
+					$script_params = $module->parse_enqueue_params( $script, 'js' );
+					extract( $script_params );
+					wp_enqueue_script( $handle, $src, $deps, $ver, $in_footer );
+				}
+			}
+
+			$instance_stylesheets = apply_filters( 'st_bb_css_stylesheets', array(), $settings->instance_id );
+			if ( $instance_stylesheets ) {
+				foreach( $instance_stylesheets as $stylesheet ) {
+					$stylesheet_params = $module->parse_enqueue_params( $stylesheet, 'css' );
+					extract( $stylesheet_params );
+					wp_enqueue_style( $handle, $src, $deps, $ver, $media );
+				}
+			}
+
 		}
+
 		
+	
 		$dep_handle = $this->plugin_name . '-public';
 		if ( $css ) {
 			wp_add_inline_style( $dep_handle, $css );

@@ -106,8 +106,13 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 * @since    1.0.0
 	 */
     public function enqueue_scripts() {
-        if ( $this->config['js'] ) {
-            foreach ( $this->config['js'] as $script_params ) {
+
+        $instance_id = isset( $this->settings->instance_id ) ? $this->settings->instance_id : '';
+        
+        $js = apply_filters( 'st_bb_js_scripts', $this->config['js'], $instance_id );
+        
+        if ( $js ) {
+            foreach ( $js as $script_params ) {
                 $script_params = $this->parse_enqueue_params( $script_params, 'js' );
                 extract( $script_params );
                 if ( $handle ) {
@@ -116,8 +121,10 @@ abstract class ST_BB_Module extends FLBuilderModule {
             }
         }
 
-        if ( $this->config['css'] ) {
-            foreach ( $this->config['css'] as $script_params ) {
+        $css = apply_filters( 'st_bb_css_stylesheets', $this->config['css'], $instance_id );
+
+        if ( $css ) {
+            foreach ( $css as $script_params ) {
                 $script_params = $this->parse_enqueue_params( $script_params, 'css' );
                 extract( $script_params );
                 if ( $handle ) {
