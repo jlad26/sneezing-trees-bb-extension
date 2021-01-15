@@ -6,6 +6,6 @@
 
 global $wp_embed;
 if ( isset( $mod_params['text_content'] ) ) {
-    echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['text_content'] ) ) );
+    echo wpautop( $wp_embed->autoembed( $mod_params['text_content'] ) );
 }
 ?>

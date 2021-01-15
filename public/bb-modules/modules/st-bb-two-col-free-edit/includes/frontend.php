@@ -11,7 +11,7 @@ global $wp_embed;
         <div>
             <?php
             if ( isset( $mod_params['free_content_1'] ) ) {
-                echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['free_content_1'] ) ) );
+                echo wpautop( $wp_embed->autoembed( $mod_params['free_content_1'] ) );
             }
             $field_prefix = 'col_1';
             include ST_BB_DIR . 'public/partials/button.php';
@@ -22,7 +22,7 @@ global $wp_embed;
         <div>
             <?php
             if ( isset( $mod_params['free_content_2'] ) ) {
-                echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['free_content_2'] ) ) );
+                echo wpautop( $wp_embed->autoembed( $mod_params['free_content_2'] ) );
             }
             $field_prefix = 'col_2';
             include ST_BB_DIR . 'public/partials/button.php';

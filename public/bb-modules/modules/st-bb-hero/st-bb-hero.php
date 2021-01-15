@@ -81,18 +81,6 @@ class ST_BB_Hero_Module extends ST_BB_Module {
                                 'sanitize'		=>	'sanitize_text_field',
                                 'help'          =>  __( 'Determines where the block of content is placed.', ST_BB_TD ),
                             ),
-                            'text_align'		=>  array(
-                                'type'          =>  'select',
-                                'label'         =>  __( 'Text', ST_BB_TD ),
-                                'default'       =>  'left',
-                                'options'	=> array(
-                                    'left'      =>  __( 'Left', ST_BB_TD ),
-                                    'center'    =>	__( 'Center', ST_BB_TD ),
-                                    'right'     =>	__( 'Right', ST_BB_TD ),
-                                ),
-                                'sanitize'		=>	'sanitize_text_field',
-                                'help'          =>  __( 'Determines how text is aligned within the block of content.', ST_BB_TD ),
-                            ),
                         ),
                     ),
                 ),
