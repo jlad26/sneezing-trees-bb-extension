@@ -1301,6 +1301,19 @@ class ST_BB_ACF_Module_Manager {
 
 		$bb_modules = ST_BB_Module_Manager::get_registered_modules();
 
+		/**
+		 * Temporarily unnhook do_shortcode from acf_the_content because we are executing earlier display.
+		 * Some plugins do things like enqueue scripts (that are then displayed in footer) when shortcode
+		 * is run and we don't want to do that too early because the script may not be registered.
+		 * We run the shortcodes at display time.
+		 * We also need to temporarily remove embedding because that follows 
+		 */
+		remove_filter( 'acf_the_content', 'do_shortcode', 11 );
+		if(	isset( $GLOBALS['wp_embed'] ) ) {
+			remove_filter( 'acf_the_content', array( $GLOBALS['wp_embed'], 'run_shortcode' ), 8 );
+			remove_filter( 'acf_the_content', array( $GLOBALS['wp_embed'], 'autoembed' ), 8 );
+		}
+
 		// Add in the BB module settings.
 		foreach ( $modules as $module_id => $module ) {
 			
@@ -1340,6 +1353,13 @@ class ST_BB_ACF_Module_Manager {
 				unset( $modules[ $module_id ] );
 			}
 
+		}
+
+		// Put back the do_shortcode and embed filters
+		add_filter( 'acf_the_content', 'do_shortcode', 11 );
+		if(	isset( $GLOBALS['wp_embed'] ) ) {
+			add_filter( 'acf_the_content', array( $GLOBALS['wp_embed'], 'run_shortcode' ), 8 );
+			add_filter( 'acf_the_content', array( $GLOBALS['wp_embed'], 'autoembed' ), 8 );
 		}
 
 		self::$display_modules = $modules;
@@ -1420,7 +1440,7 @@ class ST_BB_ACF_Module_Manager {
 		$content_module_id = absint( str_replace( 'display_hooked_content_', '', $method ) );
 		if ( $content_module_id ) {
 			global $post;
-			echo self::get_module_content( $post->ID, $content_module_id );
+			echo apply_filters( 'the_content', self::get_module_content( $post->ID, $content_module_id ) );
 		}
 		
 	}
