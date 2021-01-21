@@ -32,8 +32,8 @@ if ( 'text_first' == $mod_params['mobile_order'] ) {
 
 if ( 'right' == $mod_params['image_placement'] ) {
     if ( empty( $order_classes['first_col'] ) ) {
-        $order_classes['first_col'][] = 'order-md-last';
-        $order_classes['second_col'][] = 'order-md-first';
+        $order_classes['first_col'][] = 'order-lg-last';
+        $order_classes['second_col'][] = 'order-lg-first';
     }
     $col_classes = array(
         'first_col'     =>  'col-lg-6 col-xl-5',
@@ -41,8 +41,8 @@ if ( 'right' == $mod_params['image_placement'] ) {
     );
 } else {
     if ( ! empty ( $order_classes['first_col'] ) ) {
-        $order_classes['first_col'][] = 'order-md-first';
-        $order_classes['second_col'][] = 'order-md-last';
+        $order_classes['first_col'][] = 'order-lg-first';
+        $order_classes['second_col'][] = 'order-lg-last';
     }
     $col_classes = array(
         'first_col'     =>  'col-lg-6 col-xl-5 offset-xl-1',
