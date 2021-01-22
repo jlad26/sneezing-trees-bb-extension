@@ -1306,7 +1306,7 @@ class ST_BB_ACF_Module_Manager {
 		 * Some plugins do things like enqueue scripts (that are then displayed in footer) when shortcode
 		 * is run and we don't want to do that too early because the script may not be registered.
 		 * We run the shortcodes at display time.
-		 * We also need to temporarily remove embedding because that follows 
+		 * We also need to temporarily remove embedding because that occurs at same time. 
 		 */
 		remove_filter( 'acf_the_content', 'do_shortcode', 11 );
 		if(	isset( $GLOBALS['wp_embed'] ) ) {
