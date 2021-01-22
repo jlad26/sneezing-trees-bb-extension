@@ -1302,7 +1302,7 @@ class ST_BB_ACF_Module_Manager {
 		$bb_modules = ST_BB_Module_Manager::get_registered_modules();
 
 		/**
-		 * Temporarily unnhook do_shortcode from acf_the_content because we are executing earlier display.
+		 * Temporarily unhook do_shortcode from acf_the_content because we are executing earlier display.
 		 * Some plugins do things like enqueue scripts (that are then displayed in footer) when shortcode
 		 * is run and we don't want to do that too early because the script may not be registered.
 		 * We run the shortcodes at display time.
