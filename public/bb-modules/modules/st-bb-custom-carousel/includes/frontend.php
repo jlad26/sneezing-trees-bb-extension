@@ -4,7 +4,7 @@
  * @since      1.0.0
  */
 
-$mod_params['slides'] = apply_filters( 'st-bb-custom-carousel-slides-' . $mod_params['instance_id'], array() );
+$mod_params['slides'] = apply_filters( 'st_bb_custom_carousel_slides-' . $mod_params['instance_id'], array() );
 $is_full_width = ( isset( $mod_params['full_width'] ) && 'yes' == $mod_params['full_width'] );
 ?>
 <div class="row">

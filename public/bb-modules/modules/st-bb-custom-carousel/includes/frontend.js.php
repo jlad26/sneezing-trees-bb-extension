@@ -6,6 +6,6 @@ var stBBSwiper = new Swiper('.fl-node-<?php echo $id; ?> .swiper-container', {
     },
     grabCursor  :   true,
     ';
-    echo apply_filters( 'st-bb-custom-carousel-params-' . $settings->instance_id, $carousel_settings, $id, $settings, $module );
+    echo apply_filters( 'st_bb_custom_carousel_params-' . $settings->instance_id, $carousel_settings, $id, $settings, $module );
     ?>
 } );

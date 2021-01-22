@@ -1,1 +1,1 @@
-<?php echo apply_filters( 'st-bb-custom-carousel-css-' . $settings->instance_id, '', $id, $settings, $module ); ?>
+<?php echo apply_filters( 'st_bb_custom_carousel_css-' . $settings->instance_id, '', $id, $settings, $module ); ?>
