@@ -88,18 +88,29 @@ class ST_BB_Image_Text_Module extends ST_BB_Module {
             'image' =>  array(
                 'title'     =>  __( 'Image', ST_BB_TD ),
                 'sections'  =>  array(
-                    'image_valign'     =>  array(
-                        'title'         =>  __( 'Alignment', ST_BB_TD ),
+                    'image_layout'     =>  array(
+                        'title'         =>  __( 'Layout', ST_BB_TD ),
                         'fields'        =>  array(
                             'image_valign'  => array(
                                 'type'          =>  'select',
-                                'label'         => __( 'Vertical Alignment', ST_BB_TD ),
+                                'label'         => __( 'Vertical alignment', ST_BB_TD ),
                                 'default'       =>  'top',
                                 'options'       =>  array(
                                     'stretch'       =>  __( 'Top', ST_BB_TD ),
                                     'center'        =>  __( 'Middle', ST_BB_TD ),
                                     'flex-end'      =>  __( 'Bottom', ST_BB_TD ),
                                 ),
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
+                            'image_margin_bottom'   => array(
+                                'type'          =>  'select',
+                                'label'         => __( 'Spacing below', ST_BB_TD ),
+                                'default'       =>  'yes',
+                                'options'       =>  array(
+                                    'yes'       =>  __( 'Yes', ST_BB_TD ),
+                                    'no'        =>  __( 'No', ST_BB_TD ),
+                                ),
+                                'help'          =>  __( 'Whether to leave space below image when in two-column layout', ST_BB_TD ),
                                 'sanitize'		=>	'sanitize_text_field',
                             ),
                         ),

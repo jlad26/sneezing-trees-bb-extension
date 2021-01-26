@@ -8,3 +8,10 @@
     align-items: <?php echo $settings->image_valign; ?>
 }
 <?php endif; ?>
+<?php if ( 'no' == $settings->image_margin_bottom ) : ?>
+@media (min-width: 992px) {
+    .fl-node-<?php echo $id; ?> .st-bb-img-col .figure {
+        margin-bottom: 0
+    }
+}
+<?php endif; ?>
