@@ -91,7 +91,7 @@ global $wp_embed;
 			
 			// Display any pre content.
 			if ( isset( $mod_params['before_content'] ) && $mod_params['before_content'] ) : ?>
-				<div class="row">
+				<div class="row st-bb-top-tail">
 					<div class="st-bb-before-content <?php echo $pre_post_classes; ?>">
 						<div><?php echo wpautop( $wp_embed->autoembed( $mod_params['before_content'] ) ); ?></div>
 					</div>
@@ -107,7 +107,7 @@ global $wp_embed;
 
 			// Display any post content.
 			if ( isset( $mod_params['after_content'] ) && $mod_params['after_content'] ) : ?>
-				<div class="row">
+				<div class="row st-bb-top-tail">
 					<div class="st-bb-after-content <?php echo $pre_post_classes; ?>">
 						<div><?php echo wpautop( $wp_embed->autoembed( $mod_params['after_content'] ) ); ?></div>
 					</div>
