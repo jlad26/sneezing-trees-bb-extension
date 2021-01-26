@@ -129,6 +129,15 @@ class ST_BB_Image_Text_Module extends ST_BB_Module {
                                 'preview'       =>  false,
                                 'sanitize'		=>	'sanitize_text_field',
                             ),
+                            'image_caption'		=>  array(
+                                'type'          =>  'text',
+                                'label'         =>  __( 'Caption', ST_BB_TD ),
+                                'preview'		=> array(
+                                    'type'		=> 'text',
+                                    'selector'	=> '.st-bb-caption',
+                                ),
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
                         ),
                     ),
                 )
