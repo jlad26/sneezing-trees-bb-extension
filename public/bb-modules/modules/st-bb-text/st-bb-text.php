@@ -29,6 +29,10 @@ class ST_BB_Text_Module extends ST_BB_Module {
             'description'       =>  __( 'Text editing and embedding', ST_BB_TD ),
             'icon'              =>  'text.svg',
             'partial_refresh'   =>  true,
+            'preview'		=> array(
+                'type'		=> 'text',
+                'selector'	=> '.st-bb-rich-text',
+            ),
             'config'            =>  array(
                 'acf_version'       =>  true
             )
@@ -56,7 +60,7 @@ class ST_BB_Text_Module extends ST_BB_Module {
                                 'media_buttons'	=>  false,
                                 'preview'		=> array(
                                     'type'		=> 'text',
-                                    'selector'	=> '.st-bb-text-container',
+                                    'selector'	=> '.st-bb-rich-text',
                                 ),
                                 'sanitize'		=>	'wp_kses_post',
                             ),

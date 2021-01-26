@@ -6,10 +6,18 @@
 
 // Align the block of content.
 $content_align_class = '';
-if ( 'center' == $mod_params['content_align'] ) {
+$desktop_indent = 'yes' == $mod_params['row_desktop_indent'] ? true : false;
+if ( 'left' == $mod_params['content_align'] ) {
+    if ( $desktop_indent ) {
+        $content_align_class = ' col-xl-5 offset-xl-1';
+    }
+} elseif ( 'center' == $mod_params['content_align'] ) {
     $content_align_class = ' offset-md-3';
 } elseif ( 'right' == $mod_params['content_align'] ) {
     $content_align_class = ' offset-md-6';
+    if ( $desktop_indent ) {
+        $content_align_class .= ' col-xl-5';
+    }
 }
 
 // Format content.

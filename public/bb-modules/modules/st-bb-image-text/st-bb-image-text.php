@@ -73,7 +73,7 @@ class ST_BB_Image_Text_Module extends ST_BB_Module {
                                 'media_buttons'	=>  false,
                                 'preview'		=> array(
                                     'type'		=> 'text',
-                                    'selector'	=> '.st-bb-text',
+                                    'selector'	=> '.st-bb-rich-text',
                                 ),
                                 'sanitize'		=>	'wp_kses_post',
                             ),

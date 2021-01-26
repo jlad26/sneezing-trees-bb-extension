@@ -30,14 +30,17 @@ if ( 'text_first' == $mod_params['mobile_order'] ) {
     );
 }
 
+$desktop_view['left'] = 'yes' == $mod_params['row_desktop_indent'] ? ' col-xl-5 offset-xl-1' : '';
+$desktop_view['right'] = 'yes' == $mod_params['row_desktop_indent'] ? ' col-xl-5' : '';
+
 if ( 'right' == $mod_params['image_placement'] ) {
     if ( empty( $order_classes['first_col'] ) ) {
         $order_classes['first_col'][] = 'order-lg-last';
         $order_classes['second_col'][] = 'order-lg-first';
     }
     $col_classes = array(
-        'first_col'     =>  'col-lg-6 col-xl-5',
-        'second_col'    =>  'col-lg-6 col-xl-5 offset-xl-1'
+        'first_col'     =>  'col-lg-6' . $desktop_view['right'],
+        'second_col'    =>  'col-lg-6' . $desktop_view['left']
     );
 } else {
     if ( ! empty ( $order_classes['first_col'] ) ) {
@@ -45,8 +48,8 @@ if ( 'right' == $mod_params['image_placement'] ) {
         $order_classes['second_col'][] = 'order-lg-last';
     }
     $col_classes = array(
-        'first_col'     =>  'col-lg-6 col-xl-5 offset-xl-1',
-        'second_col'    =>  'col-lg-6 col-xl-5'
+        'first_col'     =>  'col-lg-6' . $desktop_view['left'],
+        'second_col'    =>  'col-lg-6' . $desktop_view['right']
     );
 }
 
@@ -59,11 +62,11 @@ $order_classes['second_col'] = implode( ' ', $order_classes['second_col'] );
         <?php include ST_BB_DIR . 'public/partials/figure.php'; ?>
     </div>
     <div class="st-bb-text-col <?php echo $col_classes['second_col'] . ' ' . $order_classes['second_col']; ?>">
-    <div class="st-bb-col-content">
-        <?php if ( $mod_params['text_content'] ) : ?>
-            <div class="st-bb-text"><?php echo $mod_params['text_content']; ?></div>
-        <?php endif; ?>
-        <?php include ST_BB_DIR . 'public/partials/button.php'; ?>
+        <div class="st-bb-col-content">
+            <?php if ( $mod_params['text_content'] ) : ?>
+                <div class="st-bb-rich-text"><?php echo $mod_params['text_content']; ?></div>
+            <?php endif; ?>
+            <?php include ST_BB_DIR . 'public/partials/button.php'; ?>
         </div>
     </div>
 </div>

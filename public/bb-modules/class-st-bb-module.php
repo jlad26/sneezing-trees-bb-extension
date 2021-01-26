@@ -467,6 +467,17 @@ abstract class ST_BB_Module extends FLBuilderModule {
                     'layout'     =>  array(
                         'title'         =>  __( 'Layout', ST_BB_TD ),
                         'fields'        =>  array(
+                            'row_desktop_indent'    =>  array(
+                                'type'          =>  'select',
+                                'label'         => __( 'Indent on desktop', ST_BB_TD ),
+                                'default'       =>  'yes',
+                                'options'       =>  array(
+                                    'yes'       =>  __( 'Yes', ST_BB_TD ),
+                                    'no'        =>  __( 'No', ST_BB_TD ),
+                                ),
+                                'help'          =>  __( 'Whether when viewed on desktop the content should be indented on both sides, i.e., displayed in a column narrower than the width of the header', ST_BB_TD ),
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
                             'row_height'  =>  array(
                                 'type'          =>  'select',
                                 'label'         => __( 'Minimum Height', ST_BB_TD ),
