@@ -53,6 +53,9 @@ if ( ! isset( $mod_params['row_scrolldown_target'] ) ) {
 // Set section id.
 $section_id = ( isset( $mod_params['section_id'] ) && $mod_params['section_id'] ) ? 'id="' . esc_attr( $mod_params['section_id'] ) . '" ' : '';
 
+// Set indent classes.
+$pre_post_classes =  'yes' == $mod_params['row_desktop_indent'] ? 'col-xl-10 offset-xl-1' : 'col';
+
 // Global for editors.
 global $wp_embed;
 
@@ -88,9 +91,9 @@ global $wp_embed;
 			
 			// Display any pre content.
 			if ( isset( $mod_params['before_content'] ) && $mod_params['before_content'] ) {
-				?><div class="st-bb-before-content"><?php
+				?><div class="row"><div class="st-bb-before-content <?php echo $pre_post_classes; ?>"><?php
 					echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['before_content'] ) ) );
-				?></div><?php
+				?></div></div><?php
 			}
 			ob_start();
 			include apply_filters( 'st_bb_module_frontend_file', $module->dir . 'includes/frontend.php', $module );
@@ -99,9 +102,9 @@ global $wp_embed;
 
 			// Display any post content.
 			if ( isset( $mod_params['after_content'] ) && $mod_params['after_content'] ) {
-				?><div class="st-bb-after-content"><?php
+				?><div class="row"><div class="st-bb-after-content <?php echo $pre_post_classes; ?>"><?php
 					echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['after_content'] ) ) );
-				?></div><?php
+				?></div></div><?php
 			}
 
 			?>
