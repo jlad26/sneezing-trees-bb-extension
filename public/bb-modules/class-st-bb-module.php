@@ -353,7 +353,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
                                 'media_buttons'	=>  true,
                                 'preview'		=>  array(
                                     'type'		=> 'text',
-                                    'selector'	=> '.st-bb-before-content',
+                                    'selector'	=> '.st-bb-before-content div',
                                 ),
                                 'sanitize'		=>	'wp_kses_post',
                             ),
@@ -368,7 +368,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
                                 'media_buttons'	=>  true,
                                 'preview'		=>  array(
                                     'type'		=> 'text',
-                                    'selector'	=> '.st-bb-after-content',
+                                    'selector'	=> '.st-bb-after-content div',
                                 ),
                                 'sanitize'		=>	'wp_kses_post',
                             ),

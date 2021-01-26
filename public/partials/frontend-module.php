@@ -90,24 +90,30 @@ global $wp_embed;
 			<?php // Render module content.
 			
 			// Display any pre content.
-			if ( isset( $mod_params['before_content'] ) && $mod_params['before_content'] ) {
-				?><div class="row"><div class="st-bb-before-content <?php echo $pre_post_classes; ?>"><?php
-					echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['before_content'] ) ) );
-				?></div></div><?php
-			}
+			if ( isset( $mod_params['before_content'] ) && $mod_params['before_content'] ) : ?>
+				<div class="row">
+					<div class="st-bb-before-content <?php echo $pre_post_classes; ?>">
+						<div><?php echo wpautop( $wp_embed->autoembed( $mod_params['before_content'] ) ); ?></div>
+					</div>
+				</div>
+			<?php endif; ?>
+			
+			<?php
+			// Display main content.
 			ob_start();
 			include apply_filters( 'st_bb_module_frontend_file', $module->dir . 'includes/frontend.php', $module );
 			$out = ob_get_clean();
 			echo apply_filters( 'st_bb_render_module_content', $out, $module );
 
 			// Display any post content.
-			if ( isset( $mod_params['after_content'] ) && $mod_params['after_content'] ) {
-				?><div class="row"><div class="st-bb-after-content <?php echo $pre_post_classes; ?>"><?php
-					echo wp_kses_post( wpautop( $wp_embed->autoembed( $mod_params['after_content'] ) ) );
-				?></div></div><?php
-			}
+			if ( isset( $mod_params['after_content'] ) && $mod_params['after_content'] ) : ?>
+				<div class="row">
+					<div class="st-bb-after-content <?php echo $pre_post_classes; ?>">
+						<div><?php echo wpautop( $wp_embed->autoembed( $mod_params['after_content'] ) ); ?></div>
+					</div>
+				</div>
+			<?php endif; ?>
 
-			?>
 		<?php echo $container['close']; ?>
 
 		<?php if ( $mod_params['row_scrolldown_hover_text'] && $mod_params['row_scrolldown_target'] ) : ?>
