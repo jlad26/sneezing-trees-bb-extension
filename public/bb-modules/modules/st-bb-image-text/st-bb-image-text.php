@@ -129,6 +129,23 @@ class ST_BB_Image_Text_Module extends ST_BB_Module {
                                 'preview'       =>  false,
                                 'sanitize'		=>	'sanitize_text_field',
                             ),
+                            'image_caption_type'    =>  array(
+                                'type'          =>  'select',
+                                'label'         => __( 'Caption type', ST_BB_TD ),
+                                'default'       =>  'saved',
+                                'options'       =>  array(
+                                    'none'      =>  __( 'None', ST_BB_TD ),
+                                    'saved'     =>  __( 'Saved', ST_BB_TD ),
+                                    'custom'    =>  __( 'Custom', ST__BB_TD )
+                                ),
+                                'toggle'    =>  array(
+                                    'custom'    =>  array(
+                                        'fields'    =>  array( 'image_caption' ),
+                                    )
+                                ),
+                                'help'          => __( 'Saved caption is the caption stored against the image in the Media Library. Use Custom to set a different caption in this specific location.', ST_BB_TD ),
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
                             'image_caption'		=>  array(
                                 'type'          =>  'text',
                                 'label'         =>  __( 'Caption', ST_BB_TD ),
