@@ -200,7 +200,7 @@ class ST_BB_ACF_Module_Manager {
 		foreach ( $bb_field_sections as $section => $fields ) {
 
 			// Ignore any that haven't been stored by us.
-			if ( 0 !== strpos( $section, 'section*_' ) ) {
+			if ( 0 !== strpos( $section, 'section_x_' ) ) {
 				continue;
 			}
 
@@ -213,7 +213,7 @@ class ST_BB_ACF_Module_Manager {
 				
 					// Store the fields.
 					foreach ( $fields as $field_key => $field_value ) {
-						$data_key = str_replace( '**' . $content_module_id, '', $field_key );
+						$data_key = str_replace( '_xx_' . $content_module_id, '', $field_key );
 						$module_data[ $data_key ] = self::convert_value_to_bb_format( $content_module_fields['choose_st_bb_module'], $data_key, $field_value );
 					}
 
@@ -469,7 +469,7 @@ class ST_BB_ACF_Module_Manager {
 			$content_editor_fields = self::$module_fields[ $module_slug ];
 
 			// Set overall key and title.
-			$content_editor_fields['key'] = '**st_acf_module_' . $content_module_id;
+			$content_editor_fields['key'] = '_xx_st_acf_module_' . $content_module_id;
 			$content_editor_fields['title'] = $content_module_title;
 
 			// Add in Activation tab and setting.
@@ -493,7 +493,7 @@ class ST_BB_ACF_Module_Manager {
 				array(
 					'key' => 'st_content_editor_active_cb',
 					'label' => __( 'Active', ST_BB_TD ),
-					'name' => 'section*_acf_content_editor_is_active',
+					'name' => 'section_x_acf_content_editor_is_active',
 					'type' => 'true_false',
 					'instructions' => '',
 					'required' => 0,
@@ -517,17 +517,17 @@ class ST_BB_ACF_Module_Manager {
 			foreach ( $content_editor_fields['fields'] as $key => $field ) {
 				
 				// Set the key
-				$content_editor_fields['fields'][ $key ]['key'] .= '**' . $content_module_id;
-				$content_editor_fields['fields'][ $key ]['name'] .= '**' . $content_module_id;
+				$content_editor_fields['fields'][ $key ]['key'] .= '_xx_' . $content_module_id;
+				$content_editor_fields['fields'][ $key ]['name'] .= '_xx_' . $content_module_id;
 				if ( isset ( $content_editor_fields['fields'][ $key ]['sub_fields'] ) ) {
 					foreach ( $content_editor_fields['fields'][ $key ]['sub_fields'] as $sub_field_key => $sub_field ) {
-						$content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['key'] .= '**' . $content_module_id;
-						$content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['name'] .= '**' . $content_module_id;
+						$content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['key'] .= '_xx_' . $content_module_id;
+						$content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['name'] .= '_xx_' . $content_module_id;
 						
 						// Handle conditional logic settings.
 						if ( $content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['conditional_logic'] ) {
 							// NB works only with one condition - which is acceptable as BB will only set one condition.
-							$content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['conditional_logic'][0][0]['field'] .= '**' . $content_module_id;					
+							$content_editor_fields['fields'][ $key ]['sub_fields'][ $sub_field_key ]['conditional_logic'][0][0]['field'] .= '_xx_' . $content_module_id;					
 						}
 						
 					}
@@ -549,8 +549,8 @@ class ST_BB_ACF_Module_Manager {
 	 * @param	string	$section_name	Section name
 	 */
 	public static function get_acf_module_id_from_section_name( $section_name ) {
-		$start = strrpos( $section_name, '**' );
-		return substr( $section_name, $start + 2 );
+		$start = strrpos( $section_name, '_xx_' );
+		return substr( $section_name, $start + 4 );
 	}
 
 	/**
@@ -810,7 +810,7 @@ class ST_BB_ACF_Module_Manager {
 					'choices' => $field_contents['options'],
 					'allow_null' => 0,
 					'multiple' => 0,
-					'ui' => 0,
+					'ui' => 1,
 					'ajax' => 0,
 					'return_format' => 'value',
 					'placeholder' => '',
@@ -871,9 +871,9 @@ class ST_BB_ACF_Module_Manager {
 
 				// Add the section group.
 				$section_group = array(
-					'key' => 'section*_' . $section,
+					'key' => 'section_x_' . $section,
 					'label' => $section_contents['title'],
-					'name' => 'section*_' . $section,
+					'name' => 'section_x_' . $section,
 					'type' => 'group',
 					'instructions' => '',
 					'required' => 0,
@@ -962,7 +962,7 @@ class ST_BB_ACF_Module_Manager {
 		global $wpdb;
 		$query = 'SELECT meta_id, meta_key FROM ' . $wpdb->postmeta . ' WHERE meta_key LIKE %s';
 		$post_meta = $wpdb->get_results(
-			$wpdb->prepare( $query, '%section*_%' ),
+			$wpdb->prepare( $query, '%section_x_%' ),
 			ARRAY_A
 		);
 
@@ -1348,7 +1348,7 @@ class ST_BB_ACF_Module_Manager {
 			 */
 			if (
 				empty( $modules[ $module_id ]['settings'] ) ||
-				! $modules[ $module_id ]['settings']['section*_acf_content_editor_is_active**' . $module_id ]
+				! $modules[ $module_id ]['settings']['section_x_acf_content_editor_is_active_xx_' . $module_id ]
 			) {
 				unset( $modules[ $module_id ] );
 			}
