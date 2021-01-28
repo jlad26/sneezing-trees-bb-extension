@@ -165,8 +165,8 @@ class ST_BB {
 
 		$plugin_hook_mgr = new ST_BB_Hook_Manager( $this->get_plugin_name(), $this->get_version() );
 
-		// Initialize all our BB modules.
-		$this->loader->add_action( 'init', $plugin_hook_mgr, 'init_bb_modules' );
+		// Initialize all our BB modules, late so all post types have been registered.
+		$this->loader->add_action( 'init', $plugin_hook_mgr, 'init_bb_modules', 15 );
 
 		// Disable all standard BB modules.
 		$this->loader->add_filter( 'fl_builder_register_module', $plugin_hook_mgr, 'disable_standard_modules', 10, 2 );
