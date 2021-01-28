@@ -63,11 +63,14 @@ class ST_BB_Module_Manager {
 		}
 
 		$args = array(
-			'post_type'			=>	$post_type_slugs,
-			'post_status'		=>	'publish',
-			'orderby'			=>	'title',
-			'order'				=>	'ASC',
-			'posts_per_page'	=>	-1,
+			'post_type'					=>	$post_type_slugs,
+			'post_status'				=>	'publish',
+			'orderby'					=>	'title',
+			'order'						=>	'ASC',
+			'posts_per_page'			=>	-1,
+			'no_found_rows'				=>	true,
+			'update_post_term_cache'	=>	false,
+			'update_post_meta_cache'	=>	false
 		);
 
 		$posts = get_posts( $args );
@@ -83,7 +86,7 @@ class ST_BB_Module_Manager {
 				
 				// Load module.
 				require_once ST_BB_DIR . 'public/bb-modules/modules/' . $dir . '/' . $dir . '.php';
-				
+
 				// Init module.
 				$class_name = self::get_class_name_from_dir( $dir, 'ST_BB_', '_Module' );
 				call_user_func( array( $class_name, 'init' ), $class_name );

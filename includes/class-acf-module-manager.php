@@ -339,9 +339,11 @@ class ST_BB_ACF_Module_Manager {
 		
 		// Get all Content Module posts.
 		$args = array(
-			'post_type'		=>	'st-content-module',
-			'numberposts'	=>	-1,
-			'post_status'	=>	'publish'
+			'post_type'					=>	'st-content-module',
+			'posts_per_page'			=>	-1,
+			'post_status'				=>	'publish',
+			'no_found_rows'				=>	true,
+			'update_post_term_cache'	=>	false
 		);
 
 		$content_modules = get_posts( $args );
@@ -1073,9 +1075,11 @@ class ST_BB_ACF_Module_Manager {
 
 		// Get all published content modules.
 		$args = array(
-			'post_type'		=>	'st-content-module',
-			'post_status'	=>	'publish',
-			'numberposts'	=>	-1,
+			'post_type'					=>	'st-content-module',
+			'post_status'				=>	'publish',
+			'posts_per_page'			=>	-1,
+			'no_found_rows'				=>	true,
+			'update_post_term_cache'	=>	false
 		);
 
 		$content_modules = get_posts( $args );
