@@ -168,13 +168,18 @@ class ST_BB_Hook_Manager {
 
 	/**
 	 * Remove BB outer content wrapping on front end.
-	 * @hooked	fl_builder_after_render_content
+	 * @hooked	fl_builder_before_render_shortcodes
 	 */
-	public function remove_bb_frontend_content_wrap() {
+	public function remove_bb_frontend_content_wrap( $content ) {
 		if ( ! is_admin() && ! isset( $_GET['fl_builder'] ) ) {
-			ob_clean();
-			FlBuilder::render_nodes();
+
+			// Strip off opening <div> tag and closing </div> tag.
+			$matches = array();
+			preg_match( '/<div(.*?)>/', $content, $matches );
+			$content = substr( $content, strlen( $matches[0] ), -6 );
+
 		}
+		return $content;
 	}
 	
 	/**
