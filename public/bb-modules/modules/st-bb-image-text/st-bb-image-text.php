@@ -136,7 +136,7 @@ class ST_BB_Image_Text_Module extends ST_BB_Module {
                                 'options'       =>  array(
                                     'none'      =>  __( 'None', ST_BB_TD ),
                                     'saved'     =>  __( 'Saved', ST_BB_TD ),
-                                    'custom'    =>  __( 'Custom', ST__BB_TD )
+                                    'custom'    =>  __( 'Custom', ST_BB_TD )
                                 ),
                                 'toggle'    =>  array(
                                     'custom'    =>  array(
