@@ -299,10 +299,11 @@ class ST_BB_ACF_Module_Manager {
 		if ( ! function_exists( 'get_current_screen' ) ) {
 			return false;
 		}
-		$screen = get_current_screen();
-		if ( 'edit-st-fc-editor' == $screen->id ) {
-			$query->set( 'meta_key', 'st_fc_editor_enabled' );
-			$query->set( 'meta_value', 1 );
+		if ( $screen = get_current_screen() ) {
+			if ( 'edit-st-fc-editor' == $screen->id ) {
+				$query->set( 'meta_key', 'st_fc_editor_enabled' );
+				$query->set( 'meta_value', 1 );
+			}
 		}
 	}
 
