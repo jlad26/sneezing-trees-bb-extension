@@ -29,6 +29,15 @@ class ST_BB_Module_Manager {
 	public static $modules = array();
 
 	/**
+	 * Data on post types.
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @var      array    $post_types_data    Array of data with post type as key.
+	 */
+	public static $post_types_data = array();
+
+	/**
 	 * Initialize all BB modules.
 	 *
 	 * @since    1.0.0
@@ -38,7 +47,35 @@ class ST_BB_Module_Manager {
 		
 		// Load parent class.
 		require_once ST_BB_DIR . 'public/bb-modules/class-st-bb-module.php';
-		
+
+		// Set post types and corresponding posts here so it only has to be done once.
+		$post_types_data = ST_BB_Utility::get_post_types();
+		$post_type_slugs = array();
+		foreach ( $post_types_data as $post_type => $post_type_object ) {
+			$post_type_slugs[] = $post_type;
+		}
+
+		foreach ( $post_types_data as $post_type => $post_type_object ) {
+			self::$post_types_data[ $post_type ] = array(
+				'label'	=>	$post_type_object->labels->singular_name,
+				'posts'	=>	array()
+			);
+		}
+
+		$args = array(
+			'post_type'			=>	$post_type_slugs,
+			'post_status'		=>	'publish',
+			'orderby'			=>	'title',
+			'order'				=>	'ASC',
+			'posts_per_page'	=>	-1,
+		);
+
+		$posts = get_posts( $args );
+
+		foreach ( $posts as $post ) {
+			self::$post_types_data[ $post->post_type ]['posts'][] = $post;
+		}
+
 		// Load and register all modules.
 		$module_dirs = scandir( ST_BB_DIR . 'public/bb-modules/modules' );
 		foreach ( $module_dirs as $key => $dir ) {
@@ -139,9 +176,7 @@ class ST_BB_Module_Manager {
 		}
 		
 		// Generate a dropdown for each available post type.
-		$post_types = ST_BB_Utility::get_post_types();
-
-		$posts = $dropdown_fields = array();
+		$dropdown_fields = array();
 
 		// Make the first choice a standard url
 		$link_types = array(
@@ -167,26 +202,18 @@ class ST_BB_Module_Manager {
 		);
 
 		// Add in link type and toggle field for each post type.
-		foreach ( $post_types as $post_type => $post_type_object ) {
+		foreach ( self::$post_types_data as $post_type => $post_type_data ) {
 
-			$link_types[ $post_type ] = $post_type_object->labels->singular_name;
+			$link_types[ $post_type ] = $post_type_data['label'];
 			
 			$toggle_fields[ $post_type ] = array(
 				'fields'	=>	array( $field_prefix . 'select_' . $post_type . '_id' ),
 				'sections'  =>  $sections,
 				'tabs'      =>  $tabs,
 			);
-			
-			$args = array(
-				'post_type'			=>	$post_type,
-				'post_status'		=>	'publish',
-				'orderby'			=>	'title',
-				'order'				=>	'ASC',
-				'posts_per_page'	=>	-1,
-			);
 
 			// Get the posts for this post type.
-			$posts = get_posts( $args );
+			$posts = $post_type_data['posts'];
 			if ( $posts ) {
 				
 				// Make the dropdown for this post type.
@@ -197,7 +224,7 @@ class ST_BB_Module_Manager {
 
 				$dropdown_fields[ $field_prefix . 'select_' . $post_type . '_id' ] = array(
 					'type'          => 'select',
-					'label'         => $post_type_object->labels->singular_name,
+					'label'         => $post_type_data['label'],
 					'default'       => '',
 					'options'       =>  $options,
 					'sanitize'		=>	'sanitize_text_field',
