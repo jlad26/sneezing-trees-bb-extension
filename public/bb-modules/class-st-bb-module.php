@@ -70,7 +70,11 @@ abstract class ST_BB_Module extends FLBuilderModule {
             'default_padding'   =>  'none',
             'acf_version'       =>  false,
             'js'                =>  array(),
-            'css'               =>  array()
+            'css'               =>  array(),
+            'container_classes' =>  array( 
+                'st-bb-module-container'    =>  'st-bb-module-container',
+                'container'                 =>  'container'
+            ),
         );
         
         if ( isset( $args['config'] ) ) {
@@ -78,24 +82,13 @@ abstract class ST_BB_Module extends FLBuilderModule {
         }
 
         // Add additional required classes, using matched key and value for easy unsetting using filters.
-        $class_types = array( 'container', 'section' );
-        $required_classes = array(
-            'container_classes' =>  array( 
-                'st-bb-module-container'    =>  'st-bb-module-container',
-                'container'                 =>  'container'
-            ),
-            'section_classes'   =>  array( 
-                'st-bb-section' =>  'st-bb-section',
-                $this->slug     =>  $this->slug
-            )
+        $config['section_classes'] = array( 
+            'st-bb-section' =>  'st-bb-section',
+            $this->slug     =>  $this->slug
         );
-        foreach ( $class_types as $class_type ) {
-            if ( ! isset( $config[ $class_type . '_classes' ] ) ) {
-                $config[ $class_type . '_classes' ] = array();
-            }
-            $config[ $class_type . '_classes' ] = array_merge( $config[ $class_type . '_classes' ], $required_classes[ $class_type . '_classes' ] );
+        if ( ! isset( $config[ 'container_classes' ] ) || ! is_array( $config[ 'container_classes' ] ) ) {
+            $config[ 'container_classes' ] = array();
         }
-
         $this->config = apply_filters( 'st_bb_module_config', $config, $this );
         
     }
