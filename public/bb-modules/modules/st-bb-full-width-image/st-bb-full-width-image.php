@@ -52,22 +52,6 @@ class ST_BB_Full_Width_Image_Module extends ST_BB_Module {
             'module' =>  array(
                 'title'     =>  __( 'Image', ST_BB_TD ),
                 'sections'  =>  array(
-                    'image_layout'     =>  array(
-                        'title'         =>  __( 'Layout', ST_BB_TD ),
-                        'fields'        =>  array(
-                            'image_margin_bottom'   => array(
-                                'type'          =>  'select',
-                                'label'         => __( 'Spacing below', ST_BB_TD ),
-                                'default'       =>  'yes',
-                                'options'       =>  array(
-                                    'yes'       =>  __( 'Yes', ST_BB_TD ),
-                                    'no'        =>  __( 'No', ST_BB_TD ),
-                                ),
-                                'help'          =>  __( 'Whether to leave space below image when in two-column layout', ST_BB_TD ),
-                                'sanitize'		=>	'sanitize_text_field',
-                            ),
-                        ),
-                    ),
                     'image'     =>  array(
                         'title'         =>  __( 'Image', ST_BB_TD ),
                         'fields'        =>  array(
