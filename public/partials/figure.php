@@ -29,8 +29,16 @@ if ( 'saved' == $mod_params['image_caption_type'] ) {
 <figure class="<?php echo $figure_classes; ?>">
     <?php echo wp_get_attachment_image( $mod_params['image_id'], $image_size, false, $image_attr ); ?>
 	<?php if ( $caption ) : ?>
-        <figcaption class="st-bb-caption">
-            <?php esc_html_e( $caption ); ?>
+        <figcaption class="st-bb-caption<?php if ( $mod_params['full_width_img'] ) : ?> container<?php endif; ?>">
+            <?php if ( $mod_params['full_width_img'] && 'yes' == $mod_params['row_desktop_indent'] ) : ?>
+                <div class="row">
+                    <div class="col-xl-11 offset-xl-1">
+            <?php endif; ?>
+                <?php esc_html_e( $caption ); ?>
+            <?php if ( $mod_params['full_width_img'] && 'yes' == $mod_params['row_desktop_indent'] ) : ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </figcaption>
     <?php endif; ?>
 </figure>

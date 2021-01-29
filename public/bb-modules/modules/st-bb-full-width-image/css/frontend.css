@@ -1,0 +1,5 @@
+.st-bb-full-width-image img {
+    max-height: 100vh;
+    width: 100%;
+    object-fit: cover;
+}
