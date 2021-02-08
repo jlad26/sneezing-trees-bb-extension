@@ -99,7 +99,7 @@ class ST_BB_Hook_Manager {
 		$min = WP_DEBUG ? '' : 'min.';
 
 		// General public-facing styles.
-		wp_enqueue_style( $this->plugin_name . '-public', $url_base . 'css/public.' . $min . 'css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '-public', $url_base . 'css/public.css', array(), $this->version, 'all' );
 		
 		// Bootstrap grid.
 		wp_enqueue_style( $this->plugin_name . '-bootstrap', $url_base . 'css/bootstrap-grid.' . $min . 'css', array(), $this->version, 'all' );
