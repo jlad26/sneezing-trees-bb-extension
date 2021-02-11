@@ -3,6 +3,15 @@
  */
 
 /*===========================================================================================*/
+/* General layout */
+
+/* Correct for nested containers */
+.container .container {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/*===========================================================================================*/
 /* Section background */
 
  .st-bb-section {
