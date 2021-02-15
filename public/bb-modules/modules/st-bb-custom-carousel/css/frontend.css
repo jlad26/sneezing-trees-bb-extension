@@ -1,14 +1,5 @@
-.swiper-container img {
-    max-height: 100vh;
-    width: auto;
-}
-
-.swiper-container figure {
-    text-align: center;
-}
-
 /*===========================================================================================*/
-/* NB the CSS below is a duplicate of the CSS for ST_BB_Custom_Carousel_Module */
+/* NB the CSS below is a duplicate of the CSS for ST_BB_Image_Carousel_Module */
 
 .st-bb-swiper {
     position: relative;
