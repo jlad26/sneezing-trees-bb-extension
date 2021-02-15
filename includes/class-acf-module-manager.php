@@ -1445,7 +1445,11 @@ class ST_BB_ACF_Module_Manager {
 		$content_module_id = absint( str_replace( 'display_hooked_content_', '', $method ) );
 		if ( $content_module_id ) {
 			global $post;
+
+			// remove wpautop as has already been applied where required.
+			remove_filter( 'the_content', 'wpautop' );
 			echo apply_filters( 'the_content', self::get_module_content( $post->ID, $content_module_id ) );
+			add_filter( 'the_content', 'wpautop' );
 		}
 		
 	}
