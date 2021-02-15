@@ -90,12 +90,11 @@ abstract class ST_BB_Carousel_Module extends ST_BB_Module {
                                     'no'    =>  'No'
                                 ),
                                 'sanitize'  =>  'sanitize_text_field',
-                                // 'toggle'    =>  array(
-                                //     'yes'   =>  array(
-                                //         'fields'    =>  array( 'nav_layout' )
-                                //     ),
-                                //     'no'    =>  array()
-                                // )
+                                'toggle'    =>  array(
+                                    'yes'   =>  array(
+                                        'fields'    =>  array( 'nav_layout' )
+                                    ),
+                                )
                             ),
                             'nav_layout'    =>  array(
                                 'type'      =>  'select',
