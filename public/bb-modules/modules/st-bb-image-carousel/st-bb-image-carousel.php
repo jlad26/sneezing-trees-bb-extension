@@ -57,6 +57,16 @@ class ST_BB_Image_Carousel_Module extends ST_BB_Carousel_Module {
                         'type'          =>  'multiple-photos',
                         'label'         => __( 'Images', ST_BB_TD ),
                     ),
+                    'image_caption_type'       =>  array(
+                        'type'      =>  'select',
+                        'label'     => __( 'Display captions', ST_BB_TD ),
+                        'default'   =>  'saved',
+                        'options'   =>  array(
+                            'saved'     =>  'Yes',
+                            'none'      =>  'No'
+                        ),
+                        'sanitize'  =>  'sanitize_text_field',
+                    ),
                 ),
             ),
         );
