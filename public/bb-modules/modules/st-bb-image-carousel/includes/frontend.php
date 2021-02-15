@@ -9,7 +9,7 @@
  * Note that sizes are defined for default bootstrap grid breakpoints and column padding of 15px.
  */
 $mod_params['image_attr'] = array(
-	'sizes'	=>	'(min-width: 1200px) 1110px, (min-width: 992px) 730px, (min-width: 768px) 690px, (min-width: 576px) 510px, calc(100vw - 30px)'
+	'sizes'	=>	'(min-width: 1200px) 1110px, (min-width: 992px) 930px, (min-width: 768px) 690px, (min-width: 576px) 510px, calc(100vw - 30px)'
 );
 
 // Set image size to 1536 x 1536 as we won't be needing wider or taller than that.
