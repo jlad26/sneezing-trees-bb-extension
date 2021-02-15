@@ -54,7 +54,7 @@ if ( ! isset( $mod_params['row_scrolldown_target'] ) ) {
 $section_id = ( isset( $mod_params['section_id'] ) && $mod_params['section_id'] ) ? 'id="' . esc_attr( $mod_params['section_id'] ) . '" ' : '';
 
 // Set indent classes.
-$pre_post_classes =  'yes' == $mod_params['row_desktop_indent'] ? 'col-xl-10 offset-xl-1' : 'col';
+$pre_post_classes =  ( isset( $mod_params['row_desktop_indent'] ) && 'yes' == $mod_params['row_desktop_indent'] ) ? 'col-xl-10 offset-xl-1' : 'col';
 
 // Global for editors.
 global $wp_embed;

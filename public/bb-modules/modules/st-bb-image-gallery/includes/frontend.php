@@ -17,7 +17,7 @@ $mod_params['image_size'] = 'thumbnail';
 
 ?>
 <div class="row">
-    <div class="col">
+    <div class="col<?php if ( 'yes' == $mod_params['row_desktop_indent'] ) : ?> col-xl-10 offset-xl-1<?php endif; ?>">
         <div id="lightgallery-<?php echo $module->node; ?>" class="st-bb-gallery"><?php
 
             if ( is_array( $mod_params['gallery_image_ids'] ) ) {

@@ -6,9 +6,14 @@
 
 $mod_params['slides'] = apply_filters( 'st_bb_custom_carousel_slides-' . $mod_params['instance_id'], array(), $mod_params );
 $is_full_width = ( isset( $mod_params['full_width'] ) && 'yes' == $mod_params['full_width'] );
+$desktop_indent = isset( $mod_params['row_desktop_indent'] ) && 'yes' == $mod_params['row_desktop_indent'];
+$col_classes = 'col';
+if ( ! $is_full_width && $desktop_indent ) {
+    $classes = ' col-xl-10 offset-xl-1';
+}
 ?>
 <div class="row">
-    <div class="<?php echo $is_full_width ? 'col' : 'col-lg-10 offset-lg-1'; ?>">
+    <div class="<?php echo $classes; ?>">
         <div class="swiper-container">
             <div class="swiper-wrapper">
         <?php

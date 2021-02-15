@@ -252,8 +252,24 @@ abstract class ST_BB_Module extends FLBuilderModule {
         $generic_config = self::get_generic_init_settings();
         $config = static::get_module_init_settings();
 
-        // Add in generic config sections if not already set by module config.
+        /**
+         * Amend Desktop Indent setting on modules where setting is available to content, not just top and tail,
+         * by moving from Top and Tail tab to Styling tab, and amending the Help text.
+         */
+        $no_desktop_indent_modules = array(
+            'ST_BB_Central_Col_Free_Edit_Module',
+            'ST_BB_Curator_Feed_Module',
+            'ST_BB_Html_Module'
+        );
+
+        if ( ! in_array( $child_class_name, $no_desktop_indent_modules ) ) {
+            $desktop_indent_field = $generic_config['top_and_tail']['sections']['top_and_tail_layout']['fields']['row_desktop_indent'];
+            $desktop_indent_field['help'] = __( 'Whether when viewed on desktop the content should be indented on both sides, i.e., displayed in a column narrower than the width of the header', ST_BB_TD );
+            unset( $generic_config['top_and_tail']['sections']['top_and_tail_layout'] );
+            $generic_config['styling']['sections']['layout']['fields']['row_desktop_indent'] = $desktop_indent_field;
+        }
         
+        // Do nothing if we have no generic config.
         if ( empty( $generic_config ) ) {
             return $config;
         }
@@ -337,6 +353,22 @@ abstract class ST_BB_Module extends FLBuilderModule {
             'top_and_tail'      => array(
                 'title'         =>  __( 'Top and Tail', ST_BB_TD ),
                 'sections'		=>  array(
+                    'top_and_tail_layout'   =>  array(
+                        'title'     =>  __( 'Layout', ST_BB_TD ),
+                        'fields'    =>  array(
+                            'row_desktop_indent'    =>  array(
+                                'type'          =>  'select',
+                                'label'         => __( 'Indent on desktop', ST_BB_TD ),
+                                'default'       =>  'yes',
+                                'options'       =>  array(
+                                    'yes'       =>  __( 'Yes', ST_BB_TD ),
+                                    'no'        =>  __( 'No', ST_BB_TD ),
+                                ),
+                                'help'          =>  __( 'Whether when viewed on desktop the top and tail content should be indented on both sides, i.e., displayed in a column narrower than the width of the header', ST_BB_TD ),
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
+                        )
+                    ),
                     'before_content'     =>  array(
                         'title'         =>  __( 'Before main content', ST_BB_TD ),
                         'fields'        =>  array(
@@ -460,17 +492,6 @@ abstract class ST_BB_Module extends FLBuilderModule {
                     'layout'     =>  array(
                         'title'         =>  __( 'Layout', ST_BB_TD ),
                         'fields'        =>  array(
-                            'row_desktop_indent'    =>  array(
-                                'type'          =>  'select',
-                                'label'         => __( 'Indent on desktop', ST_BB_TD ),
-                                'default'       =>  'yes',
-                                'options'       =>  array(
-                                    'yes'       =>  __( 'Yes', ST_BB_TD ),
-                                    'no'        =>  __( 'No', ST_BB_TD ),
-                                ),
-                                'help'          =>  __( 'Whether when viewed on desktop the content should be indented on both sides, i.e., displayed in a column narrower than the width of the header', ST_BB_TD ),
-                                'sanitize'		=>	'sanitize_text_field',
-                            ),
                             'row_height'  =>  array(
                                 'type'          =>  'select',
                                 'label'         => __( 'Minimum Height', ST_BB_TD ),
