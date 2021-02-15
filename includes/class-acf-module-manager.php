@@ -1619,6 +1619,11 @@ class ST_BB_ACF_Module_Manager {
 
 			$content_module_fields = $content_module['content_module_fields'];
 
+			$id = $content_module_id . '-' . $post->ID;
+			$settings = (object) $content_module['settings'];
+			$module_class = get_class( $bb_modules[ $content_module_fields['choose_st_bb_module'] ] );
+			$module = new $module_class();
+			
 			// Add the instance-specific CSS and JS.
 			$slug = $content_module_fields['choose_st_bb_module'];
 			$bb_module_dir = $bb_modules[ $slug ]->dir;
@@ -1637,10 +1642,6 @@ class ST_BB_ACF_Module_Manager {
 			}
 
 			// Add in the all-modules instance-specific CSS and JS.
-			$id = $content_module_id . '-' . $post->ID;
-			$settings = (object) $content_module['settings'];
-			$module_class = get_class( $bb_modules[ $content_module_fields['choose_st_bb_module'] ] );
-			$module = new $module_class();
 			ob_start();
 			include ST_BB_DIR . 'public/bb-modules/includes/frontend.css.php';
 			$css .= ob_get_clean();
