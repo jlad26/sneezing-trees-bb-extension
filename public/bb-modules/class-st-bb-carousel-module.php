@@ -89,8 +89,25 @@ abstract class ST_BB_Carousel_Module extends ST_BB_Module {
                                     'yes'   =>  'Yes',
                                     'no'    =>  'No'
                                 ),
-                                'sanitize'  =>  'sanitize_text_field'
+                                'sanitize'  =>  'sanitize_text_field',
+                                // 'toggle'    =>  array(
+                                //     'yes'   =>  array(
+                                //         'fields'    =>  array( 'nav_layout' )
+                                //     ),
+                                //     'no'    =>  array()
+                                // )
                             ),
+                            'nav_layout'    =>  array(
+                                'type'      =>  'select',
+                                'label'     => __( 'Navigation arrows positioning', ST_BB_TD ),
+                                'default'   =>  'outside',
+                                'options'   =>  array(
+                                    'outside'   =>  'Outside content',
+                                    'overlay'   =>  'Overlaid on content'
+                                ),
+                                'help'      =>  __( 'Whether navigation arrows should be outside content (meaning slides are narrowed slightly to allow space) or on top of content at the edges (meaning slides are full width).', ST_BB_TD ),
+                                'sanitize'  =>  'sanitize_text_field'
+                            )
                         ),
                     ),
                 ),

@@ -1,7 +1,1 @@
-var stBBSwiper = new Swiper('.fl-node-<?php echo $id; ?> .swiper-container', {
-    navigation  : {
-        nextEl  : '.fl-node-<?php echo $id; ?> .swiper-button-next',
-        prevEl  : '.fl-node-<?php echo $id; ?> .swiper-button-prev',
-    },
-    slidesPerView:  1,
-} );
+<?php include ST_BB_DIR . 'public/partials/carousel-module/frontend.js.php'; ?>

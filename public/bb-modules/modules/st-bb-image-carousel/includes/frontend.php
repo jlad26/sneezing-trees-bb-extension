@@ -28,5 +28,5 @@ if ( is_array( $mod_params['carousel_image_ids'] ) ) {
     }
 }
 
-include ST_BB_DIR . 'public/partials/frontend-carousel-module.php'; 
+include ST_BB_DIR . 'public/partials/carousel-module/frontend.php'; 
 ?>
