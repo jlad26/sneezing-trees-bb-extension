@@ -27,3 +27,7 @@
 .st-bb-swiper-button-next {
     right: 0;
 }
+
+.swiper-slide figure {
+    margin: 0;
+}
