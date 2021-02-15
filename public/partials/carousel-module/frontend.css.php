@@ -1,6 +1,6 @@
 <?php
 $carousel_css = '';
-if ( 'outside' == $settings->nav_layout ) {
+if ( 'yes' == $settings->include_nav && 'outside' == $settings->nav_layout ) {
     $carousel_css .= '.fl-node-' . $id . ' .row div.swiper-container {
     width: calc(100% - 8rem);
 },
