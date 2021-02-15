@@ -9,11 +9,11 @@ $is_full_width = ( isset( $mod_params['full_width'] ) && 'yes' == $mod_params['f
 $desktop_indent = isset( $mod_params['row_desktop_indent'] ) && 'yes' == $mod_params['row_desktop_indent'];
 $col_classes = 'col';
 if ( ! $is_full_width && $desktop_indent ) {
-    $classes = ' col-xl-10 offset-xl-1';
+    $col_classes = 'col-xl-10 offset-xl-1';
 }
 ?>
 <div class="row">
-    <div class="<?php echo $classes; ?>">
+    <div class="<?php echo $col_classes; ?>">
         <div class="swiper-container">
             <div class="swiper-wrapper">
         <?php
