@@ -47,7 +47,7 @@ class ST_BB_Full_Width_Image_Module extends ST_BB_Module {
      * 
      * @return  array
 	 */
-    protected static function get_module_config() {
+    protected static function get_module_init_settings() {
         return array(
             'module' =>  array(
                 'title'     =>  __( 'Image', ST_BB_TD ),

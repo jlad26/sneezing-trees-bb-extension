@@ -248,9 +248,9 @@ abstract class ST_BB_Module extends FLBuilderModule {
      * @param   string  $child_class_name     name of child class
      * @return  array
 	 */
-    protected static function get_config( $child_class_name ) {
-        $generic_config = self::get_generic_config();
-        $config = static::get_module_config();
+    protected static function get_init_settings( $child_class_name ) {
+        $generic_config = self::get_generic_init_settings();
+        $config = static::get_module_init_settings();
 
         // Add in generic config sections if not already set by module config.
         
@@ -329,7 +329,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
      * 
      * @return  array
 	 */
-    private static function get_generic_config() {
+    private static function get_generic_init_settings() {
         return array(
             'module'      => array(
                 'title'         =>  __( 'Content', ST_BB_TD ),
@@ -538,7 +538,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
      * 
      * @return  array
 	 */
-    abstract protected static function get_module_config();
+    abstract protected static function get_module_init_settings();
     
     /**
 	 * Register the module using intial config settings.
@@ -547,7 +547,7 @@ abstract class ST_BB_Module extends FLBuilderModule {
      * @since    1.0.0
 	 */
     public static function init( $child_class_name ) {
-        FLBuilder::register_module( static::class, static::get_config( $child_class_name ) );
+        FLBuilder::register_module( static::class, static::get_init_settings( $child_class_name ) );
     }
     
 }
