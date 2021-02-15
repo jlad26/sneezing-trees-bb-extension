@@ -16,7 +16,7 @@
  * @package    ST_BB
  * @subpackage ST_BB/public
  */
-class ST_BB_Custom_Carousel_Module extends ST_BB_Module {
+class ST_BB_Custom_Carousel_Module extends ST_BB_Carousel_Module {
     
     /**
 	 * Constructor.
@@ -24,28 +24,15 @@ class ST_BB_Custom_Carousel_Module extends ST_BB_Module {
 	 * @since    1.0.0
 	 */
     public function __construct() {
-        parent::__construct( array(
-            'name'              =>  __( 'Custom Carousel', ST_BB_TD ),
-            'description'       =>  __( 'Custom Carousel', ST_BB_TD ),
-            'icon'              =>  'format-gallery.svg',
-            'partial_refresh'   =>  true,
-            'config'            =>  array(
-                'acf_version'       =>  true,
-                'js'                =>  array(
-                    array(
-                        'handle'    =>  'bb-swiper',
-                        'src'       =>  'https://unpkg.com/swiper/swiper-bundle.min.js',
-                    ),
-                ),
-                'css'                =>  array(
-                    array(
-                        'handle'    =>  'bb-swiper',
-                        'src'       =>  'https://unpkg.com/swiper/swiper-bundle.css'
-                    ),
-                ),
+        
+        // Get the generic configuration for all carousel modules.
+        $config = self::get_generic_module_config();
 
-            )
-        ) );
+        // Add module specific config.
+        $config['name'] = __( 'Custom Carousel', ST_BB_TD );
+        $config['description'] = __( 'Custom Carousel', ST_BB_TD );
+        
+        parent::__construct( $config );
 
     }
 
@@ -57,48 +44,7 @@ class ST_BB_Custom_Carousel_Module extends ST_BB_Module {
      * @return  array
 	 */
     protected static function get_module_init_settings() {
-        return array(
-            'module'    =>  array(
-                'title' =>  __( 'Configuration', ST_BB_TD ),
-                'sections'		=>  array(
-                    'carousel_config'     =>  array(
-                        'title'         =>  __( 'Carousel ID', ST_BB_TD ),
-                        'fields'        =>  array(
-                            'include_nav'       =>  array(
-                                'type'      =>  'select',
-                                'label'     => __( 'Show left-right navigation arrows', ST_BB_TD ),
-                                'default'   =>  'yes',
-                                'options'   =>  array(
-                                    'yes'   =>  'Yes',
-                                    'no'    =>  'No'
-                                ),
-                                'sanitize'  =>  'sanitize_text_field'
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'styling'      => array(
-                'title'         =>  __( 'Styling', ST_BB_TD ),
-                'sections'		=>  array(
-                    'layout'     =>  array(
-                        'title'         =>  __( 'Layout', ST_BB_TD ),
-                        'fields'        =>  array(
-                            'full_width'  =>  array(
-                                'type'          =>  'select',
-                                'label'         => __( 'Full width', ST_BB_TD ),
-                                'default'       =>  'no',
-                                'options'       =>  array(
-                                    'no'    =>  __( 'No', ST_BB_TD ),
-                                    'yes'   =>  __( 'Yes', ST_BB_TD ),
-                                ),
-                                'sanitize'		=>	'sanitize_text_field',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+        return self::get_generic_module_init_settings();
     }
     
 }

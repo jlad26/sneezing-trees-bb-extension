@@ -48,6 +48,9 @@ class ST_BB_Module_Manager {
 		// Load parent class.
 		require_once ST_BB_DIR . 'public/bb-modules/class-st-bb-module.php';
 
+		// Load carousel parent class.
+		require_once ST_BB_DIR . 'public/bb-modules/class-st-bb-carousel-module.php';
+
 		// Set post types and corresponding posts here so it only has to be done once.
 		$post_types_data = ST_BB_Utility::get_post_types();
 		$post_type_slugs = array();

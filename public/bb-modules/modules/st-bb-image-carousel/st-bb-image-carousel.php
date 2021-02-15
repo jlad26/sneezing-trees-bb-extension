@@ -16,7 +16,7 @@
  * @package    ST_BB
  * @subpackage ST_BB/public
  */
-class ST_BB_Image_Carousel_Module extends ST_BB_Module {
+class ST_BB_Image_Carousel_Module extends ST_BB_Carousel_Module {
     
     /**
 	 * Constructor.
@@ -24,28 +24,15 @@ class ST_BB_Image_Carousel_Module extends ST_BB_Module {
 	 * @since    1.0.0
 	 */
     public function __construct() {
-        parent::__construct( array(
-            'name'              =>  __( 'Image Carousel', ST_BB_TD ),
-            'description'       =>  __( 'Image Carousel', ST_BB_TD ),
-            'icon'              =>  'format-image.svg',
-            'partial_refresh'   =>  true,
-            'config'            =>  array(
-                'acf_version'       =>  true,
-                'js'                =>  array(
-                    array(
-                        'handle'    =>  'bb-swiper',
-                        'src'       =>  'https://unpkg.com/swiper/swiper-bundle.min.js',
-                    ),
-                ),
-                'css'                =>  array(
-                    array(
-                        'handle'    =>  'bb-swiper',
-                        'src'       =>  'https://unpkg.com/swiper/swiper-bundle.css'
-                    ),
-                ),
+        
+        // Get the generic configuration for all carousel modules.
+        $config = self::get_generic_module_config();
 
-            )
-        ) );
+        // Add module specific config.
+        $config['name'] = __( 'Image Carousel', ST_BB_TD );
+        $config['description'] = __( 'Image Carousel', ST_BB_TD );
+        
+        parent::__construct( $config );
 
     }
 
@@ -57,22 +44,26 @@ class ST_BB_Image_Carousel_Module extends ST_BB_Module {
      * @return  array
 	 */
     protected static function get_module_init_settings() {
-        return array(
-            'module'    =>  array(
-                'title' =>  __( 'Images', ST_BB_TD ),
-                'sections'		=>  array(
-                    'Images'     =>  array(
-                        'title'         =>  __( 'Images', ST_BB_TD ),
-                        'fields'        =>  array(
-                            'carousel_image_ids'  => array(
-                                'type'          =>  'multiple-photos',
-                                'label'         => __( 'Images', ST_BB_TD ),
-                            ),
-                        ),
+        
+        // Get the generic configuration for all carousel modules.
+        $settings = self::get_generic_module_init_settings();
+
+        // Add module specific settings.
+        $additional_config_section = array(
+            'Images'     =>  array(
+                'title'         =>  __( 'Images', ST_BB_TD ),
+                'fields'        =>  array(
+                    'carousel_image_ids'  => array(
+                        'type'          =>  'multiple-photos',
+                        'label'         => __( 'Images', ST_BB_TD ),
                     ),
                 ),
             ),
         );
+
+        $settings['module']['sections'] = array_merge( $additional_config_section, $settings['module']['sections'] );
+        return $settings;
+
     }
     
 }

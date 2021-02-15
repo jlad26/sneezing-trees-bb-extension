@@ -15,28 +15,18 @@ $mod_params['image_attr'] = array(
 // Set image size to 1536 x 1536 as we won't be needing wider or taller than that.
 $mod_params['image_size'] = '1536x1536';
 
+// Create slides.
+$mod_params['slides'] = array();
+if ( is_array( $mod_params['carousel_image_ids'] ) ) {
+    foreach ( $mod_params['carousel_image_ids'] as $image_id ) {
+        $mod_params['image_id'] = $image_id;
+        $mod_params['caption'] = wp_get_attachment_caption( $image_id );
+        $mod_params['image_attr']['alt'] = $mod_params['caption'] ? $mod_params['caption'] : '';
+        ob_start();
+        include ST_BB_DIR . 'public/partials/figure.php';
+        $mod_params['slides'][] = ob_get_clean();
+    }
+}
+
+include ST_BB_DIR . 'public/partials/frontend-carousel-module.php'; 
 ?>
-<div class="row">
-    <div class="col<?php if ( 'yes' == $mod_params['row_desktop_indent'] ) : ?> col-xl-10 offset-xl-1<?php endif; ?>">
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
-        <?php
-            if ( is_array( $mod_params['carousel_image_ids'] ) ) {
-                foreach ( $mod_params['carousel_image_ids'] as $image_id ) {
-                    $mod_params['image_id'] = $image_id;
-                    $mod_params['caption'] = wp_get_attachment_caption( $image_id );
-                    $mod_params['image_attr']['alt'] = $mod_params['caption'] ? $mod_params['caption'] : '';
-        ?>
-                <div class="swiper-slide">
-                    <?php include ST_BB_DIR . 'public/partials/figure.php'; ?>
-                </div>
-        <?php
-                }
-            }
-        ?>
-            </div>
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
-        </div>
-    </div>
-</div>
