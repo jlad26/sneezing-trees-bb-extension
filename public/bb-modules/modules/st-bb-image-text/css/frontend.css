@@ -1,3 +1,4 @@
 .st-bb-image-text .row > div {
     display: flex;
+    justify-content: center;
 }
