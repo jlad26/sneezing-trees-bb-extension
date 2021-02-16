@@ -51,6 +51,9 @@ class ST_BB_Module_Manager {
 		// Load carousel parent class.
 		require_once ST_BB_DIR . 'public/bb-modules/class-st-bb-carousel-module.php';
 
+		// Add select post custom field.
+		add_filter( 'fl_builder_custom_fields', array( __CLASS__, 'add_custom_fields' ) );
+
 		// Set post types and corresponding posts here so it only has to be done once.
 		$post_types_data = ST_BB_Utility::get_post_types();
 		$post_type_slugs = array();
@@ -101,6 +104,17 @@ class ST_BB_Module_Manager {
 			}
 		}
 
+	}
+
+	/**
+	 * Add select post custom field.
+	 *
+	 * @since    1.0.0
+	 * @hooked	fl_builder_custom_fields
+	 */
+	public static function add_custom_fields( $fields ) {
+		$fields['st-bb-select-post'] = ST_BB_DIR . 'public/bb-modules/custom-fields/ui-field-select-post.php';
+		return $fields;
 	}
 
 	/**
@@ -296,6 +310,13 @@ class ST_BB_Module_Manager {
 		);
 
 		$fields = array_merge( $fields, $dropdown_fields );
+
+		$fields[ $field_prefix . 'select_post' ] = array(
+			'type'          	=>	'st-bb-select-post',
+			'label'         	=>	__( 'Post', ST_BB_TD ),
+			'sanitize'			=>	'intval',
+			'post_type_field'	=>	$field_prefix . 'button_url_type'
+		);
 
 		return $fields;
 

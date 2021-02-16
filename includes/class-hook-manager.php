@@ -114,6 +114,11 @@ class ST_BB_Hook_Manager {
 		 */
 		wp_enqueue_script( $this->plugin_name . '-public', $url_base . 'js/public.js', array(), $this->version, true );
 
+		// Custom fields JS.
+		if ( class_exists( 'FLBuilderModel' ) && FLBuilderModel::is_builder_active() ) {
+			wp_enqueue_script( $this->plugin_name . '-custom-fields', $url_base . 'js/custom-fields.js', array(), '', true );
+		}
+
 	}
 
 	/**
