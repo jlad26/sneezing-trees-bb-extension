@@ -70,7 +70,7 @@ class ST_BB_Image_Text_Module extends ST_BB_Module {
                             'text_content'		=>  array(
                                 'type'          =>  'editor',
                                 'wpautop'		=>  false,
-                                'media_buttons'	=>  false,
+                                'media_buttons'	=>  true,
                                 'preview'		=> array(
                                     'type'		=> 'text',
                                     'selector'	=> '.st-bb-rich-text',
