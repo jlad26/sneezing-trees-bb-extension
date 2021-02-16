@@ -116,7 +116,12 @@ class ST_BB_Hook_Manager {
 
 		// Custom fields JS.
 		if ( class_exists( 'FLBuilderModel' ) && FLBuilderModel::is_builder_active() ) {
-			wp_enqueue_script( $this->plugin_name . '-custom-fields', $url_base . 'js/custom-fields.js', array(), '', true );
+			wp_enqueue_script( $this->plugin_name . '-custom-fields', $url_base . 'js/custom-fields.js', array( 'jquery' ), '', true );
+			$js_data = array(
+				'ajaxurl'	=>	admin_url( 'admin-ajax.php' ),
+				'nonce'		=>	wp_create_nonce( 'st-bb-fetch-posts-' . get_current_user_id() )
+			);
+			wp_localize_script( $this->plugin_name . '-custom-fields', 'stBbCustomFields', $js_data );
 		}
 
 	}
@@ -322,6 +327,48 @@ class ST_BB_Hook_Manager {
 			$js .= ob_get_clean();
 		}
 		return $js;
+	}
+
+	/**
+	 * Handle ajax for BB custom field. Returns post IDs and titles of requested post type.
+	 * @hooked	wp_ajax_st_bb_fetch_post_options
+	 */
+	public function ajax_fetch_post_options() {
+
+		check_ajax_referer( 'st-bb-fetch-posts-' . get_current_user_id(), 'nonce' );
+
+		if ( current_user_can( 'edit_posts' ) ) {
+
+			if ( isset( $_POST['post_type'] ) && $_POST['post_type'] ) {
+				$post_type = sanitize_text_field( $_POST['post_type'] );
+
+				$posts = get_posts( array(
+					'post_type'					=>	$post_type,
+					'posts_per_page'			=>	-1,
+					'post_status'				=>	'publish',
+					'orderby'					=>	'title',
+					'order'						=>	'ASC',
+					'no_found_rows'				=>	true,
+					'update_post_term_cache'	=>	false,
+					'update_post_term_cache'	=>	false,
+					'cache_results'				=>	false,
+				) );
+
+				$results = array();
+				if ( $posts ) {
+					foreach ( $posts as $post ) {
+						$results[] = array( $post->ID => $post->post_title );
+					}
+				}
+
+				wp_send_json( $results );
+
+			}
+
+		}
+
+		wp_die();
+
 	}
 
 }

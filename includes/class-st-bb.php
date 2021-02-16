@@ -201,6 +201,9 @@ class ST_BB {
 		$this->loader->add_filter( 'fl_builder_render_css', $plugin_hook_mgr, 'add_instance_css', 10, 4 );
 		$this->loader->add_filter( 'fl_builder_render_js', $plugin_hook_mgr, 'add_instance_js', 10, 4 );
 
+		// Handle ajax for BB custom field.
+		$this->loader->add_action( 'wp_ajax_st_bb_fetch_post_options', $plugin_hook_mgr, 'ajax_fetch_post_options' );
+
 	}
 
 	/**

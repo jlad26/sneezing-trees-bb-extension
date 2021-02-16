@@ -42,5 +42,7 @@
  *
  */
 ?>
-<select name="{{data.name}}" class="st-bb-select-post" data-postTypeField="{{data.field.post_type_field}}" data-value="{{data.value}}">
+<select name="{{data.name}}" class="st-bb-select-post-field" data-posttypefield="{{data.field.post_type_field}}" data-value="{{data.value}}">
+	<option value=""></option>
+	<option value="1">1</option>
 </select>

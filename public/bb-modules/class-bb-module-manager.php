@@ -227,30 +227,10 @@ class ST_BB_Module_Manager {
 			$link_types[ $post_type ] = $post_type_data['label'];
 			
 			$toggle_fields[ $post_type ] = array(
-				'fields'	=>	array( $field_prefix . 'select_' . $post_type . '_id' ),
+				'fields'	=>	array( $field_prefix . 'select_post' ),
 				'sections'  =>  $sections,
 				'tabs'      =>  $tabs,
 			);
-
-			// Get the posts for this post type.
-			$posts = $post_type_data['posts'];
-			if ( $posts ) {
-				
-				// Make the dropdown for this post type.
-				$options = array();
-				foreach ( $posts as $post ) {
-					$options['id_' . $post->ID] = $post->post_title;
-				}
-
-				$dropdown_fields[ $field_prefix . 'select_' . $post_type . '_id' ] = array(
-					'type'          => 'select',
-					'label'         => $post_type_data['label'],
-					'default'       => '',
-					'options'       =>  $options,
-					'sanitize'		=>	'sanitize_text_field',
-				);
-
-			}
 
 		}
 		
