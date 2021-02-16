@@ -1,6 +1,6 @@
 <?php
 /**
- * Text module template.
+ * Full width image module template.
  * @since      1.0.0
  */
 
