@@ -31,6 +31,5 @@ if ( isset( $mod_params['free_content'] ) ) {
 <div class="st-bb-hero-content row">
     <div class="col-lg-6 st-bb-rich-text<?php echo $content_align_class; ?>">
         <?php echo $content; ?>
-        <?php include ST_BB_DIR . 'public/partials/button.php'; ?>
     </div>
 </div>

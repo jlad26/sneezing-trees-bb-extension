@@ -79,10 +79,6 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
                             ),
                         ),
                     ),
-                    'button_1'	=> array(
-						'title'		=>	__( 'Button', ST_BB_TD ),
-						'fields'	=>	ST_BB_Module_Manager::get_button_settings_fields( 'col_1', array( 'module', 'column_two' ) )
-					),
                 ),
             ),
             'column_two'    => array(
@@ -119,10 +115,6 @@ class ST_BB_Two_Col_Free_Edit_Module extends ST_BB_Module {
                             ),
                         ),
                     ),
-                    'button_2'	=> array(
-						'title'		=>	__( 'Button', ST_BB_TD ),
-						'fields'	=>	ST_BB_Module_Manager::get_button_settings_fields( 'col_2', array( 'module', 'column_two' ) )
-					),
                 ),
             ),
         );

@@ -18,8 +18,6 @@ if ( 'yes' == $mod_params['row_desktop_indent'] ) {
             if ( isset( $mod_params['free_content_1'] ) ) {
                 echo wpautop( $wp_embed->autoembed( $mod_params['free_content_1'] ) );
             }
-            $field_prefix = 'col_1';
-            include ST_BB_DIR . 'public/partials/button.php';
             ?>
         </div>
     </div>
@@ -29,8 +27,6 @@ if ( 'yes' == $mod_params['row_desktop_indent'] ) {
             if ( isset( $mod_params['free_content_2'] ) ) {
                 echo wpautop( $wp_embed->autoembed( $mod_params['free_content_2'] ) );
             }
-            $field_prefix = 'col_2';
-            include ST_BB_DIR . 'public/partials/button.php';
             ?>
         </div>
     </div>

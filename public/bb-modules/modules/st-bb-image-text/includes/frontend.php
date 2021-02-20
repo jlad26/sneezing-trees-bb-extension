@@ -66,7 +66,6 @@ $order_classes['second_col'] = implode( ' ', $order_classes['second_col'] );
             <?php if ( $mod_params['text_content'] ) : ?>
                 <div class="st-bb-rich-text"><?php echo $mod_params['text_content']; ?></div>
             <?php endif; ?>
-            <?php include ST_BB_DIR . 'public/partials/button.php'; ?>
         </div>
     </div>
 </div>

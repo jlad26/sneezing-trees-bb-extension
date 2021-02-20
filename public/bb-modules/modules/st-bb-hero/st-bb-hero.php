@@ -62,10 +62,6 @@ class ST_BB_Hero_Module extends ST_BB_Module {
                             ),
                         ),
                     ),
-                    'button'	=> array(
-						'title'		=>	__( 'Button', ST_BB_TD ),
-						'fields'	=>	ST_BB_Module_Manager::get_button_settings_fields()
-					),
                     'h_align'		=>  array(
                         'title'         =>  __( 'Horizontal alignment', ST_BB_TD ),
                         'fields'        =>  array(
