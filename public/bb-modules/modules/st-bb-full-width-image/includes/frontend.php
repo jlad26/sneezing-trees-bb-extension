@@ -9,5 +9,13 @@ $mod_params['image_attr'] = array(
 	'sizes'	=>	'100vw'
 );
 $mod_params['full_width_img'] = true;
-include ST_BB_DIR . 'public/partials/figure.php';
-?>
+$desktop_indent = 'no' == $mod_params['full_screen_stretch'] && 'yes' == $mod_params['row_desktop_indent'];
+if ( $desktop_indent ) : ?>
+<div class="row">
+	<div class="col-xl-10 offset-xl-1">
+<?php endif;
+		include ST_BB_DIR . 'public/partials/figure.php';
+if ( $desktop_indent ) : ?>
+	</div>
+</div>
+<?php endif; ?>

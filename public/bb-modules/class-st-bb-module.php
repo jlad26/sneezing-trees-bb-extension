@@ -71,10 +71,6 @@ abstract class ST_BB_Module extends FLBuilderModule {
             'acf_version'       =>  false,
             'js'                =>  array(),
             'css'               =>  array(),
-            'container_classes' =>  array( 
-                'st-bb-module-container'    =>  'st-bb-module-container',
-                'container'                 =>  'container'
-            ),
         );
         
         if ( isset( $args['config'] ) ) {
@@ -86,9 +82,6 @@ abstract class ST_BB_Module extends FLBuilderModule {
             'st-bb-section' =>  'st-bb-section',
             $this->slug     =>  $this->slug
         );
-        if ( ! isset( $config[ 'container_classes' ] ) || ! is_array( $config[ 'container_classes' ] ) ) {
-            $config[ 'container_classes' ] = array();
-        }
         $this->config = apply_filters( 'st_bb_module_config', $config, $this );
         
     }
@@ -198,18 +191,26 @@ abstract class ST_BB_Module extends FLBuilderModule {
 	 */
     public function container_classes( $echo = true ) {
         $out = '';
-        $classes = array( $this->slug . '-container' );
-        if ( isset( $this->config['container_classes'] ) ) {
-            $classes = array_merge( $classes, $this->config['container_classes'] );
-        }
+
+        // Set default classes.
+        $classes = array(
+            $this->slug . '-container'  =>  $this->slug . '-container',
+            'st-bb-module-container'    =>  'st-bb-module-container',
+            'container'                 =>  'container'
+        );
 
         /**
-         * Add in a class for full width if required.
+         * Give child modules opppotunity to amend container classes, by overriding the
+         * customise_container_classes function.
          */
-        if ( isset( $this->settings->full_width ) && 'yes' == $this->settings->full_width ) {
-            $classes[] = 'st-bb-full-width';
-        }
+        $classes = $this->customise_container_classes( $classes );
+
+        // This filter is applied only to this plugin's modules.
         $classes = apply_filters( 'st_bb_module_container_classes', $classes, $this );
+        
+        // This filter is applied to ALL Beaver Builder modules, not just this plugin's modules (@see partials/frontend-module.php)
+        $classes = apply_filters( 'st_bb_all_modules_container_classes', $classes, $this );
+        
         $out = implode( ' ', $classes );
         if ( $echo ) {
             echo esc_attr( $out );
@@ -217,6 +218,15 @@ abstract class ST_BB_Module extends FLBuilderModule {
             return $out;
         }
 
+    }
+
+    /**
+	 * Customise container classes. Available for child modules to override.
+	 *
+	 * @since    1.0.0
+	 */
+    protected function customise_container_classes( $classes ) {
+        return $classes;
     }
 
     /**

@@ -32,9 +32,6 @@ class ST_BB_Full_Width_Image_Module extends ST_BB_Module {
             'preview'		    => false,
             'config'            =>  array(
                 'acf_version'       =>  true,
-                'container_classes' =>  array(
-                    'st-bb-module-container'    =>  'st-bb-module-container',
-                ),
             )
         ) );
 
@@ -55,6 +52,17 @@ class ST_BB_Full_Width_Image_Module extends ST_BB_Module {
                     'image'     =>  array(
                         'title'         =>  __( 'Image', ST_BB_TD ),
                         'fields'        =>  array(
+                            'full_screen_stretch'    =>  array(
+                                'type'          =>  'select',
+                                'label'         => __( 'Stretch to full screen width', ST_BB_TD ),
+                                'default'       =>  'no',
+                                'options'       =>  array(
+                                    'no'    =>  __( 'No', ST_BB_TD ),
+                                    'yes'   =>  __( 'Yes', ST_BB_TD ),
+                                ),
+                                'help'          => __( 'Whether to stretch image to the edge of the screen.', ST_BB_TD ),
+                                'sanitize'		=>	'sanitize_text_field',
+                            ),
                             'image_id' => array(
                                 'type'          => 'photo',
                                 'label'         => __( 'Image', ST_BB_TD ),
@@ -97,6 +105,22 @@ class ST_BB_Full_Width_Image_Module extends ST_BB_Module {
                 )
             ),
         );
+    }
+
+    /**
+	 * Remove the container class if required.
+	 *
+	 * @since    1.0.0
+     * 
+     * @return  array
+	 */
+    protected function customise_container_classes( $classes ) {
+        if ( isset( $this->settings->full_screen_stretch ) && 'yes' == $this->settings->full_screen_stretch ) {
+            if ( isset( $classes['container'] ) ) {
+                unset( $classes['container'] );
+            }
+        }
+        return $classes;
     }
     
 }

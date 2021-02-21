@@ -119,19 +119,38 @@ abstract class ST_BB_Carousel_Module extends ST_BB_Module {
                         'fields'        =>  array(
                             'full_width'  =>  array(
                                 'type'          =>  'select',
-                                'label'         => __( 'Full width', ST_BB_TD ),
+                                'label'         =>  __( 'Full screen width', ST_BB_TD ),
                                 'default'       =>  'no',
                                 'options'       =>  array(
                                     'no'    =>  __( 'No', ST_BB_TD ),
                                     'yes'   =>  __( 'Yes', ST_BB_TD ),
                                 ),
                                 'sanitize'		=>	'sanitize_text_field',
+                                'toggle'    =>  array(
+                                    'no'    =>  array(
+                                        'fields'    =>  array( 'row_desktop_indent' ),
+                                    )
+                                ),
                             ),
                         ),
                     ),
                 ),
             ),
         );
+    }
+
+    /**
+	 * Add in a class for full width if required.
+	 *
+	 * @since    1.0.0
+     * 
+     * @return  array
+	 */
+    protected function customise_container_classes( $classes ) {
+        if ( isset( $this->settings->full_width ) && 'yes' == $this->settings->full_width ) {
+            $classes[] = 'st-bb-full-width';
+        }
+        return $classes;
     }
     
 }

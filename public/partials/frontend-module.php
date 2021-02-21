@@ -20,7 +20,7 @@ $is_edit_mode = is_admin() || isset( $_GET['fl_builder'] );
 if ( is_subclass_of( $module, 'ST_BB_MODULE' ) ) {
 	$rendered_container_classes = $module->container_classes( $echo = false );
 } else {
-	$container_classes = apply_filters( 'st_bb_module_container_classes',
+	$container_classes = apply_filters( 'st_bb_all_modules_container_classes',
 		array( 'container' => 'container' ),
 		$module
 	);

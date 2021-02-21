@@ -25,13 +25,20 @@ if ( 'saved' == $mod_params['image_caption_type'] ) {
     $caption = $mod_params['image_caption'];
 }
 
+// Work out whether we need to wrap the caption in a container class.
+$caption_needs_container = isset( $mod_params['full_width_img'] ) && isset( $mod_params['full_screen_stretch'] ) && 'yes' == $mod_params['full_screen_stretch'];
+
 // Work out whether we are indenting caption on desktop view
-$desktop_indent = isset( $mod_params['full_width_img'] ) && isset( $mod_params['row_desktop_indent'] ) && 'yes' == $mod_params['row_desktop_indent'];
+$desktop_indent = (
+    $caption_needs_container &&
+    isset( $mod_params['row_desktop_indent'] ) &&
+    'yes' == $mod_params['row_desktop_indent']
+);
 ?>
 <figure class="<?php echo $figure_classes; ?>">
     <?php echo wp_get_attachment_image( $mod_params['image_id'], $image_size, false, $image_attr ); ?>
 	<?php if ( $caption ) : ?>
-        <figcaption class="st-bb-caption<?php if ( isset( $mod_params['full_width_img'] ) ) : ?> container<?php endif; ?>">
+        <figcaption class="st-bb-caption<?php if ( $caption_needs_container ) : ?> container<?php endif; ?>">
             <?php if ( $desktop_indent ) : ?>
                 <div class="row">
                     <div class="col-xl-11 offset-xl-1">
