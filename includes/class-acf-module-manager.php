@@ -146,8 +146,8 @@ class ST_BB_ACF_Module_Manager {
 		// Add variable and fixed content editor fields, adding in content module IDs to make fields unique.
 		add_action( 'wp_loaded', array( $this, 'add_content_editor_fields' ), 20 );
 
-		// Display fixed content editor title when editing.
-		add_action( 'edit_form_after_title', array( $this, 'add_fc_editor_title' ) );
+		// Display fixed content editor title and location info when editing.
+		add_action( 'edit_form_after_title', array( $this, 'add_fc_editor_title_and_location_info' ) );
 
 		// Only display active fixed content editors on Edit Posts screen.
 		add_action( 'pre_get_posts', array( $this, 'filter_fc_editors_for_editing' ) );
@@ -272,18 +272,107 @@ class ST_BB_ACF_Module_Manager {
 
 
 	/**
-	 * Display fixed content editor title when editing.
+	 * Display fixed content editor title and location info when editing.
 	 *
 	 * @since	1.0.0
 	 * @hooked	edit_form_after_title
 	 */
-	public function add_fc_editor_title( $post ) {
+	public function add_fc_editor_title_and_location_info( $post ) {
 		if ( 'st-fc-editor' == $post->post_type ) {
+
+			// Get info of where content is displayed.
+			$module_registration = get_option( 'st_acf_module_registration' );
+			$this_content_module_id = get_post_meta( $post->ID, 'st_content_module_id', true );
+
+			// Hook info.
+			$hooks = array();
+			if( get_field( 'acf_module_the_content', $this_content_module_id ) ) {
+				$hooks[] = 'before' == get_field( 'acf_module_location', $this_content_module_id ) ? __( 'Before content', ST_BB_TD ) : __( 'After content', ST_BB_TD );
+			}
+			if ( $custom_hooks = get_field( 'acf_module_hooks', $this_content_module_id ) ) {
+				$custom_hooks = explode( "\n", $custom_hooks );
+				foreach ( $custom_hooks as $custom_hook ) {
+					$custom_hook = explode( ' ', $custom_hook );
+					$custom_hook = $custom_hook[0];
+					$priority = isset( $hook_info[1] ) ? intval( $hook_info[1] ) : 10;
+					/* translators: hook priority */
+					$hooks[] = $custom_hook . ' - ' . sprintf( __( 'Priority %s', ST_BB_TD ), $priority );
+				}
+			}
+			if ( ! $hooks ) {
+				$hooks[] = __( 'None', ST_BB_TD );
+			}
+
+			// Pages / post info
+			$location_info = array();
+			if ( isset( $module_registration['post_types'] ) && $this_content_module_id ) {
+				
+				foreach ( $module_registration['post_types'] as $post_type => $content_module_ids ) {
+					if ( in_array( $this_content_module_id, $content_module_ids ) ) {
+						$post_type_object = get_post_type_object( $post_type );
+						$location_info[ $post_type ] = array(
+							'label'		=>	$post_type_object->labels->name,
+							'post_ids'	=>	array()
+						);
+						if ( isset( $module_registration[ $post_type . '_ids' ][ $this_content_module_id ] ) ) {
+							if ( $post_ids = $module_registration[ $post_type . '_ids' ][ $this_content_module_id ] ) {
+								$location_info[ $post_type ]['post_ids'] = $post_ids;
+							}
+						}
+					}
+				}
+
+			}
+
 ?>
 <div id="titlediv">
 	<div id="titlewrap">
-				<h1><?php esc_html_e( $post->post_title ); ?></h1>
+		<h1><strong><?php esc_html_e( $post->post_title ); ?></strong></h1>
 	</div>
+</div>
+<div id="st-bb-location-info">
+	<h3 style="margin-bottom: 5px"><?php _e( 'Display locations', ST_BB_TD ); ?></h3>
+	<?php foreach( $hooks as $hook) {
+		echo '<p style="margin: 0">' . esc_html( $hook ) . '</p>';
+	}
+	?>
+	<h3 style="margin-bottom: 5px"><?php _e( 'Selected pages / posts', ST_BB_TD ); ?></h3>
+	<?php
+
+	if ( $location_info ) {
+		foreach( $location_info as $post_type => $post_type_info ) {
+			
+			// Get all selected post ids.
+			$posts = array();
+			if ( $post_type_info['post_ids'] ) {
+				$posts = get_posts( array(
+					'post_type'					=>	$post_type,
+					'post__in'					=>	$post_type_info['post_ids'],
+					'post_status'				=>	'publish',
+					'orderby'					=>	'title',
+					'order'						=>	'ASC',
+					'posts_per_page'			=>	-1,
+					'no_found_rows'				=>	true,
+					'cache_results'				=>	false,
+					'update_post_term_cache'	=>	false,
+					'update_post_meta_cache'	=>	false
+				) );
+			}
+
+			$qualifier = $posts ? __( 'Selected:', ST_BB_TD ) : __( 'All', ST_BB_TD );
+			?>
+			<h4 style="margin: 0"><?php esc_html_e( $post_type_info['label'] ); ?> - <?php echo $qualifier; ?></h4>
+			<?php
+			if ( $posts ) {
+				foreach( $posts as $post ) {
+					echo '<p style="margin: 0 0 0 10px">' . esc_html( $post->post_title ) . '</p>';
+				}
+			}
+		}
+	} else {
+		_e( 'No locations set', ST_BB_TD );
+	}
+	?>
 </div>
 <?php
 		}
